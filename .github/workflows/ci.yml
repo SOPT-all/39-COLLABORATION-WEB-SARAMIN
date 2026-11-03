@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [dev, main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: lint · build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6 # package.json의 packageManager 버전을 사용해요
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # lint · format 스크립트는 ESLint · Prettier 세팅 후 추가되므로, 있을 때만 실행해요
+      - name: Lint
+        run: pnpm run --if-present lint
+
+      - name: Format check
+        run: pnpm run --if-present format:check
+
+      - name: Build
+        run: pnpm build
