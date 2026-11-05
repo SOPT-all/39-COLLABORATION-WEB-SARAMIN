@@ -1,0 +1,78 @@
+name: Discord PR notification
+
+# PR 생성, 리뷰 요청, 리뷰 제출, 머지일 때만 Discord로 알림을 보냅니다.
+on:
+  pull_request:
+    # opened: PR을 처음 만들었을 때
+    # review_requested: 리뷰어를 지정했을 때
+    # closed: PR을 닫았을 때. 머지도 GitHub에서는 closed로 들어옵니다.
+    types: [opened, review_requested, closed]
+  pull_request_review:
+    # submitted: 승인, 수정 요청, 코멘트를 남겼을 때
+    types: [submitted]
+
+jobs:
+  notify:
+    # 머지되지 않고 닫기만 한 PR은 알리지 않습니다.
+    if: github.event.action != 'closed' || github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord message
+        env:
+          # Settings → Secrets → Actions에 저장한 웹후크 주소
+          WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          EVENT_NAME: ${{ github.event_name }}
+          ACTION: ${{ github.event.action }}
+          MERGED: ${{ github.event.pull_request.merged }}
+          TITLE: ${{ github.event.pull_request.title }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REQUESTED_REVIEWER: ${{ github.event.requested_reviewer.login }}
+          REVIEWER: ${{ github.event.review.user.login }}
+          REVIEW_STATE: ${{ github.event.review.state }}
+        run: |
+          # 사건 종류에 따라 문구와 리뷰어를 정합니다.
+          if [ "$EVENT_NAME" = "pull_request_review" ]; then
+            case "$REVIEW_STATE" in
+              approved) LABEL="리뷰 승인" ;;
+              changes_requested) LABEL="수정 요청" ;;
+              *) LABEL="리뷰 작성" ;;
+            esac
+            WHO="$REVIEWER"
+          elif [ "$ACTION" = "opened" ]; then
+            LABEL="PR 생성"
+            WHO=""
+          elif [ "$ACTION" = "review_requested" ]; then
+            LABEL="리뷰 요청"
+            WHO="$REQUESTED_REVIEWER"
+          elif [ "$MERGED" = "true" ]; then
+            LABEL="머지"
+            WHO=""
+          else
+            exit 0
+          fi
+
+          # GitHub ID와 Discord 아이디를 매핑합니다.
+          case "$WHO" in
+            ychany) WHO="<@419105539503423488>" ;;
+            huijeanjang) WHO="<@524507349231206401>" ;;
+            2516391) WHO="<@1326467371472392205>" ;;
+            KimJongHyun2) WHO="<@612538406718930954>" ;;
+            Juhyung03) WHO="<@1242814832844079195>" ;;
+          esac
+
+          if [ -n "$WHO" ]; then
+            EXTRA=$'\n'"리뷰어: ${WHO}"
+          else
+            EXTRA=""
+          fi
+
+          MESSAGE=$(printf '**%s** #%s\n제목: %s\n작성자: %s%s\n링크: %s' \
+            "$LABEL" "$PR_NUMBER" "$TITLE" "$AUTHOR" "$EXTRA" "$PR_URL")
+
+          # 웹후크가 멘션을 실제로 울리도록 users 멘션을 허용합니다.
+          jq -n --arg content "$MESSAGE" '{content: $content, allowed_mentions: {parse: ["users"]}}' \
+            | curl -fsS -X POST "$WEBHOOK_URL" \
+                -H "Content-Type: application/json" \
+                -d @-
