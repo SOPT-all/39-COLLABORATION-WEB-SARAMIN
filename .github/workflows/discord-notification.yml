@@ -16,11 +16,16 @@ jobs:
     # 머지되지 않고 닫기만 한 PR은 알리지 않습니다.
     if: github.event.action != 'closed' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    # PR 생성 알림에서 현재 지정된 리뷰어 목록을 조회하기 위한 권한
+    permissions:
+      pull-requests: read
     steps:
       - name: Send Discord message
         env:
           # Settings → Secrets → Actions에 저장한 웹후크 주소
           WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
           EVENT_NAME: ${{ github.event_name }}
           ACTION: ${{ github.event.action }}
           MERGED: ${{ github.event.pull_request.merged }}
@@ -28,10 +33,26 @@ jobs:
           AUTHOR: ${{ github.event.pull_request.user.login }}
           PR_URL: ${{ github.event.pull_request.html_url }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          CREATED_AT: ${{ github.event.pull_request.created_at }}
+          UPDATED_AT: ${{ github.event.pull_request.updated_at }}
           REQUESTED_REVIEWER: ${{ github.event.requested_reviewer.login }}
           REVIEWER: ${{ github.event.review.user.login }}
           REVIEW_STATE: ${{ github.event.review.state }}
+          # PR 생성 후 이 시간(초) 안에 지정된 리뷰어는 PR 생성 알림 하나에 모아서 멘션합니다.
+          REVIEW_WINDOW_SECONDS: 5
         run: |
+          # GitHub ID와 Discord 아이디를 매핑합니다. 매핑이 없으면 GitHub ID를 그대로 씁니다.
+          convert_to_mention() {
+            case "$1" in
+              ychany) echo "<@419105539503423488>" ;;
+              huijeanjang) echo "<@524507349231206401>" ;;
+              2516391) echo "<@1326467371472392205>" ;;
+              KimJongHyun2) echo "<@612538406718930954>" ;;
+              Juhyung03) echo "<@1242814832844079195>" ;;
+              *) echo "$1" ;;
+            esac
+          }
+
           # 사건 종류에 따라 문구와 리뷰어를 정합니다.
           if [ "$EVENT_NAME" = "pull_request_review" ]; then
             case "$REVIEW_STATE" in
@@ -39,28 +60,34 @@ jobs:
               changes_requested) LABEL="수정 요청" ;;
               *) LABEL="리뷰 작성" ;;
             esac
-            WHO="$REVIEWER"
+            REVIEWERS="$REVIEWER"
           elif [ "$ACTION" = "opened" ]; then
             LABEL="PR 생성"
-            WHO=""
+            # PR과 함께 지정된 리뷰어가 모두 반영될 때까지 기다린 뒤 목록을 조회합니다.
+            WAIT=$(( $(date -d "$CREATED_AT" +%s) + REVIEW_WINDOW_SECONDS - $(date +%s) ))
+            if [ "$WAIT" -gt 0 ]; then
+              sleep "$WAIT"
+            fi
+            REVIEWERS=$(gh api "repos/$REPO/pulls/$PR_NUMBER" --jq '.requested_reviewers[].login')
           elif [ "$ACTION" = "review_requested" ]; then
+            # PR 생성 직후의 리뷰 요청은 PR 생성 알림에 포함되므로 따로 보내지 않습니다.
+            ELAPSED=$(( $(date -d "$UPDATED_AT" +%s) - $(date -d "$CREATED_AT" +%s) ))
+            if [ "$ELAPSED" -lt "$REVIEW_WINDOW_SECONDS" ]; then
+              exit 0
+            fi
             LABEL="리뷰 요청"
-            WHO="$REQUESTED_REVIEWER"
+            REVIEWERS="$REQUESTED_REVIEWER"
           elif [ "$MERGED" = "true" ]; then
             LABEL="머지"
-            WHO=""
+            REVIEWERS=""
           else
             exit 0
           fi
 
-          # GitHub ID와 Discord 아이디를 매핑합니다.
-          case "$WHO" in
-            ychany) WHO="<@419105539503423488>" ;;
-            huijeanjang) WHO="<@524507349231206401>" ;;
-            2516391) WHO="<@1326467371472392205>" ;;
-            KimJongHyun2) WHO="<@612538406718930954>" ;;
-            Juhyung03) WHO="<@1242814832844079195>" ;;
-          esac
+          WHO=""
+          for login in $REVIEWERS; do
+            WHO="${WHO:+$WHO }$(convert_to_mention "$login")"
+          done
 
           if [ -n "$WHO" ]; then
             EXTRA=$'\n'"리뷰어: ${WHO}"
