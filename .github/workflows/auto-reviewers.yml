@@ -1,0 +1,61 @@
+
+name: Auto Assign PR
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  auto-assign:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Assign author and request reviewers
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          # 팀원 GitHub ID
+          MEMBERS=(
+            "ychany"
+            "KimJongHyun2"
+            "Juhyung03"
+            "huijeanjang"
+            "2516391"
+          )
+
+          # PR 작성자 자동 할당
+          gh api \
+            --method POST \
+            "repos/$REPO/issues/$PR_NUMBER/assignees" \
+            -f "assignees[]=$PR_AUTHOR"
+
+          # 작성자를 제외한 리뷰어 후보 생성
+          CANDIDATES=()
+          for member in "${MEMBERS[@]}"; do
+            if [ "$member" != "$PR_AUTHOR" ]; then
+              CANDIDATES+=("$member")
+            fi
+          done
+
+          # 후보 중 2명 무작위 선택
+          mapfile -t REVIEWERS < <(
+            printf '%s\n' "${CANDIDATES[@]}" |
+            shuf -n 2
+          )
+
+          # 리뷰어 자동 요청
+          if [ "${#REVIEWERS[@]}" -eq 2 ]; then
+            gh api \
+              --method POST \
+              "repos/$REPO/pulls/$PR_NUMBER/requested_reviewers" \
+              -f "reviewers[]=${REVIEWERS[0]}" \
+              -f "reviewers[]=${REVIEWERS[1]}"
+          fi
