@@ -16,7 +16,7 @@ const ChipTool = ({ variant = 'blue', className, ...props }: ChipToolProps) => {
   return (
     <span
       className={cn(
-        'flex h-7.5 w-16.75 items-center justify-center rounded-full px-2.5 py-1.5 text-center text-caption-12 whitespace-nowrap',
+        'inline-flex h-7.5 w-16.75 items-center justify-center rounded-full px-2.5 py-1.5 text-center text-caption-12 whitespace-nowrap',
         VARIANT_CLASS_NAMES[variant],
         className,
       )}

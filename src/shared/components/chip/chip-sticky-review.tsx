@@ -6,7 +6,7 @@ const ChipStickyReview = ({ className, ...props }: ComponentProps<'span'>) => {
   return (
     <span
       className={cn(
-        'flex h-7 w-14.5 items-center justify-center rounded-full bg-surface-default text-center text-caption-11 whitespace-nowrap text-blue-90',
+        'inline-flex h-7 w-14.5 items-center justify-center rounded-full bg-surface-default text-center text-caption-11 whitespace-nowrap text-blue-90',
         className,
       )}
       {...props}

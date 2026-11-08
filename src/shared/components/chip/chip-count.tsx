@@ -14,7 +14,7 @@ const ChipCount = ({
   return (
     <span
       className={cn(
-        'flex size-5 items-center justify-center rounded-full text-center text-caption-11',
+        'inline-flex size-5 items-center justify-center rounded-full text-center text-caption-11',
         isActive
           ? 'bg-blue-90 text-white'
           : 'bg-surface-subtle text-text-tertiary',

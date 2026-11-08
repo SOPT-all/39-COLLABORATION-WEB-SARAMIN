@@ -9,7 +9,7 @@ const AiButton = ({ className, ...props }: ComponentProps<'button'>) => {
     <button
       type="button"
       className={cn(
-        'relative flex h-10 w-[86px] items-center overflow-hidden rounded-[20px] bg-[linear-gradient(87.85deg,#00A1F8_1.61%,#7F38FD_98.39%)] pr-[5px] pl-3 text-title-14 whitespace-nowrap text-white shadow-[0_0_10px_0_rgba(0,161,248,0.3)]',
+        'relative flex h-10 w-21.5 items-center overflow-hidden rounded-full bg-[linear-gradient(87.85deg,#00A1F8_1.61%,#7F38FD_98.39%)] pr-1.25 pl-3 text-title-14 whitespace-nowrap text-white shadow-[0_0_10px_0_rgba(0,161,248,0.3)]',
         className,
       )}
       {...props}

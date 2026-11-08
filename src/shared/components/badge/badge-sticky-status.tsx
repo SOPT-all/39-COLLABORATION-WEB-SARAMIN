@@ -19,7 +19,7 @@ const BadgeStickyStatus = ({
   return (
     <span
       className={cn(
-        'flex h-6 w-16 items-center justify-center rounded-full bg-surface-default text-center text-label-12 whitespace-nowrap',
+        'inline-flex h-6 w-16 items-center justify-center rounded-full bg-surface-default text-center text-label-12 whitespace-nowrap',
         VARIANT_CLASS_NAMES[variant],
         className,
       )}
