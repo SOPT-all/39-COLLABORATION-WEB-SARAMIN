@@ -10,7 +10,7 @@ interface BookmarkButtonProps extends ComponentProps<'button'> {
 
 const ICON_CLASS_NAMES = {
   default:
-    'text-gray-70 group-hover:fill-white group-hover:text-white group-focus-visible:fill-white group-focus-visible:text-white',
+    'fill-white/0 text-gray-70 group-hover:fill-white group-hover:text-white group-focus-visible:fill-white group-focus-visible:text-white',
   selected: 'fill-blue-70 text-blue-70',
 };
 
@@ -30,7 +30,10 @@ const BookmarkButton = ({
     >
       <IcBookmark
         aria-hidden
-        className={ICON_CLASS_NAMES[isSelected ? 'selected' : 'default']}
+        className={cn(
+          'transition-colors',
+          ICON_CLASS_NAMES[isSelected ? 'selected' : 'default'],
+        )}
       />
     </button>
   );
