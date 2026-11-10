@@ -14,8 +14,8 @@ const Header = () => {
       <div className="border-b border-gray-30">
         <div className="mx-auto flex h-24 w-315 items-center justify-between">
           <div className="flex items-center gap-5.75">
-            <h1>
-              <Link to={ROUTES.HOME} aria-label="사람인 홈">
+            <h1 className="w-40.25 pl-6.75">
+              <Link to={ROUTES.HOME} aria-label="사람인 홈" className="block">
                 <LogoSaramin aria-hidden />
               </Link>
             </h1>
