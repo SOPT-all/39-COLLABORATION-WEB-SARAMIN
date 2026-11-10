@@ -1,10 +1,9 @@
-import { type ComponentProps,useState } from 'react';
+import type { ComponentProps } from 'react';
 
 import MyfitSearchButton from '@/shared/components/button/myfit-search-button';
 import ChipKeyword from '@/shared/components/chip/chip-keyword';
+import KeywordInput from '@/shared/components/keyword-input/keyword-input';
 import { cn } from '@/shared/utils/cn';
-
-import IcSearch from '@/shared/assets/icons/ic-search.svg?react';
 
 type KeywordSearchPanelContext = 'search' | 'compare-background';
 type KeywordSearchPanelState = 'loaded' | 'loading';
@@ -70,9 +69,6 @@ const KeywordSearchPanel = ({
   ...props
 }: KeywordSearchPanelProps) => {
   const isLoading = state === 'loading';
-  const isKeywordControlled = onKeywordChange !== undefined;
-  const [draftKeyword, setDraftKeyword] = useState(keyword);
-  const inputValue = isKeywordControlled ? keyword : draftKeyword;
   const keywordList = keywords ?? defaultKeywords[context];
 
   return (
@@ -94,24 +90,11 @@ const KeywordSearchPanel = ({
               <h2 className="text-heading-20 text-text-primary">{title}</h2>
               <p className="text-body-14 text-text-secondary">{description}</p>
             </div>
-            {/* TODO: 키워드 입력창 컴포넌트 구현 후 이 부분 바꿔끼워야 함 */}
             <div className="flex w-full flex-col gap-[18px]">
-              <label className="flex h-[50px] w-full items-center gap-2 rounded-lg border border-border-default bg-white p-2">
-                <IcSearch aria-hidden className="shrink-0 text-text-tertiary" />
-                <input
-                  value={inputValue}
-                  placeholder="키워드 입력"
-                  onChange={(event) => {
-                    const nextKeyword = event.target.value;
-                    if (onKeywordChange) {
-                      onKeywordChange(nextKeyword);
-                      return;
-                    }
-                    setDraftKeyword(nextKeyword);
-                  }}
-                  className="h-6 min-w-0 flex-1 bg-transparent text-body-16 text-text-primary outline-none placeholder:text-text-tertiary"
-                />
-              </label>
+              <KeywordInput
+                keyword={keyword}
+                onKeywordChange={onKeywordChange}
+              />
               <div className="flex flex-wrap gap-2">
                 {keywordList.map((item, index) => (
                   <ChipKeyword
@@ -127,7 +110,6 @@ const KeywordSearchPanel = ({
             <p className="text-center text-caption-12 text-text-secondary">
               키워드 {keywordList.length}개 선택됨
             </p>
-            {/* TODO: 검색 버튼 컴포넌트 구현 후 이 부분 바꿔끼워야 함 */}
             <MyfitSearchButton className="w-full" onClick={onSearch} />
           </div>
         </>
