@@ -1,5 +1,6 @@
+import HiringSeasonBadge from '@/app/layout/hiring-season-badge';
+
 import IcListLeftAlign from '@/shared/assets/icons/ic-list-leftalign.svg?react';
-import imgHiringSeasonBadge from '@/shared/assets/images/img-hiring-season-badge.png';
 
 const NAV_MENUS = [
   { label: '채용정보' },
@@ -30,13 +31,7 @@ const HeaderNav = () => {
             >
               <span className="relative">
                 {hasHiringBadge && (
-                  <img
-                    src={imgHiringSeasonBadge}
-                    alt="하반기 공채"
-                    width={85}
-                    height={28}
-                    className="absolute -top-6.25 -left-1.5 max-w-none"
-                  />
+                  <HiringSeasonBadge className="absolute -top-6.25 -left-1.5" />
                 )}
                 {label}
               </span>
