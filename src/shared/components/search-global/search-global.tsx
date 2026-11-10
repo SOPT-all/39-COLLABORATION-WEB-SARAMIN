@@ -29,6 +29,8 @@ const borderClassName = {
   error: 'border-[1.5px] border-status-danger',
 } satisfies Record<SearchGlobalState, string>;
 
+// placeholder, errorMessage 기본값은 피그마 예시 문구
+// 피그마 AI 칩은 연한 파란 알약인데, 디자이너 확인 전까지 기존 AiButton을 그대로 연결함.
 const SearchGlobal = ({
   query = '',
   placeholder = '프로덕트 디자이너',
@@ -67,9 +69,13 @@ const SearchGlobal = ({
         </div>
         <AiButton className="shrink-0" onClick={onAiSearch} />
       </div>
+      {/* 다시 시도 버튼 새로 그림. 컴포넌트 확인 필요*/}
       {state === 'error' && (
         <div className="flex h-12 w-full items-center gap-2 rounded-lg bg-coral-30 px-3 py-2">
-          <span aria-hidden className="size-2 shrink-0 rounded-full bg-status-danger" />
+          <span
+            aria-hidden
+            className="size-2 shrink-0 rounded-full bg-status-danger"
+          />
           <p className="min-w-0 flex-1 text-body-12 text-text-primary">
             {errorMessage}
           </p>

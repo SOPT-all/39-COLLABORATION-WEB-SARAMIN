@@ -6,14 +6,10 @@ import IcClose from '@/shared/assets/icons/ic-close.svg?react';
 import IcSearch from '@/shared/assets/icons/ic-search.svg?react';
 
 type SearchSuggestionItemState =
-  | 'default'
-  | 'hover'
-  | 'pressed'
-  | 'focused'
-  | 'disabled';
+  'default' | 'hover' | 'pressed' | 'focused' | 'disabled';
 
 interface SearchSuggestionItemProps extends Omit<
-  ComponentProps<'div'>, 
+  ComponentProps<'div'>,
   'children' | 'onSelect' // ComponentProps<'div'> 타입에서 children과 onSelect 속성을 제외한 타입
 > {
   keyword: string;
@@ -23,6 +19,7 @@ interface SearchSuggestionItemProps extends Omit<
   onRemove?: () => void;
 }
 
+// state는 피그마 상태 확인용, 실제 화면에서는 기본값 default만 쓰면 hover, pressed, focused가 동작
 const stateClassName = {
   default:
     'border-transparent bg-white hover:bg-surface-blue-subtle focus-within:border-action-primary active:bg-surface-blue-subtle active:opacity-88',
@@ -39,13 +36,13 @@ const SearchSuggestionItem = ({
   onSelect,
   onRemove,
   className,
-  ...props 
-}: SearchSuggestionItemProps) => { 
-  const isDisabled = state === 'disabled'; 
+  ...props
+}: SearchSuggestionItemProps) => {
+  const isDisabled = state === 'disabled';
 
   return (
     <div
-      className={cn( 
+      className={cn(
         'flex h-11 w-full items-center gap-3 rounded-md border-2 px-3 py-2',
         stateClassName[state],
         className,
