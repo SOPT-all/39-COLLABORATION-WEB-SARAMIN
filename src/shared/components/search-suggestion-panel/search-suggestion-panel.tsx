@@ -14,6 +14,8 @@ interface SearchSuggestion {
   supportingText?: string;
 }
 
+// 페이지 연결: suggestions에 목록을 넘기고, 줄을 누르면 onSelect, 최근 검색의 X는 onRemove입니다.
+// 필터 초기화는 onResetFilter, 다시 시도는 onRetry입니다. 불러오는 중에는 contentState="loading"입니다.
 interface SearchSuggestionPanelProps extends Omit<
   ComponentProps<'section'>,
   'children' | 'onSelect'

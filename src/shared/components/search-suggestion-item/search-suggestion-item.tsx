@@ -8,6 +8,8 @@ import IcSearch from '@/shared/assets/icons/ic-search.svg?react';
 type SearchSuggestionItemState =
   'default' | 'hover' | 'pressed' | 'focused' | 'disabled';
 
+// 페이지 연결: keyword에 검색어를 넘기고, 줄을 누르면 onSelect, X는 onRemove입니다.
+// state는 피그마 확인용이라 페이지에서는 넘기지 않아도 됩니다.
 interface SearchSuggestionItemProps extends Omit<
   ComponentProps<'div'>,
   'children' | 'onSelect' // ComponentProps<'div'> 타입에서 children과 onSelect 속성을 제외한 타입

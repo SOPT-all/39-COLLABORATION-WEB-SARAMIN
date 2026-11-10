@@ -8,6 +8,8 @@ import IcSearch from '@/shared/assets/icons/ic-search.svg?react';
 
 type SearchGlobalState = 'default' | 'focused' | 'typing' | 'loading' | 'error';
 
+// 페이지 연결: 입력값은 query와 onQueryChange, AI 검색은 onAiSearch, 다시 시도는 onRetry입니다.
+// 포커스·입력·로딩·에러 모양은 state로 바꿉니다.
 interface SearchGlobalProps extends Omit<
   ComponentProps<'div'>,
   'children' | 'onChange'
