@@ -4,7 +4,7 @@ import { createSearchParams, useNavigate, useSearchParams } from 'react-router';
 import { ROUTES } from '@/shared/constants/routes';
 import { SEARCH_KEYWORD_PARAM } from '@/shared/constants/search';
 
-import IcAiSpark from '@/shared/assets/icons/ic-ai-spark.svg?react';
+import IcFilters from '@/shared/assets/icons/ic-filters.svg?react';
 import IcSearch from '@/shared/assets/icons/ic-search.svg?react';
 
 // 검색하면 /search?keyword=검색어로 이동해요. 디자인은 검색 컴포넌트(#30)로 교체할 예정이에요.
@@ -52,7 +52,7 @@ const HeaderSearchBar = () => {
         type="button"
         className="flex h-7.5 w-23 items-center gap-1.5 rounded-[15px] bg-surface-blue-subtle p-1.5 text-label-14 text-blue-90"
       >
-        <IcAiSpark aria-hidden className="shrink-0" />
+        <IcFilters aria-hidden className="size-4 shrink-0" />
         AI 검색
       </button>
     </form>
