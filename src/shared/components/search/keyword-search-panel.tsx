@@ -2,7 +2,7 @@ import type { ComponentProps } from 'react';
 
 import MyfitSearchButton from '@/shared/components/button/myfit-search-button';
 import ChipKeyword from '@/shared/components/chip/chip-keyword';
-import KeywordInput from '@/shared/components/keyword-input/keyword-input';
+import KeywordInput from '@/shared/components/search/keyword-input';
 import { cn } from '@/shared/utils/cn';
 
 type KeywordSearchPanelContext = 'search' | 'compare-background';

@@ -1,6 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react';
 
-import SearchSuggestionItem from '@/shared/components/search-suggestion-item/search-suggestion-item';
+import SearchSuggestionItem from '@/shared/components/search/search-suggestion-item';
 import { cn } from '@/shared/utils/cn';
 
 import IcKindEmpty from '@/shared/assets/icons/ic-kind-empty.svg?react';
@@ -165,7 +165,9 @@ const SearchSuggestionMessage = ({
       {icon}
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <p className="truncate text-title-14 text-text-primary">{title}</p>
-        <p className="truncate text-body-12 text-text-secondary">{description}</p>
+        <p className="truncate text-body-12 text-text-secondary">
+          {description}
+        </p>
       </div>
       <button
         type="button"
