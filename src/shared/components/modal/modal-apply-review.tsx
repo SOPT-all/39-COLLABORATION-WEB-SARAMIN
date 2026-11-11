@@ -22,17 +22,20 @@ const ModalApplyReview = ({
   documentSummary,
   isSubmitting = false,
   onSubmit,
+  isOpen,
   onClose,
   className,
   ...props
 }: ModalApplyReviewProps) => {
   const titleId = useId();
   const [hasAgreed, setHasAgreed] = useState(false);
+  const [wasOpen, setWasOpen] = useState(isOpen);
 
-  const handleClose = () => {
-    setHasAgreed(false);
-    onClose();
-  };
+  // 모달이 새로 열릴 때마다 동의 체크를 초기화해요. (지원 완료 후 다시 열어도 체크가 남지 않게)
+  if (isOpen !== wasOpen) {
+    setWasOpen(isOpen);
+    if (isOpen) setHasAgreed(false);
+  }
 
   return (
     <ModalDialog
@@ -41,7 +44,8 @@ const ModalApplyReview = ({
         'h-82.5 w-140 flex-col gap-4 rounded-[20px] border border-border-default bg-surface-default p-6 shadow-[0_10px_14px_0_rgba(23,51,107,0.14)] open:flex',
         className,
       )}
-      onClose={handleClose}
+      isOpen={isOpen}
+      onClose={onClose}
       {...props}
     >
       <div className="flex h-12 items-center gap-3">
@@ -75,7 +79,7 @@ const ModalApplyReview = ({
         <button
           type="button"
           className="flex h-12 w-40 items-center justify-center rounded-[10px] border border-border-default text-label-14 text-text-primary"
-          onClick={handleClose}
+          onClick={onClose}
         >
           취소
         </button>
