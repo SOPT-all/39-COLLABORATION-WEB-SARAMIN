@@ -6,7 +6,7 @@ import IcRemove from '@/shared/assets/icons/ic-remove.svg?react';
 
 interface ChipKeywordProps extends Omit<ComponentProps<'div'>, 'children'> {
   keyword: string;
-  onRemove: () => void;
+  onRemove?: () => void; //onRemove를 넘기지 않으면 삭제 버튼 안 보임
 }
 
 const ChipKeyword = ({
@@ -26,14 +26,16 @@ const ChipKeyword = ({
       <span className="min-w-0 truncate text-label-14 text-[#2D67FF]">
         {keyword}
       </span>
-      <button
-        type="button"
-        aria-label={`${keyword} 삭제`}
-        className="size-6 shrink-0"
-        onClick={onRemove}
-      >
-        <IcRemove aria-hidden />
-      </button>
+      {onRemove && (
+        <button
+          type="button"
+          aria-label={`${keyword} 삭제`}
+          className="size-6 shrink-0"
+          onClick={onRemove}
+        >
+          <IcRemove aria-hidden />
+        </button>
+      )}
     </div>
   );
 };
