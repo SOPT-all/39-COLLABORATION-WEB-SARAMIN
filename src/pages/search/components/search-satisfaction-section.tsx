@@ -1,3 +1,5 @@
+import IcClose from '@/shared/assets/icons/ic-close.svg?react';
+
 const SCORES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 const SearchSatisfactionSection = () => {
@@ -16,9 +18,9 @@ const SearchSatisfactionSection = () => {
         <button
           type="button"
           aria-label="만족도 조사 닫기"
-          className="text-[22px] leading-6 text-gray-70"
+          className="flex size-6 items-center justify-center"
         >
-          ×
+          <IcClose aria-hidden />
         </button>
       </div>
       <p className="text-title-14 text-gray-120">
