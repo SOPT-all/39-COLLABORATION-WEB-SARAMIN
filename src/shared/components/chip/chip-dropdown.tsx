@@ -19,7 +19,7 @@ const ChipDropdown = ({
       {...props}
     >
       {children}
-      <IcChevronDown aria-hidden className="shrink-0" />
+      <IcChevronDown aria-hidden className="shrink-0 text-text-secondary" />
     </button>
   );
 };
