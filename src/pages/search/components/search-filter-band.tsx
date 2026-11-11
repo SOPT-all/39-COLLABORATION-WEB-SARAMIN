@@ -42,7 +42,7 @@ const SearchFilterBand = ({ keyword }: SearchFilterBandProps) => {
             직업 선택
           </button>
           <button type="button" className={cn(FIELD_CLASS_NAME, 'w-37.5')}>
-            <IcFilters aria-hidden className="shrink-0" />
+            <IcFilters aria-hidden className="shrink-0 text-gray-80" />
             상세조건
           </button>
         </div>
