@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router';
+import { Navigate, useSearchParams } from 'react-router';
 
 import CompanyInfoSection from '@/pages/search/components/company-info-section';
 import JobResultSection from '@/pages/search/components/job-result-section';
@@ -7,12 +7,16 @@ import SearchFilterBand from '@/pages/search/components/search-filter-band';
 import SearchSatisfactionSection from '@/pages/search/components/search-satisfaction-section';
 import SearchSummary from '@/pages/search/components/search-summary';
 import SearchUtilities from '@/pages/search/components/search-utilities';
+import { ROUTES } from '@/shared/constants/routes';
 import { SEARCH_KEYWORD_PARAM } from '@/shared/constants/search';
 
 // TODO: 검색 API가 나오면 keyword로 결과를 조회해요.
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
-  const keyword = searchParams.get(SEARCH_KEYWORD_PARAM) ?? '';
+  const keyword = searchParams.get(SEARCH_KEYWORD_PARAM)?.trim() ?? '';
+
+  // 주소창에 /search만 입력하는 등 검색어가 없으면 홈으로 보내요.
+  if (!keyword) return <Navigate to={ROUTES.HOME} replace />;
 
   return (
     <>
