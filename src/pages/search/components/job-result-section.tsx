@@ -16,12 +16,12 @@ const JobResultSection = () => {
   return (
     <section aria-labelledby="job-result-title">
       <div className="flex items-center gap-2 px-6.75 py-4.5">
-        <h3
+        <h2
           id="job-result-title"
           className="w-33 text-heading-24 text-text-primary"
         >
           채용정보
-        </h3>
+        </h2>
         <span className="text-body-14 text-text-tertiary">총 729건</span>
       </div>
 

@@ -45,15 +45,15 @@ const CompanyInfoSection = () => {
       className="overflow-hidden rounded-2xl border border-gray-30 bg-surface-default"
     >
       <div className="flex h-15 items-center gap-3 px-10">
-        <h3 id="company-info-title" className="text-heading-20 text-gray-120">
+        <h2 id="company-info-title" className="text-heading-20 text-gray-120">
           기업정보
-        </h3>
+        </h2>
         <span className="text-body-12 text-gray-70">총 49,094건</span>
       </div>
 
       <article className="flex flex-col gap-4 px-10 pt-6">
         <div className="flex h-6 items-center gap-2">
-          <h4 className="text-heading-18 text-gray-120">(주)어반플레이</h4>
+          <h3 className="text-heading-18 text-gray-120">(주)어반플레이</h3>
           <button
             type="button"
             aria-label="관심기업 등록"

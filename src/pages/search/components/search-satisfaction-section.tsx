@@ -7,12 +7,12 @@ const SearchSatisfactionSection = () => {
       className="flex flex-col gap-4 rounded-2xl border border-gray-30 bg-surface-blue-subtle px-10 pt-6 pb-8"
     >
       <div className="flex items-center">
-        <h3
+        <h2
           id="search-satisfaction-title"
           className="flex-1 text-center text-body-12 text-blue-80"
         >
           검색결과 만족도 조사
-        </h3>
+        </h2>
         <button
           type="button"
           aria-label="만족도 조사 닫기"

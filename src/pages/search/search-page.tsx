@@ -21,9 +21,9 @@ const SearchPage = () => {
 
       <div className="mx-auto w-315 pt-6.5 pb-14.5">
         <div className="flex items-center justify-between">
-          <h2 className="text-heading-20 text-text-primary">
+          <h1 className="text-heading-20 text-text-primary">
             ‘{keyword}’에 대한 취업정보
-          </h2>
+          </h1>
           <span className="text-body-14 whitespace-pre text-text-secondary">
             관련도순 · 40개씩
           </span>

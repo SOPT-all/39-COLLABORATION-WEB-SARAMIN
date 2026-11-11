@@ -47,9 +47,9 @@ const PowerLinkSection = () => {
       className="border border-gray-30 bg-surface-default"
     >
       <div className="flex h-13.5 items-center gap-2 bg-surface-subtle px-5">
-        <h3 id="power-link-title" className="text-title-16 text-gray-120">
+        <h2 id="power-link-title" className="text-title-16 text-gray-120">
           파워링크
-        </h3>
+        </h2>
         <span className="px-1.5 py-1 text-label-12 text-blue-90">
           사람인 Pick!
         </span>
