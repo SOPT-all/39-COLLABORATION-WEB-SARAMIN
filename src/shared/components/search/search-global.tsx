@@ -1,8 +1,9 @@
 import type { ComponentProps } from 'react';
 
-import AiButton from '@/shared/components/button/ai-button';
+import ActionButton from '@/shared/components/button/action-button';
 import { cn } from '@/shared/utils/cn';
 
+import IcFilters from '@/shared/assets/icons/ic-filters.svg?react';
 import IcLoadingSpinner from '@/shared/assets/icons/ic-loading-spinner.svg?react';
 import IcSearch from '@/shared/assets/icons/ic-search.svg?react';
 
@@ -32,7 +33,6 @@ const borderClassName = {
 } satisfies Record<SearchGlobalState, string>;
 
 // placeholder, errorMessage 기본값은 피그마 예시 문구
-// 피그마 AI 칩은 연한 파란 알약인데, 디자이너 확인 전까지 기존 AiButton을 그대로 연결함.
 const SearchGlobal = ({
   query = '',
   placeholder = '프로덕트 디자이너',
@@ -50,7 +50,7 @@ const SearchGlobal = ({
     <div className={cn('flex w-full flex-col gap-2', className)} {...props}>
       <div
         className={cn(
-          'flex min-h-[46px] w-full items-center justify-between rounded-full bg-white px-4 py-1.5',
+          'flex h-[46px] w-full items-center justify-between rounded-full bg-white px-4 py-1.5',
           borderClassName[state],
         )}
       >
@@ -69,9 +69,15 @@ const SearchGlobal = ({
             className="h-5 min-w-0 flex-1 bg-transparent text-body-14 text-text-secondary outline-none placeholder:text-text-secondary"
           />
         </div>
-        <AiButton className="shrink-0" onClick={onAiSearch} />
+        <button
+          type="button"
+          className="flex h-[30px] w-[92px] shrink-0 items-center gap-1.5 rounded-full bg-surface-blue-subtle p-1.5 text-label-14 whitespace-nowrap text-blue-90"
+          onClick={onAiSearch}
+        >
+          <IcFilters aria-hidden className="shrink-0" />
+          AI 검색
+        </button>
       </div>
-      {/* 다시 시도 버튼 새로 그림. 컴포넌트 확인 필요*/}
       {state === 'error' && (
         <div className="flex h-12 w-full items-center gap-2 rounded-lg bg-coral-30 px-3 py-2">
           <span
@@ -81,13 +87,7 @@ const SearchGlobal = ({
           <p className="min-w-0 flex-1 text-body-12 text-text-primary">
             {errorMessage}
           </p>
-          <button
-            type="button"
-            className="flex h-8 w-24 shrink-0 items-center justify-center rounded-md border border-border-default bg-white px-3 text-label-12 text-text-secondary"
-            onClick={onRetry}
-          >
-            다시 시도
-          </button>
+          <ActionButton onClick={onRetry}>다시 시도</ActionButton>
         </div>
       )}
     </div>

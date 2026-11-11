@@ -46,7 +46,10 @@ const SearchFilterField = ({
       )}
       {...props}
     >
-      <Icon className="shrink-0" aria-hidden />
+      <Icon
+        className={cn('shrink-0', icon === 'filters' && 'text-text-tertiary')}
+        aria-hidden
+      />
       <span className="min-w-0 flex-1">{label}</span>
     </button>
   );

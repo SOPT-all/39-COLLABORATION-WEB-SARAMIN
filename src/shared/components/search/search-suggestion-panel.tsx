@@ -1,5 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react';
 
+import ActionButton from '@/shared/components/button/action-button';
 import SearchSuggestionItem from '@/shared/components/search/search-suggestion-item';
 import { cn } from '@/shared/utils/cn';
 
@@ -151,8 +152,7 @@ interface SearchSuggestionMessageProps {
   onAction?: () => void;
 }
 
-// 피그마 state_message, 임시로 이 파일 안에 두었음
-// 필터 초기화, 다시 시도 버튼은 버튼 컴포넌트들과 크기가 달라서 새로 그렸고, 확인받아야 할 듯
+// TODO: state_message가 공통 컴포넌트로 생기면 이 부분을 그걸로 교체해야 함
 const SearchSuggestionMessage = ({
   title,
   description,
@@ -169,13 +169,7 @@ const SearchSuggestionMessage = ({
           {description}
         </p>
       </div>
-      <button
-        type="button"
-        className="flex h-8 w-24 shrink-0 items-center justify-center rounded-md border border-border-default bg-white px-3 text-body-12 whitespace-nowrap text-blue-90"
-        onClick={onAction}
-      >
-        {actionLabel}
-      </button>
+      <ActionButton onClick={onAction}>{actionLabel}</ActionButton>
     </div>
   );
 };
