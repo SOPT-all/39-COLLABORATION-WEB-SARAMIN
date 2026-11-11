@@ -1,6 +1,7 @@
 import { cn } from '@/shared/utils/cn';
 
 import IcBriefcase from '@/shared/assets/icons/ic-briefcase.svg?react';
+import IcChevronDown from '@/shared/assets/icons/ic-chevron-down.svg?react';
 import IcFilters from '@/shared/assets/icons/ic-filters.svg?react';
 import IcLocation from '@/shared/assets/icons/ic-location.svg?react';
 import IcSearch from '@/shared/assets/icons/ic-search.svg?react';
@@ -18,11 +19,13 @@ const SearchFilterBand = ({ keyword }: SearchFilterBandProps) => {
       <div className="mx-auto w-315">
         <div className="flex h-9.5 items-center justify-between text-label-14 text-white">
           <div className="flex gap-4.5">
-            <button type="button" className="w-27 text-left">
-              경력 선택⌄
+            <button type="button" className="flex w-27 items-center">
+              경력 선택
+              <IcChevronDown aria-hidden className="shrink-0" />
             </button>
-            <button type="button" className="w-27 text-left">
-              학력 선택⌄
+            <button type="button" className="flex w-27 items-center">
+              학력 선택
+              <IcChevronDown aria-hidden className="shrink-0" />
             </button>
           </div>
           <a href="#">나의 검색 / 메일관리</a>
