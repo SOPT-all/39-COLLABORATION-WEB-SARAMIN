@@ -1,6 +1,8 @@
 import ChipSelectedFilter from '@/shared/components/chip/chip-selected-filter';
 import { cn } from '@/shared/utils/cn';
 
+import IcRemove from '@/shared/assets/icons/ic-remove.svg?react';
+
 interface SearchSummaryProps {
   keyword: string;
 }
@@ -38,9 +40,9 @@ const SearchSummary = ({ keyword }: SearchSummaryProps) => {
               <button
                 type="button"
                 aria-label={`${filter} 삭제`}
-                className="ml-1"
+                className="-mr-1.5 flex"
               >
-                ×
+                <IcRemove aria-hidden className="size-5" />
               </button>
             </span>
           ))}
