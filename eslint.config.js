@@ -3,6 +3,7 @@ import prettierConfig from 'eslint-config-prettier';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import storybook from 'eslint-plugin-storybook';
 import unusedImports from 'eslint-plugin-unused-imports';
 import tseslint from 'typescript-eslint';
 
@@ -62,4 +63,5 @@ export default defineConfig([
     },
   },
   prettierConfig,
+  ...storybook.configs['flat/recommended'],
 ]);
