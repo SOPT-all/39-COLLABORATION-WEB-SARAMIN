@@ -10,7 +10,7 @@ interface SearchKeywordGroup {
 
 // 페이지 연결: 묶음은 groups, 칩 클릭은 onSelect입니다.
 // groups 기본값은 피그마 예시 데이터입니다.
-interface ListSearchProps extends ComponentProps<'div'> {
+interface ListSearchProps extends Omit<ComponentProps<'div'>, 'onSelect'> {
   groups?: SearchKeywordGroup[];
   onSelect?: (keyword: string) => void;
 }
