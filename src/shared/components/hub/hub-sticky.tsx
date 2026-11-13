@@ -3,6 +3,7 @@
 // props  : status - ready · dragging · needsDocument · loading (기본 ready)
 //          size - full · compact (기본 full). compact는 헤더 + 패키지 카드 + 푸터만
 //          documents - 서류 행 목록 [{ label, state, count }]. 기본값 피그마 3개
+//          badge · summaryTitle · summaryDescription - API 값이 들어갈 문구. 안 주면 상태 표의 피그마 문구
 //          className, 나머지 div 속성 통과
 // 상태   : status 하나로 뱃지 문구 · 뱃지 색 · 안내 문구 · 요약 카드 tone/문구 · 패키지 카드 state · 바깥 흰 테두리가 정해짐
 //          hub-sticky-states.ts 표에서 꺼냄. loading이면 본문 대신 SkeletonStickyHub
@@ -43,25 +44,28 @@ interface HubStickyProps extends ComponentProps<'div'> {
   status?: HubStickyStatus;
   size?: 'full' | 'compact';
   documents?: HubStickyDocument[];
+  badge?: string;
+  summaryTitle?: string;
+  summaryDescription?: string;
 }
 
 const HubSticky = ({
   status = 'ready',
   size = 'full',
   documents = DEFAULT_DOCUMENTS,
+  badge: badgeProp,
+  summaryTitle: summaryTitleProp,
+  summaryDescription: summaryDescriptionProp,
   className,
   ...props
 }: HubStickyProps) => {
-  const {
-    badgeVariant,
-    badge,
-    description,
-    summaryTone,
-    summaryTitle,
-    summaryDescription,
-    bundleState,
-    isOutlined,
-  } = HUB_STICKY_STATES[status];
+  const { badgeVariant, description, summaryTone, bundleState, isOutlined } =
+    HUB_STICKY_STATES[status];
+  const badge = badgeProp ?? HUB_STICKY_STATES[status].badge;
+  const summaryTitle =
+    summaryTitleProp ?? HUB_STICKY_STATES[status].summaryTitle;
+  const summaryDescription =
+    summaryDescriptionProp ?? HUB_STICKY_STATES[status].summaryDescription;
   const isLoading = status === 'loading';
   const isFull = size === 'full';
 
