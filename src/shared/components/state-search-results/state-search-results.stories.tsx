@@ -5,7 +5,12 @@ import StateSearchResults from '@/shared/components/state-search-results/state-s
 
 import IcBookmark from '@/shared/assets/icons/ic-bookmark.svg?react';
 
-// Story-only visual examples. Service screens supply their owners' real components through slots.
+// 팀원 컴포넌트 머지 전까지 Storybook에서는 임시 UI로 상태 확인
+// TODO: 종현님 SkeletonSearchResultItem → loadingSlot
+// TODO: 종현님 LoadingBar → loaderSlot
+// TODO: 희진님 RowSearchResult → resultsSlot
+
+// 최초 로딩 상태에서 사용할 임시 스켈레톤 UI
 const renderSkeletonRowExample = () => (
   <div
     aria-hidden
@@ -29,6 +34,7 @@ const renderSkeletonRowExample = () => (
   </div>
 );
 
+// 검색 결과가 갱신 중일 때 표시할 임시 공고 UI
 const renderResultRowExample = () => (
   <article className="flex h-41.25 w-full shrink-0 flex-col border-b border-border-default bg-surface-default pt-4">
     <div className="flex h-7 shrink-0 items-start justify-between px-4">
@@ -62,9 +68,10 @@ const renderResultRowExample = () => (
 const meta = {
   title: 'Shared/StateSearchResults',
   component: StateSearchResults,
+  tags: ['autodocs'],
   parameters: { layout: 'centered' },
   argTypes: {
-    // Each story fixes its discriminant so controls cannot select a state without its required slots.
+    // 상태별 필수 slot이 다르므로 각 Story에서 상태를 고정
     contentState: { control: false },
     loadingSlot: { control: false },
     loaderSlot: { control: false },
@@ -77,6 +84,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+// 최초 검색 결과 로딩
 export const Loading: Story = {
   args: {
     contentState: 'loading',
@@ -88,18 +96,24 @@ export const Loading: Story = {
     ),
   },
 };
+
+// 검색 결과 없음
 export const Empty: Story = {
   args: {
     contentState: 'empty',
     action: { label: '필터 초기화', onClick: () => {} },
   },
 };
+
+// 검색 결과 조회 오류
 export const Error: Story = {
   args: {
     contentState: 'error',
     action: { label: '다시 시도', onClick: () => {} },
   },
 };
+
+// 기존 검색 결과를 유지하면서 갱신
 export const Refreshing: Story = {
   args: {
     contentState: 'refreshing',
@@ -115,4 +129,52 @@ export const Refreshing: Story = {
       </div>
     ),
   },
+};
+
+// 네 가지 검색 결과 상태를 한 화면에서 비교
+export const AllStates: Story = {
+  render: () => (
+    <div className="flex flex-col gap-6 p-5">
+      <StateSearchResults
+        contentState="loading"
+        loadingSlot={
+          <div className="flex flex-col gap-3">
+            {renderSkeletonRowExample()}
+            {renderSkeletonRowExample()}
+          </div>
+        }
+      />
+
+      <StateSearchResults
+        contentState="empty"
+        action={{
+          label: '필터 초기화',
+          onClick: () => {},
+        }}
+      />
+
+      <StateSearchResults
+        contentState="error"
+        action={{
+          label: '다시 시도',
+          onClick: () => {},
+        }}
+      />
+
+      <StateSearchResults
+        contentState="refreshing"
+        loaderSlot={
+          <div aria-hidden className="h-1 w-full rounded-sm bg-surface-subtle">
+            <div className="h-1 w-70 rounded-sm bg-action-primary" />
+          </div>
+        }
+        resultsSlot={
+          <div className="flex flex-col gap-3">
+            {renderResultRowExample()}
+            {renderResultRowExample()}
+          </div>
+        }
+      />
+    </div>
+  ),
 };
