@@ -15,13 +15,13 @@ interface ListSearchProps extends Omit<ComponentProps<'div'>, 'onSelect'> {
   onSelect?: (keyword: string) => void;
 }
 
-const defaultGroups: SearchKeywordGroup[] = [
-  { title: '카테고리 타이틀', keywords: ['Figma', 'Figma', 'Figma'] },
-  { title: '카테고리 타이틀', keywords: ['Figma', 'Figma', 'Figma'] },
+const DEFAULT_GROUPS: SearchKeywordGroup[] = [
+  { title: '디자인 툴', keywords: ['Figma', 'Sketch', 'Adobe XD'] },
+  { title: '디자인 직무', keywords: ['UX', 'UI', '프로덕트 디자인'] },
 ];
 
 const ListSearch = ({
-  groups = defaultGroups,
+  groups = DEFAULT_GROUPS,
   onSelect,
   className,
   ...props
@@ -35,20 +35,17 @@ const ListSearch = ({
       {...props}
     >
       <div className="flex flex-col pb-6">
-        {groups.map((group, groupIndex) => (
-          <section
-            key={`${group.title}-${groupIndex}`}
-            className="flex w-full flex-col pt-3"
-          >
+        {groups.map((group) => (
+          <section key={group.title} className="flex w-full flex-col pt-3">
             <h3 className="px-4 py-1 text-label-12 text-blue-50">
               {group.title}
             </h3>
             <div className="flex flex-col items-center gap-2">
-              <div className="h-px w-[210px] bg-blue-30" />
+              <div className="h-px w-52.5 bg-blue-30" />
               <div className="flex w-full flex-col">
-                {group.keywords.map((keyword, keywordIndex) => (
+                {group.keywords.map((keyword) => (
                   <RowKeywordSearch
-                    key={`${keyword}-${keywordIndex}`}
+                    key={keyword}
                     keyword={keyword}
                     onClick={() => onSelect?.(keyword)}
                   />
