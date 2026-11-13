@@ -1,20 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import BundleApplication from '@/shared/components/bundle-application/bundle-application';
+import SkeletonApplicationBundle from '@/shared/components/skeleton/skeleton-application-bundle';
 
 // 지원 패키지 묶음의 기본, 드래그 중, 비활성화, 로딩 상태 확인
-// 로딩 상태는 실제 스켈레톤 연결 전까지 Storybook 전용 임시 UI 사용
-
-const LOADING_EXAMPLE = (
-  <div aria-hidden className="flex h-full w-full items-center gap-3">
-    <div className="h-10 w-8 shrink-0 rounded-lg bg-surface-subtle" />
-    <div className="flex min-w-0 flex-1 flex-col justify-center gap-2">
-      <div className="h-3 w-28 rounded-md bg-surface-subtle" />
-      <div className="h-2 w-21 rounded-md bg-surface-subtle" />
-    </div>
-    <div className="h-10 w-6 shrink-0 rounded-lg bg-surface-subtle" />
-  </div>
-);
+// 재사용: 종현님 SkeletonApplicationBundle - 로딩 상태 UI
 
 const meta = {
   title: 'Shared/BundleApplication',
@@ -49,10 +39,11 @@ export const Disabled: Story = {
   args: { state: 'disabled' },
 };
 
+// 실제 공통 스켈레톤 컴포넌트 재사용
 export const Loading: Story = {
   args: {
     state: 'loading',
-    loadingSlot: LOADING_EXAMPLE,
+    loadingSlot: <SkeletonApplicationBundle />,
   },
 };
 
@@ -66,7 +57,9 @@ export const AllStates: Story = {
           <BundleApplication
             {...args}
             state={state}
-            loadingSlot={state === 'loading' ? LOADING_EXAMPLE : undefined}
+            loadingSlot={
+              state === 'loading' ? <SkeletonApplicationBundle /> : undefined
+            }
           />
         </div>
       ))}

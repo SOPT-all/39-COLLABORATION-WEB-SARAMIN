@@ -10,7 +10,7 @@ export interface BundleApplicationProps {
   meta: string;
   state?: BundleApplicationState;
 
-  // 로딩 시 카드 내부에 표시할 스켈레톤 UI
+  // 로딩 시 카드 전체를 대체할 UI (기본 SkeletonApplicationBundle)
   loadingSlot?: ReactNode;
 
   className?: string;
