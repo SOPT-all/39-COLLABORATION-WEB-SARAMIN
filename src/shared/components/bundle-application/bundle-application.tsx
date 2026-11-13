@@ -1,3 +1,15 @@
+// 드래그 가능한 지원 패키지 묶음의 정보와 상태를 표시하는 컴포넌트
+// props: title - 지원 패키지 이름
+//        meta - 포함 서류 등 부가 정보
+//        state - 현재 상태 (기본 'default')
+//        loadingSlot - 로딩 시 표시할 스켈레톤 UI
+//        className - 추가 스타일
+// 상태: default, grabbed, disabled, loading
+// 재사용: StackApplicationDocument - 지원 서류 스택 아이콘
+//         DragHandleButton - 드래그 핸들 표시
+// TODO: 실제 스켈레톤 컴포넌트 확인 후 loadingSlot 연결
+// 데이터: 실제 드래그 동작과 패키지 상태는 부모 컴포넌트에서 관리
+
 import { useId } from 'react';
 
 import type { BundleApplicationProps } from '@/shared/components/bundle-application/bundle-application.types';
@@ -5,6 +17,7 @@ import DragHandleButton from '@/shared/components/button/drag-handle-button';
 import StackApplicationDocument from '@/shared/components/stack-application-document/stack-application-document';
 import { cn } from '@/shared/utils/cn';
 
+// 상태에 따른 테두리, 배경색, 그림자 스타일
 const STATE_CLASS_NAMES = {
   default:
     'gap-2.5 rounded-xl border-border-default bg-surface-default p-2.5 drop-shadow-[0_6px_9px_rgba(23,51,107,0.1)]',
@@ -41,6 +54,7 @@ const BundleApplication = ({
     >
       {isLoading ? (
         <div className="h-full w-full">
+          {/* 로딩 시 전달받은 스켈레톤 또는 기본 안내 문구 표시 */}
           {loadingSlot ?? (
             <p className="flex h-full items-center justify-center text-center text-caption-11 text-text-secondary">
               지원 패키지를 불러오는 중입니다.
@@ -50,6 +64,7 @@ const BundleApplication = ({
       ) : (
         <>
           <StackApplicationDocument state={state} />
+
           <div className="flex min-w-0 flex-1 flex-col gap-0.5 overflow-hidden whitespace-nowrap">
             <h3
               id={titleId}
@@ -60,6 +75,7 @@ const BundleApplication = ({
             >
               {title}
             </h3>
+
             <p
               className={cn(
                 'text-caption-11',
@@ -69,6 +85,7 @@ const BundleApplication = ({
               {meta}
             </p>
           </div>
+
           <DragHandleButton
             aria-hidden
             tabIndex={-1}
