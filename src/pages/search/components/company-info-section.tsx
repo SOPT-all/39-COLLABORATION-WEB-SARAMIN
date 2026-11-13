@@ -1,42 +1,7 @@
-const COMPANY_FACT_COLUMNS = [
-  [
-    { label: '설립일', value: '2013년 12월 17일 (업력 14년차)' },
-    { label: '업종', value: '인테리어 디자인업' },
-    { label: '평균연봉', value: '4,744만원  전체 ›' },
-    { label: '합격자료', value: '면접질문·후기 2건' },
-  ],
-  [
-    { label: '대표자명', value: '홍주석' },
-    { label: '재무정보', value: '매출액 202.4억 (2025년 기준)  전체 ›' },
-    {
-      label: '기업주소',
-      value: '서울 서대문구 연희로5길 22, 지하 1층, 2층, 3층',
-    },
-  ],
-];
-
-const OPEN_POSITIONS = [
-  {
-    title: '[콘텐츠유통팀] 판로개척 담당자',
-    condition: '서울 서대문구 | 경력3년↑ | 대졸↑',
-    deadline: '~11.01(일)',
-  },
-  {
-    title: '[공간OS팀] 공간 기획자 (3년이상 8년이하)',
-    condition: '서울 서대문구 | 경력 3~8년 | 대졸↑',
-    deadline: '~12.01(화)',
-  },
-  {
-    title: '[경영전략그룹] 제주 성산 기록상점 공간 운영 매니저',
-    condition: '제주 제주시 | 경력무관 | 학력무관',
-    deadline: '~11.20(금)',
-  },
-  {
-    title: '[경영전략그룹] 브랜드 MD / 공간운영 매니저',
-    condition: '서울 서대문구 | 경력3년↑ | 학력무관',
-    deadline: '채용시',
-  },
-];
+import {
+  MOCK_COMPANY_INFO,
+  MOCK_COMPANY_TOTAL,
+} from '@/pages/search/constants/mock-search';
 
 const CompanyInfoSection = () => {
   return (
@@ -48,12 +13,16 @@ const CompanyInfoSection = () => {
         <h2 id="company-info-title" className="text-heading-20 text-gray-120">
           기업정보
         </h2>
-        <span className="text-body-12 text-gray-70">총 49,094건</span>
+        <span className="text-body-12 text-gray-70">
+          총 {MOCK_COMPANY_TOTAL.toLocaleString()}건
+        </span>
       </div>
 
       <article className="flex flex-col gap-4 px-10 pt-6">
         <div className="flex h-6 items-center gap-2">
-          <h3 className="text-heading-18 text-gray-120">(주)어반플레이</h3>
+          <h3 className="text-heading-18 text-gray-120">
+            {MOCK_COMPANY_INFO.name}
+          </h3>
           <button
             type="button"
             aria-label="관심기업 등록"
@@ -62,7 +31,7 @@ const CompanyInfoSection = () => {
             ♡
           </button>
           <a href="#" className="text-body-12 text-gray-120">
-            진행중 채용공고 4건 &gt;
+            진행중 채용공고 {MOCK_COMPANY_INFO.positions.length}건 &gt;
           </a>
           <span className="ml-auto text-body-12 whitespace-pre text-gray-70">
             나의 커리어 첫 시작 ◀ ▣ ▶
@@ -70,7 +39,7 @@ const CompanyInfoSection = () => {
         </div>
 
         <div className="flex gap-6 border border-gray-30 bg-surface-subtle py-6 pr-5 pl-7.5 text-body-12">
-          {COMPANY_FACT_COLUMNS.map((facts) => (
+          {MOCK_COMPANY_INFO.factColumns.map((facts) => (
             <dl key={facts[0].label} className="flex flex-1 flex-col gap-2">
               {facts.map(({ label, value }) => (
                 <div key={label} className="flex gap-3">
@@ -85,7 +54,7 @@ const CompanyInfoSection = () => {
         </div>
 
         <ul className="text-body-12">
-          {OPEN_POSITIONS.map(({ title, condition, deadline }) => (
+          {MOCK_COMPANY_INFO.positions.map(({ title, condition, deadline }) => (
             <li
               key={title}
               className="flex min-h-11.25 items-center gap-3 border-b border-gray-30"

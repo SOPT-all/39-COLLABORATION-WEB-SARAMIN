@@ -1,3 +1,8 @@
+import {
+  MOCK_RELATED_KEYWORDS,
+  MOCK_SEARCH_RESULT_TOTAL,
+  MOCK_SELECTED_FILTERS,
+} from '@/pages/search/constants/mock-search';
 import ChipSelectedFilter from '@/shared/components/chip/chip-selected-filter';
 import { cn } from '@/shared/utils/cn';
 
@@ -6,16 +11,6 @@ import IcRemove from '@/shared/assets/icons/ic-remove.svg?react';
 interface SearchSummaryProps {
   keyword: string;
 }
-
-const SELECTED_FILTERS = ['서울', '경력 2–7년'];
-
-const RELATED_KEYWORDS = [
-  'UX 디자이너',
-  'UIUX',
-  '프로덕트 디자인',
-  'Figma',
-  '서비스 기획',
-];
 
 const SEARCH_TABS = ['통합검색', '✦ AI 검색', '채용정보', '기업정보'];
 
@@ -31,7 +26,7 @@ const SearchSummary = ({ keyword }: SearchSummaryProps) => {
             {keyword}
           </ChipSelectedFilter>
           {/* ChipSelectedFilter는 '검색어 · ' 접두어가 고정이라 일반 필터는 직접 그려요. */}
-          {SELECTED_FILTERS.map((filter) => (
+          {MOCK_SELECTED_FILTERS.map((filter) => (
             <span
               key={filter}
               className="inline-flex h-8 items-center rounded-2xl border border-border-default bg-surface-default px-3 text-label-14 whitespace-nowrap text-text-secondary"
@@ -48,7 +43,7 @@ const SearchSummary = ({ keyword }: SearchSummaryProps) => {
           ))}
         </div>
         <p className="flex h-10 w-47.5 items-center justify-center rounded-lg bg-surface-subtle text-title-16 text-text-primary">
-          729건 검색완료
+          {MOCK_SEARCH_RESULT_TOTAL.toLocaleString()}건 검색완료
         </p>
       </div>
 
@@ -57,7 +52,7 @@ const SearchSummary = ({ keyword }: SearchSummaryProps) => {
           연관검색어
         </span>
         <ul className="flex gap-4 text-text-tertiary">
-          {RELATED_KEYWORDS.map((relatedKeyword) => (
+          {MOCK_RELATED_KEYWORDS.map((relatedKeyword) => (
             <li key={relatedKeyword} className="min-w-21.5">
               <a href="#">{relatedKeyword}</a>
             </li>

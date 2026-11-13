@@ -1,3 +1,7 @@
+import {
+  MOCK_SEARCH_RESULT_TOTAL,
+  MOCK_SEARCH_RESULTS,
+} from '@/pages/search/constants/mock-search';
 import ChipNumber from '@/shared/components/chip/chip-number';
 import { cn } from '@/shared/utils/cn';
 
@@ -8,8 +12,6 @@ const SORT_OPTIONS = [
   { label: '마감임박', widthClassName: 'w-29.5' },
 ];
 
-// 결과 행은 검색 컴포넌트(#30)의 row_search_result로 교체해요.
-const RESULT_ROW_COUNT = 7;
 const PAGE_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 const JobResultSection = () => {
@@ -22,7 +24,9 @@ const JobResultSection = () => {
         >
           채용정보
         </h2>
-        <span className="text-body-14 text-text-tertiary">총 729건</span>
+        <span className="text-body-14 text-text-tertiary">
+          총 {MOCK_SEARCH_RESULT_TOTAL.toLocaleString()}건
+        </span>
       </div>
 
       <div className="mx-6.25 flex gap-2 px-3 py-2">
@@ -48,12 +52,13 @@ const JobResultSection = () => {
       </div>
 
       <ul className="mx-4.75">
-        {Array.from({ length: RESULT_ROW_COUNT }, (_, index) => (
+        {/* TODO(#55): 결과 행 자리를 RowSearchResult(#47)로 교체하고 result를 그대로 넘겨요. */}
+        {MOCK_SEARCH_RESULTS.map((result) => (
           <li
-            key={index}
+            key={result.id}
             className="flex h-41.25 items-center justify-center border-b border-gray-30 text-body-14 text-text-tertiary"
           >
-            검색 결과 행 자리
+            검색 결과 행 자리 · {result.title}
           </li>
         ))}
       </ul>
