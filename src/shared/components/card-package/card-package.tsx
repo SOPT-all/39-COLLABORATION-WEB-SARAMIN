@@ -1,9 +1,20 @@
+// 지원 패키지의 서류 구성, 수정 정보 및 현재 상태를 표시하는 카드
+// props: title - 패키지 이름
+//        documentSummary - 포함된 서류 요약
+//        updatedLabel - 최근 수정 정보
+//        state - 카드 상태 (기본 'default')
+//        className - 추가 스타일
+// 상태: default, selected, incomplete, ready
+// 재사용: BadgeModalStatus - 패키지 상태 배지
+// 데이터: 실제 패키지 정보와 선택 상태는 부모 컴포넌트에서 관리
+
 import { useId } from 'react';
 
 import BadgeModalStatus from '@/shared/components/badge/badge-modal-status';
 import type { CardPackageProps } from '@/shared/components/card-package/card-package.types';
 import { cn } from '@/shared/utils/cn';
 
+// 상태별 카드 스타일과 배지 문구 관리
 const STATE_VARIANTS = {
   default: {
     cardClassName: 'border-border-default bg-surface-default',
@@ -54,6 +65,7 @@ const CardPackage = ({
         >
           {title}
         </h3>
+
         <BadgeModalStatus
           variant="neutral"
           className={cn('h-6.5 shrink-0 py-1', variant.badgeClassName)}
@@ -61,9 +73,11 @@ const CardPackage = ({
           {variant.label}
         </BadgeModalStatus>
       </header>
+
       <p className="shrink-0 text-caption-12 whitespace-nowrap text-text-secondary">
         {documentSummary}
       </p>
+
       <p className="shrink-0 text-caption-12 whitespace-nowrap text-text-secondary">
         {updatedLabel}
       </p>
