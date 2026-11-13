@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+// 채용 공고 카드에서 표현할 수 있는 13가지 상태
 export type CardJobState =
   | 'default'
   | 'drag_ready'
@@ -15,12 +16,14 @@ export type CardJobState =
   | 'ineligible'
   | 'loading';
 
+// 공고에 표시되는 직무, 기술, 복지 태그 정보
 export interface CardJobTag {
   id: string;
   label: string;
   variant: 'role' | 'skill' | 'benefit';
 }
 
+// 채용 공고 카드의 정보, 상태 및 사용자 액션을 외부에서 전달받음
 export interface CardJobProps {
   company: string;
   jobTitle: string;
@@ -36,9 +39,12 @@ export interface CardJobProps {
   isBookmarked?: boolean;
   onBookmarkChange: (isBookmarked: boolean) => void;
   onViewDetail: () => void;
-  /** Receives the application component; its background, divider and events belong to the slot. */
+
+  // 지원 영역은 별도 컴포넌트를 전달받아 표시
   applicationSlot: ReactNode;
-  /** Full-card loading content supplied by the skeleton owner. */
+
+  // 로딩 시 카드 전체를 대체할 스켈레톤 UI
   loadingSlot?: ReactNode;
+
   className?: string;
 }
