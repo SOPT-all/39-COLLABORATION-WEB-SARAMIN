@@ -24,7 +24,7 @@ interface SearchGlobalProps extends Omit<
   onRetry?: () => void;
 }
 
-const borderClassName = {
+const BORDER_CLASS_NAMES = {
   default: 'border-2 border-blue-90',
   focused: 'border-[1.5px] border-blue-90',
   typing: 'border-[1.5px] border-blue-90',
@@ -50,8 +50,8 @@ const SearchGlobal = ({
     <div className={cn('flex w-full flex-col gap-2', className)} {...props}>
       <div
         className={cn(
-          'flex h-[46px] w-full items-center justify-between rounded-full bg-white px-4 py-1.5',
-          borderClassName[state],
+          'flex h-11.5 w-full items-center justify-between rounded-full bg-white px-4 py-1.5',
+          BORDER_CLASS_NAMES[state],
         )}
       >
         <div className="flex min-w-0 flex-1 items-center gap-2.5">
@@ -71,7 +71,7 @@ const SearchGlobal = ({
         </div>
         <button
           type="button"
-          className="flex h-[30px] w-[92px] shrink-0 items-center gap-1.5 rounded-full bg-surface-blue-subtle p-1.5 text-label-14 whitespace-nowrap text-blue-90"
+          className="flex h-7.5 w-23 shrink-0 items-center gap-1.5 rounded-full bg-surface-blue-subtle p-1.5 text-label-14 whitespace-nowrap text-blue-90"
           onClick={onAiSearch}
         >
           <IcFilters aria-hidden className="shrink-0" />

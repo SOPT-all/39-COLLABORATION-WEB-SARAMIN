@@ -18,7 +18,7 @@ const SatisfactionScoreCell = ({
   ...props
 }: SatisfactionScoreCellProps) => {
   return (
-    <ChipNumber className={cn('h-11 w-[78px]', className)} {...props}>
+    <ChipNumber className={cn('h-11 w-19.5', className)} {...props}>
       {score}
     </ChipNumber>
   );

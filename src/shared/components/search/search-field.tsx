@@ -23,7 +23,7 @@ interface SearchFieldProps extends Omit<
   onClear?: () => void;
 }
 
-const borderClassName = {
+const BORDER_CLASS_NAMES = {
   default:
     'border border-border-default focus-within:border-2 focus-within:border-blue-90',
   focused: 'border-2 border-blue-90',
@@ -47,7 +47,7 @@ const SearchField = ({
   const isDisabled = state === 'disabled';
   const [draftQuery, setDraftQuery] = useState(query);
   const inputValue = onQueryChange ? query : draftQuery;
-  const showsClearButton = inputValue.length > 0 && !isLoading && !isDisabled;
+  const hasClearButton = inputValue.length > 0 && !isLoading && !isDisabled;
 
   const handleQueryChange = (nextQuery: string) => {
     if (onQueryChange) {
@@ -74,7 +74,7 @@ const SearchField = ({
       <label
         className={cn(
           'flex h-12 w-full items-center gap-3 rounded-lg bg-white px-4',
-          borderClassName[state],
+          BORDER_CLASS_NAMES[state],
         )}
       >
         <IcSearch aria-hidden className="shrink-0 text-text-tertiary" />
@@ -88,7 +88,7 @@ const SearchField = ({
           onChange={(event) => handleQueryChange(event.target.value)}
           className="h-5 min-w-0 flex-1 bg-transparent text-body-14 text-text-primary outline-none placeholder:text-text-tertiary"
         />
-        {showsClearButton && (
+        {hasClearButton && (
           <button
             type="button"
             aria-label="검색어 삭제"

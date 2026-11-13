@@ -22,7 +22,7 @@ interface SearchSuggestionItemProps extends Omit<
 }
 
 // state는 피그마 상태 확인용, 실제 화면에서는 기본값 default만 쓰면 hover, pressed, focused가 동작
-const stateClassName = {
+const STATE_CLASS_NAMES = {
   default:
     'border-transparent bg-white hover:bg-surface-blue-subtle focus-within:border-action-primary active:bg-surface-blue-subtle active:opacity-88',
   hover: 'border-transparent bg-surface-blue-subtle',
@@ -46,7 +46,7 @@ const SearchSuggestionItem = ({
     <div
       className={cn(
         'flex h-11 w-full items-center gap-3 rounded-md border-2 px-3 py-2',
-        stateClassName[state],
+        STATE_CLASS_NAMES[state],
         className,
       )}
       {...props}

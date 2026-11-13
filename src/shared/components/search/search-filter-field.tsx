@@ -20,7 +20,7 @@ interface SearchFilterFieldProps extends Omit<
   label?: string;
 }
 
-const icons = {
+const ICONS = {
   search: IcSearchFilter,
   location: IcLocation,
   briefcase: IcBriefcase,
@@ -34,13 +34,13 @@ const SearchFilterField = ({
   type = 'button',
   ...props
 }: SearchFilterFieldProps) => {
-  const Icon = icons[icon];
+  const Icon = ICONS[icon];
 
   return (
     <button
       type={type}
       className={cn(
-        'flex h-[58px] items-center gap-2.5 border border-border-default bg-surface-default px-[18px] text-left text-body-16',
+        'flex h-14.5 items-center gap-2.5 border border-border-default bg-surface-default px-4.5 text-left text-body-16',
         icon === 'search' ? 'text-blue-90' : 'text-text-secondary',
         className,
       )}
