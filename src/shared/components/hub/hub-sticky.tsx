@@ -12,13 +12,13 @@
 //          [RowStickyDocument × n]       ← compact 땐 없음
 //          [BundleApplication]
 //          [StickyFooterButton │ StickyFooterButton]
-// 재사용 : BadgeStickyStatus · RowStickyDocument · SkeletonStickyHub · BundleApplication · ReadinessSummary · StickyFooterButton
+// 재사용 : 주형 님 BadgeStickyStatus · 희진 님 RowStickyDocument · 지영 님 BundleApplication · SkeletonStickyHub · ReadinessSummary · StickyFooterButton
 // 접근성 : div. aria-label은 레일 섹션(aside)이 가짐. loading이면 aria-busy
 
 import type { ComponentProps } from 'react';
 
 import BadgeStickyStatus from '@/shared/components/badge/badge-sticky-status';
-import BundleApplication from '@/shared/components/bundle/bundle-application';
+import BundleApplication from '@/shared/components/bundle-application/bundle-application';
 import StickyFooterButton from '@/shared/components/button/sticky-footer-button';
 import {
   HUB_STICKY_STATES,
@@ -110,7 +110,11 @@ const HubSticky = ({
                 </ul>
               </>
             )}
-            <BundleApplication state={bundleState} />
+            <BundleApplication
+              title="지원 패키지"
+              meta="필수 서류 3개 · 최신"
+              state={bundleState}
+            />
           </div>
 
           <footer className="flex h-11 items-center">

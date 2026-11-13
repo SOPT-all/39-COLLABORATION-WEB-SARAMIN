@@ -3,7 +3,7 @@
 // 문구   : 피그마 그대로 고정. "3/3"처럼 숫자가 바뀌는 건 API 나오면 분리 검토
 // loading: 본문을 통째로 스켈레톤으로 바꾸므로 표에는 뱃지 · 문구만 있고 쓰이지 않음
 
-import type { BundleApplicationState } from '@/shared/components/bundle/stack-application-document';
+import type { BundleApplicationState } from '@/shared/components/bundle-application/bundle-application.types';
 
 export type HubStickyStatus =
   'ready' | 'dragging' | 'needsDocument' | 'loading';
