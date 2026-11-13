@@ -22,6 +22,14 @@ interface KeywordInputProps extends Omit<
   onRemove?: (keyword: string) => void;
 }
 
+const BORDER_CLASS_NAMES = {
+  default:
+    'border border-border-default focus-within:border-2 focus-within:border-blue-90',
+  focused: 'border-2 border-blue-90',
+  error: 'border border-coral-80',
+  chip: 'border-2 border-blue-90',
+} satisfies Record<KeywordInputState, string>;
+
 const KeywordInput = ({
   state = 'default',
   keyword = '',
@@ -34,6 +42,7 @@ const KeywordInput = ({
   ...props
 }: KeywordInputProps) => {
   const hasChips = keywords.length > 0 || state === 'chip';
+  const borderState = state === 'error' ? 'error' : hasChips ? 'chip' : state;
   const [draftKeyword, setDraftKeyword] = useState(keyword);
   const inputValue = onKeywordChange ? keyword : draftKeyword;
 
@@ -50,20 +59,16 @@ const KeywordInput = ({
       <label
         className={cn(
           'flex w-full items-center gap-2 overflow-hidden rounded-lg bg-white',
-          hasChips ? 'min-h-[50px] px-2 py-1' : 'h-[50px] p-2',
-          state === 'error'
-            ? 'border border-coral-80'
-            : state === 'focused' || hasChips
-              ? 'border-2 border-blue-90'
-              : 'border border-border-default focus-within:border-2 focus-within:border-blue-90',
+          hasChips ? 'min-h-12.5 px-2 py-1' : 'h-12.5 p-2',
+          BORDER_CLASS_NAMES[borderState],
         )}
       >
         <IcSearch aria-hidden className="shrink-0 text-text-tertiary" />
         {keywords.length > 0 && (
           <div className="flex shrink-0 gap-1">
-            {keywords.map((item, index) => (
+            {keywords.map((item) => (
               <ChipKeyword
-                key={`${item}-${index}`}
+                key={item}
                 keyword={item}
                 className="shrink-0"
                 onRemove={() => onRemove?.(item)}
