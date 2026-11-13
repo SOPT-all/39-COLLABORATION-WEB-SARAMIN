@@ -1,7 +1,7 @@
-import type { ComponentProps, ReactNode } from 'react';
+import type { ComponentProps } from 'react';
 
-import ActionButton from '@/shared/components/button/action-button';
 import SearchSuggestionItem from '@/shared/components/search/search-suggestion-item';
+import SearchSuggestionMessage from '@/shared/components/search/search-suggestion-message';
 import { cn } from '@/shared/utils/cn';
 
 import IcKindEmpty from '@/shared/assets/icons/ic-kind-empty.svg?react';
@@ -29,7 +29,7 @@ interface SearchSuggestionPanelProps extends Omit<
   onRetry?: () => void;
 }
 
-const panelTitle = {
+const PANEL_TITLE = {
   recent: '최근 검색어',
   predictive: '검색어 자동완성',
   related: '연관 검색어',
@@ -39,7 +39,7 @@ const panelTitle = {
 } satisfies Record<SearchSuggestionPanelContentState, string>;
 
 // 피그마 예시 검색어 (suggestions를 넘기면 이 값은 쓰이지 않음)
-const defaultSuggestions = {
+const DEFAULT_SUGGESTIONS = {
   recent: [
     { keyword: '프로덕트 디자이너', supportingText: '최근 검색' },
     { keyword: 'ui 디자이너', supportingText: '최근 검색' },
@@ -61,7 +61,7 @@ const defaultSuggestions = {
 } satisfies Record<'recent' | 'predictive' | 'related', SearchSuggestion[]>;
 
 // 스켈레톤 라인 너비 (피그마 선 너비 440, 376, 416, 336px을 패널 너비에 맞춘 비율)
-const skeletonLineWidth = ['w-[85%]', 'w-[72%]', 'w-[80%]', 'w-[64%]'];
+const SKELETON_LINE_WIDTHS = ['w-[85%]', 'w-[72%]', 'w-4/5', 'w-[64%]'];
 
 const SearchSuggestionPanel = ({
   contentState = 'recent',
@@ -79,20 +79,20 @@ const SearchSuggestionPanel = ({
     (contentState === 'recent' ||
     contentState === 'predictive' ||
     contentState === 'related'
-      ? defaultSuggestions[contentState]
+      ? DEFAULT_SUGGESTIONS[contentState]
       : []);
 
   return (
     <section
       aria-busy={isLoading}
       className={cn(
-        'flex h-[280px] w-full flex-col gap-2 rounded-xl border border-border-default bg-white p-3',
+        'flex h-70 w-full flex-col gap-2 rounded-xl border border-border-default bg-white p-3',
         className,
       )}
       {...props}
     >
       <h2 className="text-title-14 text-text-primary">
-        {panelTitle[contentState]}
+        {PANEL_TITLE[contentState]}
       </h2>
       <div className="flex min-h-0 flex-1 flex-col gap-1">
         {suggestionList.map((suggestion) => (
@@ -109,7 +109,7 @@ const SearchSuggestionPanel = ({
           />
         ))}
         {isLoading &&
-          skeletonLineWidth.map((lineWidth) => (
+          SKELETON_LINE_WIDTHS.map((lineWidth) => (
             <div
               key={lineWidth}
               className="flex items-center gap-3 py-2"
@@ -141,36 +141,6 @@ const SearchSuggestionPanel = ({
         )}
       </div>
     </section>
-  );
-};
-
-interface SearchSuggestionMessageProps {
-  title: string;
-  description: string;
-  actionLabel: string;
-  icon: ReactNode;
-  onAction?: () => void;
-}
-
-// TODO: state_message가 공통 컴포넌트로 생기면 이 부분을 그걸로 교체해야 함
-const SearchSuggestionMessage = ({
-  title,
-  description,
-  actionLabel,
-  icon,
-  onAction,
-}: SearchSuggestionMessageProps) => {
-  return (
-    <div className="flex h-[72px] w-full items-center gap-3 rounded-lg border border-border-default p-3">
-      {icon}
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <p className="truncate text-title-14 text-text-primary">{title}</p>
-        <p className="truncate text-body-12 text-text-secondary">
-          {description}
-        </p>
-      </div>
-      <ActionButton onClick={onAction}>{actionLabel}</ActionButton>
-    </div>
   );
 };
 

@@ -3,6 +3,7 @@ import type { ComponentProps } from 'react';
 import MyfitSearchButton from '@/shared/components/button/myfit-search-button';
 import ChipKeyword from '@/shared/components/chip/chip-keyword';
 import KeywordInput from '@/shared/components/search/keyword-input';
+import KeywordSearchSkeleton from '@/shared/components/search/keyword-search-skeleton';
 import { cn } from '@/shared/utils/cn';
 
 type KeywordSearchPanelContext = 'search' | 'compare-background';
@@ -27,7 +28,7 @@ interface KeywordSearchPanelProps extends Omit<
 }
 
 // 피그마 예시 키워드입니다. keywords를 넘기면 이 값은 쓰이지 않습니다.
-const defaultKeywords = {
+const DEFAULT_KEYWORDS = {
   search: [
     'Figma',
     'UX디자인',
@@ -39,21 +40,14 @@ const defaultKeywords = {
   ],
   'compare-background': [
     'Figma',
-    'Figma',
-    'Figma',
-    'Figma',
-    'Figma',
-    'Figma',
-    'Figma',
+    'Sketch',
+    'Zeplin',
+    'Framer',
+    'ProtoPie',
+    'Adobe XD',
+    'Principle',
   ],
 } satisfies Record<KeywordSearchPanelContext, string[]>;
-
-const skeletonChipRows = [
-  ['w-[72px]', 'w-[96px]'],
-  ['w-[88px]', 'w-[64px]'],
-  ['w-[72px]', 'w-[96px]'],
-  ['w-[88px]', 'w-[64px]'],
-] as const;
 
 const KeywordSearchPanel = ({
   context = 'search',
@@ -69,14 +63,14 @@ const KeywordSearchPanel = ({
   ...props
 }: KeywordSearchPanelProps) => {
   const isLoading = state === 'loading';
-  const keywordList = keywords ?? defaultKeywords[context];
+  const keywordList = keywords ?? DEFAULT_KEYWORDS[context];
 
   return (
     <section
       aria-busy={isLoading}
       className={cn(
         'flex w-full flex-col rounded-xl border border-border-default bg-surface-blue-subtle p-4',
-        isLoading ? 'h-[456px] gap-3' : 'gap-12 shadow-card',
+        isLoading ? 'h-114 gap-3' : 'gap-12 shadow-card',
         className,
       )}
       {...props}
@@ -90,15 +84,15 @@ const KeywordSearchPanel = ({
               <h2 className="text-heading-20 text-text-primary">{title}</h2>
               <p className="text-body-14 text-text-secondary">{description}</p>
             </div>
-            <div className="flex w-full flex-col gap-[18px]">
+            <div className="flex w-full flex-col gap-4.5">
               <KeywordInput
                 keyword={keyword}
                 onKeywordChange={onKeywordChange}
               />
               <div className="flex flex-wrap gap-2">
-                {keywordList.map((item, index) => (
+                {keywordList.map((item) => (
                   <ChipKeyword
-                    key={`${item}-${index}`}
+                    key={item}
                     keyword={item}
                     onRemove={() => onRemove?.(item)}
                   />
@@ -115,33 +109,6 @@ const KeywordSearchPanel = ({
         </>
       )}
     </section>
-  );
-};
-
-// 스켈레톤
-const KeywordSearchSkeleton = () => {
-  return (
-    <>
-      <span aria-hidden className="h-4 w-[88px] rounded-md bg-surface-subtle" />
-      <span
-        aria-hidden
-        className="h-2.5 w-[168px] rounded-md bg-surface-subtle"
-      />
-      <span aria-hidden className="h-10 w-full rounded-lg bg-surface-subtle" />
-      {skeletonChipRows.map((row, rowIndex) => (
-        <div key={rowIndex} className="flex gap-2">
-          {row.map((width, widthIndex) => (
-            <span
-              key={widthIndex}
-              aria-hidden
-              className={cn('h-7 rounded-lg bg-surface-subtle', width)}
-            />
-          ))}
-        </div>
-      ))}
-      <span className="flex-1" />
-      <span aria-hidden className="h-11 w-full rounded-lg bg-surface-subtle" />
-    </>
   );
 };
 
