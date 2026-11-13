@@ -6,7 +6,7 @@ import IcRemove from '@/shared/assets/icons/ic-remove.svg?react';
 
 interface ChipKeywordProps extends Omit<ComponentProps<'div'>, 'children'> {
   keyword: string;
-  onRemove?: () => void; //onRemove를 넘기지 않으면 삭제 버튼 안 보임
+  onRemove?: () => void; // onRemove를 넘기지 않으면 삭제 버튼 안 보임
 }
 
 const ChipKeyword = ({

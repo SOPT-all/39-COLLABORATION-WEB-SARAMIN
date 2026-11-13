@@ -36,12 +36,12 @@ const RowApplicationHistory = ({
   return (
     <div
       className={cn(
-        'flex h-[88px] w-full items-center gap-4 rounded-lg border border-border-default bg-surface-default p-4',
+        'flex h-22 w-full items-center gap-4 rounded-lg border border-border-default bg-surface-default p-4',
         className,
       )}
       {...props}
     >
-      <div className="flex size-[52px] shrink-0 items-center justify-center rounded-lg bg-surface-subtle">
+      <div className="flex size-13 shrink-0 items-center justify-center rounded-lg bg-surface-subtle">
         <p className="text-caption-12 text-text-secondary">{logoText}</p>
       </div>
       <div className="flex min-w-0 flex-1 flex-col gap-1 overflow-hidden">

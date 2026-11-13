@@ -39,12 +39,11 @@ const RowSearchResult = ({
 }: RowSearchResultProps) => {
   if (contentState === 'loading') {
     return (
-      //스켈레톤
       <article
         aria-busy="true"
         aria-label="검색 결과를 불러오는 중"
         className={cn(
-          'flex h-[165px] w-full items-start gap-4 border-b border-border-default bg-surface-default p-4',
+          'flex h-41.25 w-full items-start gap-4 border-b border-border-default bg-surface-default p-4',
           className,
         )}
         {...props}
@@ -54,17 +53,17 @@ const RowSearchResult = ({
           className="size-10 shrink-0 rounded-full bg-surface-subtle"
         />
         <div aria-hidden className="flex min-w-0 flex-1 flex-col gap-3">
-          <div className="h-3 w-[220px] max-w-full rounded-md bg-surface-subtle" />
-          <div className="h-4 w-[460px] max-w-full rounded-md bg-surface-subtle" />
-          <div className="h-3 w-[360px] max-w-full rounded-md bg-surface-subtle" />
+          <div className="h-3 w-55 max-w-full rounded-md bg-surface-subtle" />
+          <div className="h-4 w-115 max-w-full rounded-md bg-surface-subtle" />
+          <div className="h-3 w-90 max-w-full rounded-md bg-surface-subtle" />
           <div className="flex gap-2">
-            <div className="h-6 w-[72px] rounded-lg bg-surface-subtle" />
-            <div className="h-6 w-[88px] rounded-lg bg-surface-subtle" />
+            <div className="h-6 w-18 rounded-lg bg-surface-subtle" />
+            <div className="h-6 w-22 rounded-lg bg-surface-subtle" />
             <div className="h-6 w-16 rounded-lg bg-surface-subtle" />
           </div>
         </div>
         <div aria-hidden className="flex shrink-0 flex-col items-end gap-3">
-          <div className="h-8 w-[72px] rounded-lg bg-surface-subtle" />
+          <div className="h-8 w-18 rounded-lg bg-surface-subtle" />
           <div className="h-3 w-24 rounded-md bg-surface-subtle" />
         </div>
       </article>
@@ -81,7 +80,7 @@ const RowSearchResult = ({
     >
       <div className="flex items-start justify-between px-4">
         <BadgeMatch matchCount={matchCount} />
-        <p className="w-[50px] shrink-0 text-center text-caption-12 text-status-danger">
+        <p className="w-12.5 shrink-0 text-center text-caption-12 text-status-danger">
           {deadline}
         </p>
       </div>
@@ -89,7 +88,7 @@ const RowSearchResult = ({
         <span className="text-green-100">일치</span>
         <span className="text-text-secondary">{`  ${matchedKeywords}`}</span>
       </p>
-      <div className="flex min-h-[72px] items-center gap-3 px-4 pb-4">
+      <div className="flex min-h-18 items-center gap-3 px-4 pb-4">
         <BookmarkButton
           isSelected={isBookmarked}
           className="shrink-0"
@@ -99,7 +98,7 @@ const RowSearchResult = ({
           <p className="text-heading-20 text-text-primary">{title}</p>
           <p className="text-body-14 text-text-secondary">{meta}</p>
         </div>
-        <div className="flex w-[190px] shrink-0 flex-col items-end gap-[3px] text-right">
+        <div className="flex w-47.5 shrink-0 flex-col items-end gap-0.75 text-right">
           <p className="w-full text-title-16 text-text-primary">
             {companyName}
           </p>

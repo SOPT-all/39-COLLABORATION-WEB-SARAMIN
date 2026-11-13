@@ -25,16 +25,16 @@ const ListCompanyPosition = ({
   return (
     <div
       className={cn(
-        'flex min-h-[45px] w-full items-center gap-3 border-b border-gray-30 text-caption-12',
+        'flex min-h-11.25 w-full items-center gap-3 border-b border-gray-30 text-caption-12',
         className,
       )}
       {...props}
     >
-      <p className="w-[85px] shrink-0 text-center text-blue-80">{status}</p>
-      <p className="min-w-[180px] flex-1 text-gray-120">{title}</p>
-      <p className="max-w-[216px] min-w-[140px] flex-1 text-gray-70">{meta}</p>
-      <p className="w-[72px] shrink-0 text-right text-gray-70">{deadline}</p>
-      <BadgeMetadata variant="blue" className="h-auto shrink-0 py-[5px]">
+      <p className="w-21.25 shrink-0 text-center text-blue-80">{status}</p>
+      <p className="min-w-45 flex-1 text-gray-120">{title}</p>
+      <p className="max-w-54 min-w-35 flex-1 text-gray-70">{meta}</p>
+      <p className="w-18 shrink-0 text-right text-gray-70">{deadline}</p>
+      <BadgeMetadata variant="blue" className="h-auto shrink-0 py-1.25">
         {badge}
       </BadgeMetadata>
     </div>
