@@ -10,6 +10,9 @@ export const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  // 배열 파라미터를 keywords=A&keywords=B 형식으로 보내요.
+  // axios 기본값(keywords[]=A)은 서버가 인식하지 못해서 검색 결과가 0건으로 와요.
+  paramsSerializer: { indexes: null },
 });
 
 axiosInstance.interceptors.response.use(
