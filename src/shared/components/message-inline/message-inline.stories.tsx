@@ -42,6 +42,9 @@ export const Success: Story = {
 
 // 세 가지 상태를 한 화면에서 비교
 export const AllStates: Story = {
+  args: {
+    message: '상태별 안내 메시지',
+  },
   render: () => (
     <div className="flex flex-col gap-3 p-5">
       <MessageInline

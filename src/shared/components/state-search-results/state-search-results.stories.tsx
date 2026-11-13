@@ -133,6 +133,9 @@ export const Refreshing: Story = {
 
 // 네 가지 검색 결과 상태를 한 화면에서 비교
 export const AllStates: Story = {
+  args: {
+    contentState: 'empty',
+  },
   render: () => (
     <div className="flex flex-col gap-6 p-5">
       <StateSearchResults
