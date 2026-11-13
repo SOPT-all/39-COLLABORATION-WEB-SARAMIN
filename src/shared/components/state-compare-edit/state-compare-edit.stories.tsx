@@ -5,9 +5,10 @@ import StateCompareEdit from '@/shared/components/state-compare-edit/state-compa
 const meta = {
   title: 'Shared/StateCompareEdit',
   component: StateCompareEdit,
+  tags: ['autodocs'],
   parameters: { layout: 'centered' },
   argTypes: {
-    // Keep each state with its required props; Error supplies its retry callback.
+    // error 상태에서 onRetry가 필수이므로 상태 변경은 개별 Story에서 확인
     state: { control: false },
     onRetry: { action: 'retry' },
   },
@@ -17,9 +18,33 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = { args: { state: 'default' } };
-export const Loading: Story = { args: { state: 'loading' } };
-export const Error: Story = {
-  args: { state: 'error', onRetry: () => {} },
+export const Default: Story = {
+  args: { state: 'default' },
 };
-export const Success: Story = { args: { state: 'success' } };
+
+export const Loading: Story = {
+  args: { state: 'loading' },
+};
+
+export const Error: Story = {
+  args: {
+    state: 'error',
+    onRetry: () => {},
+  },
+};
+
+export const Success: Story = {
+  args: { state: 'success' },
+};
+
+// 4가지 저장 상태를 한 화면에서 비교
+export const AllStates: Story = {
+  render: () => (
+    <div className="flex flex-col gap-3 p-5">
+      <StateCompareEdit state="default" />
+      <StateCompareEdit state="loading" />
+      <StateCompareEdit state="error" onRetry={() => {}} />
+      <StateCompareEdit state="success" />
+    </div>
+  ),
+};
