@@ -4,8 +4,12 @@
 //          size - full · compact (기본 full). compact는 헤더 + 패키지 카드 + 푸터만
 //          documents - 서류 행 목록 [{ label, state, count }]. 기본값 피그마 3개
 //          badge · summaryTitle · summaryDescription - API 값이 들어갈 문구. 안 주면 상태 표의 피그마 문구
-//          className, 나머지 div 속성 통과
+//          bundleTitle · bundleMeta - 지원 패키지 카드 문구. 안 주면 피그마 문구
+//          bundleProps - 지원 패키지 카드(BundleApplication)에 그대로 넘기는 속성. draggable · onDragStart 등 드래그 연결용
+//          onDocumentManageClick · onApplicationHistoryClick - 푸터 버튼 클릭
+//          className, 나머지 div 속성 통과 (허브 바깥 div)
 // 상태   : status 하나로 뱃지 문구 · 뱃지 색 · 안내 문구 · 요약 카드 tone/문구 · 패키지 카드 state · 바깥 흰 테두리가 정해짐
+//          흰 테두리는 안쪽 outline으로 그려서 상태가 바뀌어도 안쪽 크기가 그대로임
 //          hub-sticky-states.ts 표에서 꺼냄. loading이면 본문 대신 SkeletonStickyHub
 // 구조   : [헤더: 제목 + BadgeStickyStatus / 안내 문구]
 //          [ReadinessSummary]            ← compact 땐 없음
@@ -34,6 +38,9 @@ type HubStickyDocument = Pick<
   'label' | 'state' | 'count'
 >;
 
+const DEFAULT_BUNDLE_TITLE = '지원 패키지';
+const DEFAULT_BUNDLE_META = '필수 서류 3개 · 최신';
+
 const DEFAULT_DOCUMENTS: HubStickyDocument[] = [
   { label: '이력서', count: 1 },
   { label: '자기소개서', count: 1 },
@@ -47,6 +54,11 @@ interface HubStickyProps extends ComponentProps<'div'> {
   badge?: string;
   summaryTitle?: string;
   summaryDescription?: string;
+  bundleTitle?: string;
+  bundleMeta?: string;
+  bundleProps?: ComponentProps<'section'>;
+  onDocumentManageClick?: () => void;
+  onApplicationHistoryClick?: () => void;
 }
 
 const HubSticky = ({
@@ -56,6 +68,11 @@ const HubSticky = ({
   badge: badgeProp,
   summaryTitle: summaryTitleProp,
   summaryDescription: summaryDescriptionProp,
+  bundleTitle = DEFAULT_BUNDLE_TITLE,
+  bundleMeta = DEFAULT_BUNDLE_META,
+  bundleProps,
+  onDocumentManageClick,
+  onApplicationHistoryClick,
   className,
   ...props
 }: HubStickyProps) => {
@@ -74,7 +91,7 @@ const HubSticky = ({
       aria-busy={isLoading}
       className={cn(
         'flex w-69 flex-col gap-6 rounded-[22px] bg-blue-90 p-4 shadow-card-strong',
-        isOutlined && 'border-2 border-white',
+        isOutlined && 'outline-2 -outline-offset-2 outline-white',
         className,
       )}
       {...props}
@@ -111,16 +128,21 @@ const HubSticky = ({
               </>
             )}
             <BundleApplication
-              title="지원 패키지"
-              meta="필수 서류 3개 · 최신"
+              title={bundleTitle}
+              meta={bundleMeta}
               state={bundleState}
+              {...bundleProps}
             />
           </div>
 
           <footer className="flex h-11 items-center">
-            <StickyFooterButton>서류 관리</StickyFooterButton>
+            <StickyFooterButton onClick={onDocumentManageClick}>
+              서류 관리
+            </StickyFooterButton>
             <span aria-hidden className="h-4 w-px bg-white" />
-            <StickyFooterButton>지원 내역</StickyFooterButton>
+            <StickyFooterButton onClick={onApplicationHistoryClick}>
+              지원 내역
+            </StickyFooterButton>
           </footer>
         </>
       )}
