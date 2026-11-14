@@ -4,6 +4,7 @@
 //          className, 나머지 button 속성 통과 (onClick · 이동은 페이지에서 연결)
 // 상태   : Default · Hover 2개. Hover는 props가 아니라 CSS hover:로 처리 (마우스 올리면 저절로 바뀌므로)
 //          Hover 때 배경 흰색 · 테두리 · 그림자 · 라벨 파랑. 아이콘은 그대로
+//          키보드 포커스(focus-visible)일 때도 Hover와 같은 모양
 // 구조   : [아이콘 영역 62px: 28px 아이콘] [라벨 영역 58px: 14 Medium 두 줄]
 // 접근성 : button + type="button". 라벨이 그대로 읽히므로 aria-label 없음. 아이콘만 aria-hidden
 
@@ -30,8 +31,9 @@ const ToolQuickPolish = ({
     <button
       type="button"
       className={cn(
-        'flex size-30 shrink-0 flex-col items-center rounded-full border border-transparent bg-surface-subtle text-text-primary transition-colors',
+        'flex size-30 shrink-0 flex-col items-center rounded-full border border-transparent bg-surface-subtle text-text-primary transition',
         'hover:border-border-default hover:bg-surface-default hover:text-blue-90 hover:shadow-card',
+        'focus-visible:border-border-default focus-visible:bg-surface-default focus-visible:text-blue-90 focus-visible:shadow-card',
         className,
       )}
       {...props}
