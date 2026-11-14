@@ -6,12 +6,12 @@
 //        isBookmarked, onBookmarkChange - 북마크 상태와 변경 함수
 //        onViewDetail - 공고 상세보기 클릭 함수
 //        applicationSlot - 카드 오른쪽 지원 영역
-//        loadingSlot - 로딩 시 표시할 스켈레톤 UI
+//        loadingSlot - 로딩 시 표시할 UI (기본 SkeletonJobCard)
 //        className - 추가 스타일
 // 재사용: BadgeCompany, TagJob, BookmarkButton, 매칭 상태 아이콘
-//         주형님 - logo_kakaopay (머지 완료, 부모 또는 Storybook에서 전달)
-//         종현님 - DropZoneApplication (머지 후 applicationSlot에 연결 예정)
-// TODO: DropZoneApplication 머지 후 실제 컴포넌트 연결 및 상태별 UI 검증
+//         SkeletonJobCard - 로딩 상태의 전체 카드 UI
+//         logo_kakaopay - 부모 또는 Storybook에서 전달
+// 슬롯: DropZoneApplication 등을 applicationSlot으로 전달 가능
 // 데이터: 실제 공고 정보와 사용자 액션은 부모 컴포넌트에서 관리
 
 import { useId } from 'react';
@@ -23,6 +23,7 @@ import type {
   CardJobProps,
   CardJobState,
 } from '@/shared/components/card-job/card-job.types';
+import SkeletonJobCard from '@/shared/components/skeleton/skeleton-job-card';
 import { cn } from '@/shared/utils/cn';
 
 import IcMatchPrimary from '@/shared/assets/icons/ic-match-primary.svg?react';
@@ -42,7 +43,7 @@ const STATE_CLASS_NAMES = {
   needs_questions: 'border-status-danger bg-surface-default',
   applied: 'border-status-success bg-surface-default',
   ineligible: 'border-border-default bg-surface-subtle opacity-74',
-  loading: 'border-border-default bg-surface-default',
+  loading: 'bg-surface-default',
 } satisfies Record<CardJobState, string>;
 
 // 성공형 매칭 아이콘을 표시할 상태
@@ -93,17 +94,17 @@ const CardJob = ({
       aria-busy={isLoading}
       data-state={state}
       className={cn(
-        'flex h-63 w-118 shrink-0 overflow-hidden rounded-xl border',
+        // 로딩 상태에서는 SkeletonJobCard가 테두리를 담당하므로 바깥 테두리 제거
+        'flex h-63 w-118 shrink-0 overflow-hidden rounded-xl',
+        !isLoading && 'border',
         STATE_CLASS_NAMES[state],
         className,
       )}
     >
       {isLoading ? (
         <div className="h-full w-full">
-          {/* 부모에서 전달한 스켈레톤 UI로 카드 전체를 대체 */}
-          {loadingSlot ?? (
-            <span className="sr-only">채용 공고를 불러오고 있습니다.</span>
-          )}
+          {/* 전달받은 로딩 UI가 있으면 우선 사용하고, 없으면 기본 스켈레톤 표시 */}
+          {loadingSlot ?? <SkeletonJobCard />}
         </div>
       ) : (
         <>
@@ -182,7 +183,7 @@ const CardJob = ({
             </footer>
           </div>
 
-          {/* 카드 오른쪽: DropZoneApplication 머지 후 applicationSlot에 연결 */}
+          {/* 카드 오른쪽: 지원 UI는 부모에서 applicationSlot으로 전달 */}
           <div className="h-full w-28 shrink-0">{applicationSlot}</div>
         </>
       )}

@@ -9,10 +9,10 @@ import type {
 
 import kakaopayLogo from './kakaopay-story.png';
 
-// TODO: 종현님 DropZoneApplication 머지 후 applicationSlot에 연결
-// 현재는 Storybook 전용 임시 지원 영역과 스켈레톤 UI 사용
+// 지원 영역은 현재 Storybook용 예시 UI를 사용
+// TODO: DropZoneApplication의 props 확인 후 applicationSlot에 연결
+// 로딩 상태는 CardJob의 기본 SkeletonJobCard를 사용
 
-// 카드 상태별 지원 영역 안내 문구
 const APPLICATION_LABELS = {
   default: '패키지 놓고 지원',
   drag_ready: '지원 가능한 공고',
@@ -29,7 +29,7 @@ const APPLICATION_LABELS = {
   loading: '',
 } satisfies Record<CardJobState, string>;
 
-// DropZoneApplication 머지 전까지 사용할 임시 지원 영역
+// 지원 영역 예시
 const renderApplicationExample = (state: CardJobState) => (
   <div className="flex h-full flex-col items-center justify-center gap-2 border-l border-border-default bg-surface-subtle px-2.5 text-center">
     <span className="text-label-12 text-text-primary">
@@ -39,35 +39,7 @@ const renderApplicationExample = (state: CardJobState) => (
   </div>
 );
 
-// 실제 스켈레톤 컴포넌트 연결 전 로딩 상태를 확인하기 위한 임시 UI
-const renderLoadingExample = () => (
-  <div aria-hidden className="flex h-full flex-col gap-3 p-4">
-    <div className="flex items-center gap-3">
-      <div className="size-10 shrink-0 rounded-full bg-surface-subtle" />
-      <div className="flex flex-1 flex-col gap-2">
-        <div className="h-2.5 w-34 rounded-md bg-surface-subtle" />
-        <div className="h-2 w-23 rounded-md bg-surface-subtle" />
-      </div>
-      <div className="size-6 rounded-full bg-surface-subtle" />
-    </div>
-
-    <div className="h-4 w-80 rounded-md bg-surface-subtle" />
-    <div className="h-3 w-60 rounded-md bg-surface-subtle" />
-
-    <div className="flex gap-2">
-      <div className="h-6 w-20 rounded-lg bg-surface-subtle" />
-      <div className="h-6 w-16 rounded-lg bg-surface-subtle" />
-      <div className="h-6 w-18 rounded-lg bg-surface-subtle" />
-    </div>
-
-    <div className="flex justify-between">
-      <div className="h-2.5 w-30 rounded-md bg-surface-subtle" />
-      <div className="h-2.5 w-22 rounded-md bg-surface-subtle" />
-    </div>
-  </div>
-);
-
-// 북마크와 상세보기 클릭 동작을 확인하는 Storybook 전용 컴포넌트
+// 북마크 및 상세보기 클릭 동작 확인
 const InteractiveExample = (args: CardJobProps) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [detailCount, setDetailCount] = useState(0);
@@ -122,7 +94,6 @@ const meta = {
     onBookmarkChange: () => {},
     onViewDetail: () => {},
     applicationSlot: renderApplicationExample('default'),
-    loadingSlot: renderLoadingExample(),
   },
   argTypes: {
     state: { control: 'select', options: Object.keys(APPLICATION_LABELS) },
@@ -144,7 +115,6 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-// 카드의 13가지 상태
 export const Default: Story = {};
 
 export const DragReady: Story = {
@@ -191,17 +161,16 @@ export const Ineligible: Story = {
   args: { state: 'ineligible' },
 };
 
+// loadingSlot 없이 기본 SkeletonJobCard 표시
 export const Loading: Story = {
   args: { state: 'loading' },
 };
 
-// 북마크 선택 상태
 export const Bookmarked: Story = {
   name: 'Example - Bookmarked',
   args: { isBookmarked: true },
 };
 
-// 선택적인 정보가 없는 경우
 export const WithoutOptionalContent: Story = {
   name: 'Example - Without Optional Content',
   args: {
@@ -211,7 +180,6 @@ export const WithoutOptionalContent: Story = {
   },
 };
 
-// 긴 채용 공고 제목
 export const LongTitle: Story = {
   name: 'Example - Long Title',
   args: {
@@ -220,15 +188,13 @@ export const LongTitle: Story = {
   },
 };
 
-// 북마크 클릭 및 공고 상세보기 동작 확인
 export const Interactive: Story = {
   name: 'Example - Interactive',
   render: (args) => <InteractiveExample {...args} />,
 };
 
-// 카드의 13가지 상태를 한 화면에서 비교
+// 13가지 상태 비교
 export const AllStates: Story = {
-  name: 'All States',
   render: (args) => (
     <div className="grid grid-cols-2 gap-6 p-5">
       {(Object.keys(APPLICATION_LABELS) as CardJobState[]).map((state) => (
