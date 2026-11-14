@@ -12,4 +12,6 @@ export interface BundleApplicationProps extends ComponentProps<'section'> {
 
   // 로딩 시 카드 전체를 대체할 UI (기본 SkeletonApplicationBundle)
   loadingSlot?: ReactNode;
+
+  className?: string;
 }
