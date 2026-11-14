@@ -4,13 +4,12 @@
 //        resultsSlot, loaderSlot - 갱신 중 유지할 결과와 로딩 표시
 //        action - 결과 없음 또는 오류 상태에서 사용할 버튼 정보
 //        className - 추가 스타일
-// 재사용: StateMessage - 직접 구현한 공통 안내 메시지 컴포넌트
-//         SkeletonSearchResultItem - loadingSlot에 연결 예정 (종현님)
-//         LoadingBar - loaderSlot에 연결 예정 (종현님)
-//         RowSearchResult - resultsSlot에 연결 예정 (희진님)
-// TODO: 팀원 컴포넌트 머지 후 SkeletonSearchResultItem은 loadingSlot,
-//       LoadingBar는 loaderSlot, RowSearchResult는 resultsSlot에 연결 예정
-// 데이터: 실제 검색 요청과 결과 데이터 관리는 부모 컴포넌트에서 담당
+// 재사용: StateMessage - 빈 결과 및 오류 안내 메시지
+// 슬롯으로 전달받을 UI:
+//   loadingSlot - SkeletonSearchResultItem
+//   loaderSlot - LoaderBar
+//   resultsSlot - RowSearchResult
+// 데이터: 검색 요청 및 결과 데이터는 부모 컴포넌트에서 관리
 
 import StateMessage from '@/shared/components/state-message/state-message';
 import type { StateSearchResultsProps } from '@/shared/components/state-search-results/state-search-results.types';

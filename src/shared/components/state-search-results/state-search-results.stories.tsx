@@ -1,68 +1,32 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import BadgeMatch from '@/shared/components/badge/badge-match';
+import RowSearchResult from '@/shared/components/row/row-search-result';
+import LoaderBar from '@/shared/components/skeleton/loader-bar';
+import SkeletonSearchResultItem from '@/shared/components/skeleton/skeleton-search-result-item';
 import StateSearchResults from '@/shared/components/state-search-results/state-search-results';
 
-import IcBookmark from '@/shared/assets/icons/ic-bookmark.svg?react';
-
-// 팀원 컴포넌트 머지 전까지 Storybook에서는 임시 UI로 상태 확인
-// TODO: 종현님 SkeletonSearchResultItem → loadingSlot
-// TODO: 종현님 LoadingBar → loaderSlot
-// TODO: 희진님 RowSearchResult → resultsSlot
-
-// 최초 로딩 상태에서 사용할 임시 스켈레톤 UI
-const renderSkeletonRowExample = () => (
-  <div
-    aria-hidden
-    className="flex h-41 w-full shrink-0 items-start gap-4 border-b border-border-default bg-surface-default p-4"
-  >
-    <div className="size-10 shrink-0 rounded-full bg-surface-subtle" />
-    <div className="flex min-w-0 flex-1 flex-col gap-3">
-      <div className="h-3 w-55 rounded-md bg-surface-subtle" />
-      <div className="h-4 w-115 rounded-md bg-surface-subtle" />
-      <div className="h-3 w-90 rounded-md bg-surface-subtle" />
-      <div className="flex gap-2">
-        <div className="h-6 w-18 rounded-lg bg-surface-subtle" />
-        <div className="h-6 w-22 rounded-lg bg-surface-subtle" />
-        <div className="h-6 w-16 rounded-lg bg-surface-subtle" />
-      </div>
-    </div>
-    <div className="flex shrink-0 flex-col items-end gap-3">
-      <div className="h-8 w-18 rounded-lg bg-surface-subtle" />
-      <div className="h-3 w-24 rounded-md bg-surface-subtle" />
-    </div>
+// 최초 로딩에 사용할 스켈레톤 목록
+const loadingContent = (
+  <div className="flex flex-col gap-3">
+    <SkeletonSearchResultItem />
+    <SkeletonSearchResultItem />
   </div>
 );
 
-// 검색 결과가 갱신 중일 때 표시할 임시 공고 UI
-const renderResultRowExample = () => (
-  <article className="flex h-41.25 w-full shrink-0 flex-col border-b border-border-default bg-surface-default pt-4">
-    <div className="flex h-7 shrink-0 items-start justify-between px-4">
-      <BadgeMatch matchCount={2} />
-      <span className="h-5 w-12.5 text-center text-body-12 text-[#ff4d4f]">
-        D-4
-      </span>
-    </div>
-    <p className="h-8 shrink-0 px-4 pt-3 text-body-12 text-text-secondary">
-      <span className="text-[#16a36a]">일치</span>
-      {'  '}Figma · 프로토타이핑
-    </p>
-    <div className="flex h-22 shrink-0 items-center gap-3 px-4 pb-4">
-      <IcBookmark aria-hidden className="shrink-0 text-gray-70" />
-      <div className="flex w-160 shrink-0 flex-col gap-1">
-        <h3 className="text-heading-20 text-text-primary">
-          [첫차]와 함께 할 프로덕트 디자이너를 찾습니다.
-        </h3>
-        <p className="h-5 text-body-14 text-text-secondary">
-          서울 강남구 · 신입·경력 · 학력무관 · 정규직
-        </p>
-      </div>
-      <div className="flex w-47.5 shrink-0 flex-col gap-0.75 text-right">
-        <p className="text-title-16 text-text-primary">(주)미스터픽</p>
-        <p className="h-5 text-body-12 text-text-tertiary">관심기업 TOP 100</p>
-      </div>
-    </div>
-  </article>
+// 갱신 중 기존 검색 결과를 유지하기 위한 예시 데이터
+const refreshingContent = (
+  <div className="flex flex-col gap-3">
+    <RowSearchResult />
+    <RowSearchResult
+      matchCount={3}
+      deadline="D-7"
+      matchedKeywords="React · TypeScript · 협업"
+      title="프론트엔드 개발자를 모집합니다"
+      meta="서울 강남구 · 신입 · 학력무관 · 정규직"
+      companyName="예시 기업"
+      companyMeta="채용 진행 중"
+    />
+  </div>
 );
 
 const meta = {
@@ -88,12 +52,7 @@ type Story = StoryObj<typeof meta>;
 export const Loading: Story = {
   args: {
     contentState: 'loading',
-    loadingSlot: (
-      <div className="flex flex-col gap-3">
-        {renderSkeletonRowExample()}
-        {renderSkeletonRowExample()}
-      </div>
-    ),
+    loadingSlot: loadingContent,
   },
 };
 
@@ -101,7 +60,10 @@ export const Loading: Story = {
 export const Empty: Story = {
   args: {
     contentState: 'empty',
-    action: { label: '필터 초기화', onClick: () => {} },
+    action: {
+      label: '필터 초기화',
+      onClick: () => {},
+    },
   },
 };
 
@@ -109,7 +71,10 @@ export const Empty: Story = {
 export const Error: Story = {
   args: {
     contentState: 'error',
-    action: { label: '다시 시도', onClick: () => {} },
+    action: {
+      label: '다시 시도',
+      onClick: () => {},
+    },
   },
 };
 
@@ -117,15 +82,32 @@ export const Error: Story = {
 export const Refreshing: Story = {
   args: {
     contentState: 'refreshing',
-    loaderSlot: (
-      <div aria-hidden className="h-1 w-full rounded-sm bg-surface-subtle">
-        <div className="h-1 w-70 rounded-sm bg-action-primary" />
-      </div>
-    ),
+    loaderSlot: <LoaderBar />,
+    resultsSlot: refreshingContent,
+  },
+};
+
+// 검색 결과가 많을 때 최소 높이가 늘어나는지 확인
+export const ManyResults: Story = {
+  args: {
+    contentState: 'refreshing',
+    loaderSlot: <LoaderBar />,
     resultsSlot: (
       <div className="flex flex-col gap-3">
-        {renderResultRowExample()}
-        {renderResultRowExample()}
+        {[
+          { id: 'job-1', title: '프론트엔드 개발자' },
+          { id: 'job-2', title: 'React 개발자' },
+          { id: 'job-3', title: '웹 서비스 개발자' },
+          { id: 'job-4', title: 'TypeScript 개발자' },
+          { id: 'job-5', title: '주니어 프론트엔드 개발자' },
+          { id: 'job-6', title: 'UI 개발자' },
+          { id: 'job-7', title: '웹 프론트엔드 엔지니어' },
+          { id: 'job-8', title: '서비스 개발자' },
+          { id: 'job-9', title: 'React 엔지니어' },
+          { id: 'job-10', title: '프론트엔드 엔지니어' },
+        ].map((job) => (
+          <RowSearchResult key={job.id} title={job.title} />
+        ))}
       </div>
     ),
   },
@@ -138,15 +120,7 @@ export const AllStates: Story = {
   },
   render: () => (
     <div className="flex flex-col gap-6 p-5">
-      <StateSearchResults
-        contentState="loading"
-        loadingSlot={
-          <div className="flex flex-col gap-3">
-            {renderSkeletonRowExample()}
-            {renderSkeletonRowExample()}
-          </div>
-        }
-      />
+      <StateSearchResults contentState="loading" loadingSlot={loadingContent} />
 
       <StateSearchResults
         contentState="empty"
@@ -166,17 +140,8 @@ export const AllStates: Story = {
 
       <StateSearchResults
         contentState="refreshing"
-        loaderSlot={
-          <div aria-hidden className="h-1 w-full rounded-sm bg-surface-subtle">
-            <div className="h-1 w-70 rounded-sm bg-action-primary" />
-          </div>
-        }
-        resultsSlot={
-          <div className="flex flex-col gap-3">
-            {renderResultRowExample()}
-            {renderResultRowExample()}
-          </div>
-        }
+        loaderSlot={<LoaderBar />}
+        resultsSlot={refreshingContent}
       />
     </div>
   ),
