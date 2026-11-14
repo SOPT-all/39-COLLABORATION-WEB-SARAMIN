@@ -4,12 +4,11 @@
 //        title, description - 부모에서 전달하는 제목과 설명
 //        action - 선택적 버튼 정보(label, onClick)
 //        className - 추가 스타일
-// 재사용: 주형님 아이콘 3개, ActionButton(머지 후)을 사용
-// TODO: ActionButton PR 머지 후 아래 import 사용
+// 재사용: 주형님 아이콘 3개, 희진님 action-button 사용
 
 import { useId } from 'react';
 
-// import ActionButton from '@/shared/components/button/action-button';
+import ActionButton from '@/shared/components/button/action-button';
 import type { StateMessageProps } from '@/shared/components/state-message/state-message.types';
 import { cn } from '@/shared/utils/cn';
 
@@ -88,24 +87,10 @@ const StateMessage = ({
       </div>
 
       {/* action이 전달된 경우에만 버튼 표시 */}
-      {action && (
-        <button
-          type="button"
-          className="flex h-8 w-24 shrink-0 items-center justify-center rounded-md border border-border-default bg-surface-default px-3 text-body-12 whitespace-nowrap text-blue-90"
-          onClick={action.onClick}
-        >
-          {action.label}
-        </button>
-      )}
 
-      {/* TODO: ActionButton 머지 후 임시 버튼 교체 */}
-      {/*
       {action && (
-        <ActionButton onClick={action.onClick}>
-          {action.label}
-        </ActionButton>
+        <ActionButton onClick={action.onClick}>{action.label}</ActionButton>
       )}
-      */}
     </section>
   );
 };
