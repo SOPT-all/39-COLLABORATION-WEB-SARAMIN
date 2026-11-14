@@ -128,10 +128,10 @@ const HubSticky = ({
               </>
             )}
             <BundleApplication
+              {...bundleProps}
               title={bundleTitle}
               meta={bundleMeta}
               state={bundleState}
-              {...bundleProps}
             />
           </div>
 
