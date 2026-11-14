@@ -38,7 +38,7 @@ const StateSearchResults = (props: StateSearchResultsProps) => {
       aria-busy={isLoading || isRefreshing}
       data-content-state={props.contentState}
       className={cn(
-        'flex h-130 w-228.5 shrink-0 flex-col items-center justify-center bg-surface-default py-4',
+        'flex min-h-130 w-228.5 shrink-0 flex-col items-center justify-center bg-surface-default py-4',
         (isLoading || isRefreshing) && 'gap-3',
         props.className,
       )}
