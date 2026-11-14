@@ -6,9 +6,7 @@
 // 재사용 : 희진님 action-button
 // 데이터 : 메시지 문구는 사용하는 부모 컴포넌트에서 전달
 
-// TODO: ActionButton PR 머지 후 다시 사용
-
-//import ActionButton from '@/shared/components/button/action-button';
+import ActionButton from '@/shared/components/button/action-button';
 import type { MessageInlineProps } from '@/shared/components/message-inline/message-inline.types';
 import { cn } from '@/shared/utils/cn';
 
@@ -57,24 +55,9 @@ const MessageInline = ({
 
       {/* 오류 상태이고 action이 있을 때만 버튼 표시 */}
 
-      {/* ActionButton 머지 전 임시 버튼 */}
       {tone === 'error' && action && (
-        <button
-          type="button"
-          onClick={action.onClick}
-          className="flex h-8 w-24 shrink-0 items-center justify-center rounded-md border border-border-default bg-surface-default px-3 text-body-12 whitespace-nowrap text-blue-90"
-        >
-          {action.label}
-        </button>
+        <ActionButton onClick={action.onClick}>{action.label}</ActionButton>
       )}
-      {/* TODO: ActionButton 머지 후 아래 버튼으로 교체 */}
-      {/*
-        {tone === 'error' && action && (
-          <ActionButton onClick={action.onClick}>
-            {action.label}
-          </ActionButton>
-        )}
-      */}
     </div>
   );
 };
