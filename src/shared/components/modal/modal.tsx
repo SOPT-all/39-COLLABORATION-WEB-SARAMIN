@@ -18,12 +18,15 @@ interface ModalProps extends ModalDialogProps {
   title: string;
   size?: keyof typeof SIZE_CLASS_NAMES;
   footer?: ReactNode;
+  // 지원서 제출 중처럼 닫으면 안 되는 모달은 false로 닫기(X) 버튼을 숨겨요.
+  hasCloseButton?: boolean;
 }
 
 const Modal = ({
   title,
   size = 'compact',
   footer,
+  hasCloseButton = true,
   onClose,
   className,
   children,
@@ -42,7 +45,11 @@ const Modal = ({
       onClose={onClose}
       {...props}
     >
-      <ModalHeader title={title} titleId={titleId} onClose={onClose} />
+      <ModalHeader
+        title={title}
+        titleId={titleId}
+        onClose={hasCloseButton ? onClose : undefined}
+      />
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-6">
         {children}
       </div>
