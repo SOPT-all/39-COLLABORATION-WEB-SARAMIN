@@ -15,11 +15,11 @@ AI 코딩 에이전트(Codex, Claude Code 등)가 이 저장소에서 작업할 
 | UI · 언어 | React 19, TypeScript |
 | 빌드 | Vite |
 | 패키지 매니저 | **pnpm만 사용** (npm, yarn 금지) |
-| 라우팅 | React Router (`react-router-dom`) |
+| 라우팅 | React Router v8 (`react-router`, `react-router/dom`) |
 | 서버 상태 | TanStack Query |
 | 네트워크 | axios (인스턴스 · 인터셉터는 `shared/api/config`) |
 | 스타일 | Tailwind CSS v4, `cn` 유틸 (clsx + tailwind-merge) |
-| SVG | SVGR (`currentColor`로 색상 제어) |
+| SVG | SVGR (여러 색상으로 쓰는 아이콘만 `currentColor`) |
 | UI 문서화 | Storybook |
 | 린트 · 포맷 | ESLint + Prettier (`prettier-plugin-tailwindcss`) |
 | 배포 | Vercel, CI는 GitHub Actions |
