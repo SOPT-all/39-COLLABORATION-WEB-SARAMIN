@@ -4,6 +4,7 @@
 //        state - 현재 상태 (기본 'default')
 //        loadingSlot - 로딩 시 표시할 UI (기본 SkeletonApplicationBundle)
 //        className - 추가 스타일
+//        나머지 section 속성 통과 (draggable, onDragStart 등)
 // 상태: default, grabbed, disabled, loading
 // 재사용: StackApplicationDocument - 지원 서류 스택 아이콘
 //         DragHandleButton - 드래그 핸들 표시
@@ -35,6 +36,7 @@ const BundleApplication = ({
   state = 'default',
   loadingSlot,
   className,
+  ...props
 }: BundleApplicationProps) => {
   const titleId = useId();
   const isLoading = state === 'loading';
@@ -51,6 +53,7 @@ const BundleApplication = ({
         STATE_CLASS_NAMES[state],
         className,
       )}
+      {...props}
     >
       {isLoading ? (
         // 스켈레톤 자체에 테두리, 여백, 크기가 있으므로 외부 스타일을 중복 적용하지 않음
