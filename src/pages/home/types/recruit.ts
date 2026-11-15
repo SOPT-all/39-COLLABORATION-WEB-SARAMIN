@@ -1,9 +1,3 @@
-export interface RecruitDetail {
-  id: number;
-  title: string;
-  companyName: string;
-}
-
 // 공고 카드의 지원 상태 (오른쪽 상태 영역 · 지원 필터 바 기준)
 export type ApplyStatus =
   | 'ready' // 바로 지원 가능

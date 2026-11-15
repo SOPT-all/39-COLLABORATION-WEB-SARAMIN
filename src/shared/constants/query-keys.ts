@@ -1,9 +1,4 @@
 export const QUERY_KEYS = {
-  RECRUIT: {
-    all: ['recruit'] as const,
-    detail: (id: number) => ['recruit', id] as const,
-    list: (params?: object) => ['recruit', 'list', params] as const,
-  },
   JOB_POSTING: {
     all: ['jobPosting'] as const,
     recommended: (params?: object) =>
