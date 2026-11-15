@@ -2,6 +2,7 @@ import type { ComponentProps } from 'react';
 
 import BadgeMatch from '@/shared/components/badge/badge-match';
 import BookmarkButton from '@/shared/components/button/bookmark-button';
+import SkeletonSearchResultItem from '@/shared/components/skeleton/skeleton-search-result-item';
 import { cn } from '@/shared/utils/cn';
 
 type SearchResultContentState = 'loaded' | 'loading';
@@ -10,6 +11,7 @@ type SearchResultContentState = 'loaded' | 'loading';
 // 일치 키워드는 matchedKeywords, 공고는 title, 조건은 meta, 회사는 companyName,
 // 회사 설명은 companyMeta, 북마크는 isBookmarked와 onBookmarkClick입니다.
 // 기본값은 피그마 예시 문구입니다.
+// 로딩(contentState="loading")은 SkeletonSearchResultItem을 보여 줍니다. 폭은 부모에 맞춥니다.
 interface RowSearchResultProps extends ComponentProps<'article'> {
   contentState?: SearchResultContentState;
   matchCount?: number;
@@ -42,30 +44,10 @@ const RowSearchResult = ({
       <article
         aria-busy="true"
         aria-label="검색 결과를 불러오는 중"
-        className={cn(
-          'flex h-41.25 w-full items-start gap-4 border-b border-border-default bg-surface-default p-4',
-          className,
-        )}
+        className={cn('w-full', className)}
         {...props}
       >
-        <div
-          aria-hidden
-          className="size-10 shrink-0 rounded-full bg-surface-subtle"
-        />
-        <div aria-hidden className="flex min-w-0 flex-1 flex-col gap-3">
-          <div className="h-3 w-55 max-w-full rounded-md bg-surface-subtle" />
-          <div className="h-4 w-115 max-w-full rounded-md bg-surface-subtle" />
-          <div className="h-3 w-90 max-w-full rounded-md bg-surface-subtle" />
-          <div className="flex gap-2">
-            <div className="h-6 w-18 rounded-lg bg-surface-subtle" />
-            <div className="h-6 w-22 rounded-lg bg-surface-subtle" />
-            <div className="h-6 w-16 rounded-lg bg-surface-subtle" />
-          </div>
-        </div>
-        <div aria-hidden className="flex shrink-0 flex-col items-end gap-3">
-          <div className="h-8 w-18 rounded-lg bg-surface-subtle" />
-          <div className="h-3 w-24 rounded-md bg-surface-subtle" />
-        </div>
+        <SkeletonSearchResultItem className="w-full" />
       </article>
     );
   }
