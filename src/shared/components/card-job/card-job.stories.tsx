@@ -7,7 +7,7 @@ import type {
   CardJobState,
 } from '@/shared/components/card-job/card-job.types';
 
-import kakaopayLogo from './kakaopay-story.png';
+import kakaopayLogo from '@/shared/assets/logo/logo_kakaopay.svg';
 
 // 지원 영역은 현재 Storybook용 예시 UI를 사용
 // TODO: DropZoneApplication의 props 확인 후 applicationSlot에 연결
@@ -72,11 +72,7 @@ const meta = {
     jobTitle: 'Product Designer (결제·송금)',
     logo: (
       <div className="relative size-8 overflow-hidden rounded-lg">
-        <img
-          src={kakaopayLogo}
-          alt=""
-          className="absolute top-[-45.31%] left-[-86.31%] h-[200.22%] w-[272.3%] max-w-none"
-        />
+        <img src={kakaopayLogo} alt="" />
       </div>
     ),
     tags: [
