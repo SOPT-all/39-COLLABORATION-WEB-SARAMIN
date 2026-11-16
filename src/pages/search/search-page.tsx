@@ -17,7 +17,8 @@ import KeywordSearchPanel from '@/shared/components/search/keyword-search-panel'
 import { ROUTES } from '@/shared/constants/routes';
 import { SEARCH_KEYWORD_PARAM } from '@/shared/constants/search';
 
-// TODO: 검색 API가 나오면 keyword로 결과를 조회해요.
+// TODO(#72, FR-09): keyword와 myFitKeywords를 쿼리 조건으로 사용해 칩 추가·삭제 즉시 재조회해요.
+// 선택 칩이 0개면 기본 목록을 조회하고, 재조회 중에는 기존 결과를 유지해요.
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
   const keyword = searchParams.get(SEARCH_KEYWORD_PARAM)?.trim() ?? '';
@@ -26,15 +27,6 @@ const SearchPage = () => {
 
   const handleMyFitKeywordRemove = (removedKeyword: string) => {
     setMyFitKeywords((prev) => prev.filter((item) => item !== removedKeyword));
-  };
-
-  // TODO(#72): 선택한 키워드를 공고 검색 API의 keywords로 넘겨요.
-  const handleMyFitSearch = () => {
-    const newKeyword = myFitInput.trim();
-    if (!newKeyword || myFitKeywords.includes(newKeyword)) return;
-
-    setMyFitKeywords((prev) => [...prev, newKeyword]);
-    setMyFitInput('');
   };
 
   // 주소창에 /search만 입력하는 등 검색어가 없으면 홈으로 보내요.
@@ -57,12 +49,13 @@ const SearchPage = () => {
 
         <div className="mt-5 flex items-start gap-8">
           <aside aria-label="MY FIT" className="sticky top-6 w-69 shrink-0">
+            {/* TODO(FR-09): 입력값으로 후보를 조회하고, 후보 선택 시 myFitKeywords에 추가해요. */}
+            {/* 시안의 검색하기 버튼은 역할 협의 전까지 연결하지 않아요. 칩 추가·삭제에는 필요하지 않아요. */}
             <KeywordSearchPanel
               keywords={myFitKeywords}
               keyword={myFitInput}
               onKeywordChange={setMyFitInput}
               onRemove={handleMyFitKeywordRemove}
-              onSearch={handleMyFitSearch}
             />
           </aside>
 
