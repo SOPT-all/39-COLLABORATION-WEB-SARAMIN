@@ -11,18 +11,29 @@ type SearchGlobalState = 'default' | 'focused' | 'typing' | 'loading' | 'error';
 
 // 페이지 연결: 입력값은 query와 onQueryChange, AI 검색은 onAiSearch, 다시 시도는 onRetry입니다.
 // 포커스·입력·로딩·에러 모양은 state로 바꿉니다.
-interface SearchGlobalProps extends Omit<
+interface SearchGlobalBaseProps extends Omit<
   ComponentProps<'div'>,
   'children' | 'onChange'
 > {
   query?: string;
-  placeholder?: string;
-  state?: SearchGlobalState;
-  errorMessage?: string;
+  placeholder: string;
   onQueryChange?: (query: string) => void;
   onAiSearch?: () => void;
   onRetry?: () => void;
 }
+
+interface SearchGlobalDefaultProps extends SearchGlobalBaseProps {
+  state?: Exclude<SearchGlobalState, 'error'>;
+  errorMessage?: string;
+}
+
+// 오류 상태에서만 안내 문구를 필수로 받아 빈 오류 안내가 표시되지 않게 해요.
+interface SearchGlobalErrorProps extends SearchGlobalBaseProps {
+  state: 'error';
+  errorMessage: string;
+}
+
+type SearchGlobalProps = SearchGlobalDefaultProps | SearchGlobalErrorProps;
 
 const BORDER_CLASS_NAMES = {
   default: 'border-2 border-blue-90',
@@ -32,12 +43,11 @@ const BORDER_CLASS_NAMES = {
   error: 'border-[1.5px] border-status-danger',
 } satisfies Record<SearchGlobalState, string>;
 
-// placeholder, errorMessage 기본값은 피그마 예시 문구
 const SearchGlobal = ({
   query = '',
-  placeholder = '프로덕트 디자이너',
+  placeholder,
   state = 'default',
-  errorMessage = '일부 정보를 불러오지 못했습니다',
+  errorMessage,
   onQueryChange,
   onAiSearch,
   onRetry,
@@ -61,7 +71,9 @@ const SearchGlobal = ({
             <IcSearch aria-hidden className="shrink-0 text-text-secondary" />
           )}
           <input
+            type="search"
             value={query}
+            aria-label="검색어 입력"
             placeholder={placeholder}
             readOnly={isLoading}
             aria-busy={isLoading}

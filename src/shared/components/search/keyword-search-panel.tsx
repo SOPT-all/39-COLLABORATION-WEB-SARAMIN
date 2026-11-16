@@ -6,7 +6,6 @@ import KeywordInput from '@/shared/components/search/keyword-input';
 import SkeletonFilterPanel from '@/shared/components/skeleton/skeleton-filter-panel';
 import { cn } from '@/shared/utils/cn';
 
-type KeywordSearchPanelContext = 'search' | 'compare-background';
 type KeywordSearchPanelState = 'loaded' | 'loading';
 
 // 페이지 연결: keywords에 선택된 키워드를 넘기고, 칩의 X는 onRemove로 목록에서 빼야 사라집니다.
@@ -17,41 +16,17 @@ interface KeywordSearchPanelProps extends Omit<
   ComponentProps<'section'>,
   'children' | 'onChange'
 > {
-  context?: KeywordSearchPanelContext;
   state?: KeywordSearchPanelState;
   title?: string;
   description?: string;
-  keywords?: string[];
+  keywords: string[];
   keyword?: string;
   onKeywordChange?: (keyword: string) => void;
   onRemove?: (keyword: string) => void;
   onSearch?: () => void;
 }
 
-// 피그마 예시 키워드입니다. keywords를 넘기면 이 값은 쓰이지 않습니다.
-const DEFAULT_KEYWORDS = {
-  search: [
-    'Figma',
-    'UX디자인',
-    'Adobe XD',
-    'UI',
-    '프로덕트 디자인',
-    'UX',
-    '프로토타이핑',
-  ],
-  'compare-background': [
-    'Figma',
-    'Sketch',
-    'Zeplin',
-    'Framer',
-    'ProtoPie',
-    'Adobe XD',
-    'Principle',
-  ],
-} satisfies Record<KeywordSearchPanelContext, string[]>;
-
 const KeywordSearchPanel = ({
-  context = 'search',
   state = 'loaded',
   title = 'MY FIT',
   description = '내 키워드로 맞춤 공고 찾기',
@@ -63,8 +38,6 @@ const KeywordSearchPanel = ({
   className,
   ...props
 }: KeywordSearchPanelProps) => {
-  const keywordList = keywords ?? DEFAULT_KEYWORDS[context];
-
   if (state === 'loading') {
     return (
       <section
@@ -94,7 +67,7 @@ const KeywordSearchPanel = ({
         <div className="flex w-full flex-col gap-4.5">
           <KeywordInput keyword={keyword} onKeywordChange={onKeywordChange} />
           <div className="flex flex-wrap gap-2">
-            {keywordList.map((item) => (
+            {keywords.map((item) => (
               <ChipKeyword
                 key={item}
                 keyword={item}
@@ -106,7 +79,7 @@ const KeywordSearchPanel = ({
       </div>
       <div className="flex w-full flex-col gap-2">
         <p className="text-center text-caption-12 text-text-secondary">
-          키워드 {keywordList.length}개 선택됨
+          키워드 {keywords.length}개 선택됨
         </p>
         <MyfitSearchButton className="w-full" onClick={onSearch}>
           검색하기
