@@ -1,14 +1,16 @@
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 
 import { cn } from '@/shared/utils/cn';
 
 import IcBookmark from '@/shared/assets/icons/ic-bookmark.svg?react';
 
 interface MyfitSearchButtonProps extends ComponentProps<'button'> {
+  children: ReactNode;
   resultCount?: number;
 }
 
 const MyfitSearchButton = ({
+  children,
   resultCount,
   className,
   ...props
@@ -27,7 +29,7 @@ const MyfitSearchButton = ({
       {hasResult && (
         <IcBookmark aria-hidden className="shrink-0 fill-white text-white" />
       )}
-      검색하기
+      {children}
       {hasResult && (
         <span className="text-body-12 text-blue-30">{resultCount}개</span>
       )}
