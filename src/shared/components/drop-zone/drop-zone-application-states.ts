@@ -2,7 +2,8 @@
 // 역할   : 상태 12개마다 톤 · 아이콘 · 제목 · 설명 · 뱃지 문구를 모아 둠. 컴포넌트는 이 표를 읽기만 함
 // 톤     : 12개를 색으로 묶으면 4가지 (neutral 회색 · info 파랑 · success 초록 · danger 코랄)
 // 아이콘 : applied → success, ineligible → closed, needs_document → error 와 같은 그림이라 공유
-// 문구   : 피그마 그대로 고정. "서류 3/3"처럼 숫자가 바뀌는 건 API 나오면 분리 검토
+// 문구   : 피그마 문구가 기본값. 서류 수 · 빠진 서류 · 지원 시각처럼 공고마다 다른 문구는
+//          DropZoneApplication의 statusTitle · statusDescription · badge로 덮어씀
 
 import type { ComponentType, SVGProps } from 'react';
 
@@ -71,7 +72,8 @@ export const DROP_ZONE_APPLICATION_STATES: Record<
     tone: 'info',
     icon: IcStateDragOver,
     title: '놓으면 바로 지원',
-    description: '5초 안에 취소 가능',
+    // 놓으면 지원 내용 확인 모달이 열려서, 피그마의 '5초 안에 취소 가능' 대신 실제 동작을 적어요.
+    description: '지원 전에 한 번 더 확인',
     badge: '지원 준비 완료',
     isBadgeHighlighted: true,
   },
