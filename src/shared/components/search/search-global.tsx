@@ -71,6 +71,7 @@ const SearchGlobal = ({
             <IcSearch aria-hidden className="shrink-0 text-text-secondary" />
           )}
           <input
+            type="search"
             value={query}
             aria-label="검색어 입력"
             placeholder={placeholder}

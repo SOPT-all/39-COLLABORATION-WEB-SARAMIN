@@ -50,6 +50,7 @@ const CompanyInfoSection = () => {
           ))}
         </div>
 
+        {/* TODO: 공고 상세·지원 URL이 정해지면 ListCompanyPosition의 제목과 지원 배지에 링크를 연결해요. */}
         <ul className="text-body-12">
           {MOCK_COMPANY_INFO.positions.map(({ title, condition, deadline }) => (
             <li key={title}>
