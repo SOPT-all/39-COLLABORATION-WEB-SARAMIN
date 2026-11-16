@@ -1,48 +1,20 @@
+import { useDeadlineSoonJobPostingsQuery } from '@/pages/home/api/use-deadline-soon-job-postings-query';
+import RecruitCardList from '@/pages/home/components/recruit-card-list';
 import RecruitSectionHeading from '@/pages/home/components/recruit-section-heading';
 import { MOCK_RECRUITS } from '@/pages/home/constants/mock-recruits';
 import { RECRUIT_SECTIONS } from '@/pages/home/constants/recruit-sections';
-import type { ApplyFilter } from '@/pages/home/types/recruit';
-import CardJob from '@/shared/components/card-job/card-job';
+import type { JobCardItem } from '@/pages/home/types/job-card';
+import type { JobPostingListParams } from '@/pages/home/types/job-posting';
+import type {
+  ApplyFilter,
+  Recruit,
+  RecruitSectionType,
+} from '@/pages/home/types/recruit';
+import { convertJobPostingToCardItem } from '@/pages/home/utils/convert-job-posting-to-card-item';
 import type { CardJobTag } from '@/shared/components/card-job/card-job.types';
-import DropZoneApplication from '@/shared/components/drop-zone/drop-zone-application';
 
-import LogoDanggeun from '@/shared/assets/logo/logo_danggeun.svg';
-import LogoHyundaiAutoever from '@/shared/assets/logo/logo_hyundai_autoever.svg';
-import LogoKakaopay from '@/shared/assets/logo/logo_kakaopay.svg';
-import LogoMusinsa from '@/shared/assets/logo/logo_musinsa.svg';
-import LogoNaverCloud from '@/shared/assets/logo/logo_naver_cloud.svg';
-import LogoOliveYoung from '@/shared/assets/logo/logo_olive_young.svg';
-import LogoTodaysHome from '@/shared/assets/logo/logo_todays_home.svg';
-import LogoToss from '@/shared/assets/logo/logo_toss.svg';
-
-// 목데이터의 지원상태를 CardJob 상태로 변환
-const CARD_JOB_STATE_MAP = {
-  ready: 'default',
-  needsDocuments: 'needs_document',
-  external: 'external',
-  applied: 'applied',
-  closed: 'closed',
-} as const;
-
-// 목데이터의 지원상태를 DropZoneApplication 상태로 변환
-const DROP_ZONE_STATUS_MAP = {
-  ready: 'idle',
-  needsDocuments: 'needsDocument',
-  external: 'external',
-  applied: 'applied',
-  closed: 'closed',
-} as const;
-
-const COMPANY_LOGO_MAP: Record<number, string> = {
-  1: LogoKakaopay,
-  2: LogoMusinsa,
-  3: LogoTodaysHome,
-  4: LogoNaverCloud,
-  5: LogoDanggeun,
-  6: LogoToss,
-  7: LogoHyundaiAutoever,
-  8: LogoOliveYoung,
-};
+// 마감 임박 공고는 카드 두 줄(2개)까지 보여 줘요.
+const DEADLINE_SOON_PARAMS: JobPostingListParams = { size: 2 };
 
 interface RecruitDisplayInfo {
   companyBadge?: string;
@@ -51,8 +23,7 @@ interface RecruitDisplayInfo {
   tagVariants: CardJobTag['variant'][];
 }
 
-// 임시 데이터
-
+// 목 데이터에만 있는 표시 정보예요. 추천(#70) · 조회한 공고(#68)를 API로 바꾸면 지워요.
 const RECRUIT_DISPLAY_INFO: Record<number, RecruitDisplayInfo> = {
   1: {
     companyBadge: '기업인증',
@@ -100,72 +71,99 @@ const RECRUIT_DISPLAY_INFO: Record<number, RecruitDisplayInfo> = {
   },
 };
 
+const convertMockRecruitToCardItem = (recruit: Recruit): JobCardItem => {
+  const displayInfo = RECRUIT_DISPLAY_INFO[recruit.id];
+
+  return {
+    id: recruit.id,
+    companyName: recruit.companyName,
+    title: recruit.title,
+    companyBadge: displayInfo?.companyBadge,
+    tags: recruit.tags.map((tag, index) => ({
+      id: `${recruit.id}-${tag}`,
+      label: tag,
+      variant: displayInfo?.tagVariants[index] ?? 'skill',
+    })),
+    conditions: recruit.conditions.join(' · '),
+    benefit: displayInfo?.benefit,
+    matchReason: `내 조건 ${recruit.matchedConditionCount}개 일치`,
+    deadline: recruit.deadline,
+    updated: displayInfo?.updated ?? '',
+    applyStatus: recruit.applyStatus,
+    isBookmarked: recruit.isBookmarked,
+  };
+};
+
+interface SectionContent {
+  recruits: JobCardItem[];
+  isPending: boolean;
+  isError: boolean;
+  onRetry?: () => void;
+}
+
 interface RecruitFeedSectionProps {
   selectedFilter: ApplyFilter | null;
 }
 
 const RecruitFeedSection = ({ selectedFilter }: RecruitFeedSectionProps) => {
+  const deadlineSoonQuery =
+    useDeadlineSoonJobPostingsQuery(DEADLINE_SOON_PARAMS);
+
+  // 마감 임박은 API, 나머지는 각 이슈에서 연결할 때까지 목 데이터를 써요.
+  const getSectionContent = (type: RecruitSectionType): SectionContent => {
+    if (type === 'closingSoon') {
+      return {
+        recruits: (deadlineSoonQuery.data ?? []).map((jobPosting) =>
+          convertJobPostingToCardItem(jobPosting),
+        ),
+        isPending: deadlineSoonQuery.isPending,
+        isError: deadlineSoonQuery.isError,
+        onRetry: () => void deadlineSoonQuery.refetch(),
+      };
+    }
+
+    return {
+      recruits: MOCK_RECRUITS[type].map(convertMockRecruitToCardItem),
+      isPending: false,
+      isError: false,
+    };
+  };
+
   return (
     <>
-      {RECRUIT_SECTIONS.map(({ type, ...heading }) => {
-        // 섹션별 목 데이터 조회 및 선택된 필터 적용
-        const recruits = MOCK_RECRUITS[type].filter(
-          ({ applyStatus }) =>
-            !selectedFilter || applyStatus === selectedFilter,
-        );
+      {RECRUIT_SECTIONS.map(
+        ({ type, hasCount, emptyTitle, emptyDescription, ...heading }) => {
+          const { recruits, isPending, isError, onRetry } =
+            getSectionContent(type);
+          const isLoaded = !isPending && !isError;
+          const filteredRecruits = recruits.filter(
+            ({ applyStatus }) =>
+              !selectedFilter || applyStatus === selectedFilter,
+          );
 
-        return (
-          <section key={type} className="flex flex-col gap-6">
-            <RecruitSectionHeading {...heading} />
-
-            <ul className="grid grid-cols-2 gap-4">
-              {recruits.map((recruit) => {
-                const displayInfo = RECRUIT_DISPLAY_INFO[recruit.id];
-
-                return (
-                  <li key={recruit.id}>
-                    <CardJob
-                      company={recruit.companyName}
-                      jobTitle={recruit.title}
-                      logo={
-                        <img
-                          src={COMPANY_LOGO_MAP[recruit.id]}
-                          alt=""
-                          className="size-8 rounded-lg"
-                        />
-                      }
-                      companyBadge={displayInfo?.companyBadge}
-                      tags={recruit.tags.map((tag, index) => ({
-                        id: `${recruit.id}-${tag}`,
-                        label: tag,
-                        variant: displayInfo?.tagVariants[index] ?? 'skill',
-                      }))}
-                      conditions={recruit.conditions.join(' · ')}
-                      benefit={displayInfo?.benefit}
-                      matchReason={`내 조건 ${recruit.matchedConditionCount}개 일치`}
-                      deadline={recruit.deadline}
-                      updated={displayInfo?.updated ?? ''}
-                      isBookmarked={recruit.isBookmarked}
-                      state={CARD_JOB_STATE_MAP[recruit.applyStatus]}
-                      applicationSlot={
-                        <DropZoneApplication
-                          status={DROP_ZONE_STATUS_MAP[recruit.applyStatus]}
-                        />
-                      }
-
-                      // 북마크 기능 연결 전 임시 처리
-                      onBookmarkChange={() => {}}
-
-                      //상세보기 기능 연결 전 임시 처리
-                      onViewDetail={() => {}}
-                    />
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        );
-      })}
+          return (
+            <section key={type} className="flex flex-col gap-6">
+              <RecruitSectionHeading
+                {...heading}
+                description={
+                  hasCount && isLoaded
+                    ? `${heading.description} · ${recruits.length}개`
+                    : heading.description
+                }
+              />
+              <RecruitCardList
+                recruits={filteredRecruits}
+                isPending={isPending}
+                isError={isError}
+                isEmpty={isLoaded && recruits.length === 0}
+                emptyTitle={emptyTitle}
+                emptyDescription={emptyDescription}
+                onRetry={onRetry}
+              />
+            </section>
+          );
+        },
+      )}
     </>
   );
 };
