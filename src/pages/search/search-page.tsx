@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Navigate, useSearchParams } from 'react-router';
 
 import CompanyInfoSection from '@/pages/search/components/company-info-section';
@@ -7,6 +8,8 @@ import SearchFilterBand from '@/pages/search/components/search-filter-band';
 import SearchSatisfactionSection from '@/pages/search/components/search-satisfaction-section';
 import SearchSummary from '@/pages/search/components/search-summary';
 import SearchUtilities from '@/pages/search/components/search-utilities';
+import { MOCK_MYFIT_KEYWORDS } from '@/pages/search/constants/mock-search';
+import KeywordSearchPanel from '@/shared/components/search/keyword-search-panel';
 import { ROUTES } from '@/shared/constants/routes';
 import { SEARCH_KEYWORD_PARAM } from '@/shared/constants/search';
 
@@ -14,6 +17,21 @@ import { SEARCH_KEYWORD_PARAM } from '@/shared/constants/search';
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
   const keyword = searchParams.get(SEARCH_KEYWORD_PARAM)?.trim() ?? '';
+  const [myFitKeywords, setMyFitKeywords] = useState(MOCK_MYFIT_KEYWORDS);
+  const [myFitInput, setMyFitInput] = useState('');
+
+  const handleMyFitKeywordRemove = (removedKeyword: string) => {
+    setMyFitKeywords((prev) => prev.filter((item) => item !== removedKeyword));
+  };
+
+  // TODO(#72): 선택한 키워드를 공고 검색 API의 keywords로 넘겨요.
+  const handleMyFitSearch = () => {
+    const newKeyword = myFitInput.trim();
+    if (!newKeyword || myFitKeywords.includes(newKeyword)) return;
+
+    setMyFitKeywords((prev) => [...prev, newKeyword]);
+    setMyFitInput('');
+  };
 
   // 주소창에 /search만 입력하는 등 검색어가 없으면 홈으로 보내요.
   if (!keyword) return <Navigate to={ROUTES.HOME} replace />;
@@ -34,12 +52,14 @@ const SearchPage = () => {
         </div>
 
         <div className="mt-5 flex items-start gap-8">
-          {/* MY FIT 패널 자리 (검색 컴포넌트 #30으로 교체) */}
-          <aside
-            aria-label="MY FIT"
-            className="sticky top-6 flex h-117 w-69 shrink-0 items-center justify-center rounded-2xl border border-dashed border-border-default text-body-14 text-text-tertiary"
-          >
-            MY FIT 패널 자리
+          <aside aria-label="MY FIT" className="sticky top-6 w-69 shrink-0">
+            <KeywordSearchPanel
+              keywords={myFitKeywords}
+              keyword={myFitInput}
+              onKeywordChange={setMyFitInput}
+              onRemove={handleMyFitKeywordRemove}
+              onSearch={handleMyFitSearch}
+            />
           </aside>
 
           <div className="w-238 rounded-2xl border border-gray-30 bg-surface-default">
