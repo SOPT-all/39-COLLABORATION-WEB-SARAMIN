@@ -11,16 +11,16 @@ const HeaderSearchBar = () => {
   const [searchParams] = useSearchParams();
   const currentKeyword = searchParams.get(SEARCH_KEYWORD_PARAM) ?? '';
   const [query, setQuery] = useState(currentKeyword);
-  const [prevKeyword, setPrevKeyword] = useState(currentKeyword);
+  const [previousKeyword, setPreviousKeyword] = useState(currentKeyword);
 
   // 다른 검색어로 이동하면 입력값을 새 검색어로 맞춰요.
-  if (currentKeyword !== prevKeyword) {
-    setPrevKeyword(currentKeyword);
+  if (currentKeyword !== previousKeyword) {
+    setPreviousKeyword(currentKeyword);
     setQuery(currentKeyword);
   }
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const keyword = query.trim();
     if (!keyword) return;
 
@@ -34,6 +34,7 @@ const HeaderSearchBar = () => {
 
   return (
     <form role="search" className="w-140" onSubmit={handleSubmit}>
+      {/* TODO: AI 검색 버튼의 동작이 정해지면 onAiSearch를 연결해요. 현재 검색 이동은 Enter로 처리해요. */}
       <SearchGlobal
         query={query}
         placeholder="프로덕트 디자이너"

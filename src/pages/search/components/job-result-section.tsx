@@ -113,7 +113,8 @@ const JobResultSection = ({
                 companyName={result.companyName}
                 companyMeta={result.companyMeta}
                 isBookmarked={result.isBookmarked}
-                onBookmarkClick={() => {}} // TODO: 북마크 클릭 시 북마크 상태 업데이트
+                // TODO: 북마크 저장·해제의 후속 작업 범위를 정한 뒤 공고 id별 상태 변경을 연결해요. 현재는 표시만 해요.
+                onBookmarkClick={() => {}}
               />
             </li>
           ))}
