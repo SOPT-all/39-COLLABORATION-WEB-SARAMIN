@@ -20,6 +20,8 @@ const meta = {
   ],
   args: {
     state: 'default',
+    placeholder: '프로덕트 디자이너',
+    errorMessage: '일부 정보를 불러오지 못했습니다',
     onAiSearch: () => {},
     onRetry: () => {},
   },
@@ -56,6 +58,8 @@ const InteractiveSearchGlobal = () => {
   return (
     <SearchGlobal
       query={query}
+      placeholder="프로덕트 디자이너"
+      errorMessage="일부 정보를 불러오지 못했습니다"
       state={query.length > 0 ? 'typing' : 'default'}
       onQueryChange={setQuery}
     />

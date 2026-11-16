@@ -16,9 +16,9 @@ interface SearchGlobalProps extends Omit<
   'children' | 'onChange'
 > {
   query?: string;
-  placeholder?: string;
+  placeholder: string;
   state?: SearchGlobalState;
-  errorMessage?: string;
+  errorMessage: string;
   onQueryChange?: (query: string) => void;
   onAiSearch?: () => void;
   onRetry?: () => void;
@@ -32,12 +32,11 @@ const BORDER_CLASS_NAMES = {
   error: 'border-[1.5px] border-status-danger',
 } satisfies Record<SearchGlobalState, string>;
 
-// placeholder, errorMessage 기본값은 피그마 예시 문구
 const SearchGlobal = ({
   query = '',
-  placeholder = '프로덕트 디자이너',
+  placeholder,
   state = 'default',
-  errorMessage = '일부 정보를 불러오지 못했습니다',
+  errorMessage,
   onQueryChange,
   onAiSearch,
   onRetry,
@@ -62,6 +61,7 @@ const SearchGlobal = ({
           )}
           <input
             value={query}
+            aria-label="검색어 입력"
             placeholder={placeholder}
             readOnly={isLoading}
             aria-busy={isLoading}
