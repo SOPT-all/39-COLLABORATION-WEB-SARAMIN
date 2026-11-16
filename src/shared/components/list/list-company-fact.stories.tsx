@@ -15,6 +15,10 @@ const meta = {
       </div>
     ),
   ],
+  args: {
+    label: '설립일',
+    value: '2013년 12월 17일 (업력 14년차)',
+  },
 } satisfies Meta<typeof ListCompanyFact>;
 
 export default meta;
