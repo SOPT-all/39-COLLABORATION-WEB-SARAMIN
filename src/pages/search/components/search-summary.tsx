@@ -6,8 +6,6 @@ import {
 import ChipSelectedFilter from '@/shared/components/chip/chip-selected-filter';
 import { cn } from '@/shared/utils/cn';
 
-import IcRemove from '@/shared/assets/icons/ic-remove.svg?react';
-
 interface SearchSummaryProps {
   keyword: string;
 }
@@ -23,23 +21,16 @@ const SearchSummary = ({ keyword }: SearchSummaryProps) => {
       <div className="flex h-18.5 items-center justify-between px-5">
         <div className="flex items-center gap-2">
           <ChipSelectedFilter onRemove={handleRemoveFilter}>
-            {keyword}
+            {`검색어 · ${keyword}`}
           </ChipSelectedFilter>
-          {/* ChipSelectedFilter는 '검색어 · ' 접두어가 고정이라 일반 필터는 직접 그려요. */}
           {MOCK_SELECTED_FILTERS.map((filter) => (
-            <span
+            <ChipSelectedFilter
               key={filter}
-              className="inline-flex h-8 items-center rounded-2xl border border-border-default bg-surface-default px-3 text-label-14 whitespace-nowrap text-text-secondary"
+              variant="secondary"
+              onRemove={handleRemoveFilter}
             >
-              {filter}{' '}
-              <button
-                type="button"
-                aria-label={`${filter} 삭제`}
-                className="-mr-1.5 flex"
-              >
-                <IcRemove aria-hidden className="size-5" />
-              </button>
-            </span>
+              {filter}
+            </ChipSelectedFilter>
           ))}
         </div>
         <p className="flex h-10 w-47.5 items-center justify-center rounded-lg bg-surface-subtle text-title-16 text-text-primary">
