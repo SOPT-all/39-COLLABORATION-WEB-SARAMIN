@@ -5,13 +5,11 @@ import BookmarkButton from '@/shared/components/button/bookmark-button';
 import SkeletonSearchResultItem from '@/shared/components/skeleton/skeleton-search-result-item';
 import { cn } from '@/shared/utils/cn';
 
-type SearchResultContentState = 'loaded' | 'loading';
-
 // 페이지 연결: 불러오기 여부는 contentState, 일치 개수는 matchCount, 마감은 deadline,
 // 일치 키워드는 matchedKeywords, 공고는 title, 조건은 meta, 회사는 companyName,
 // 회사 설명은 companyMeta, 북마크는 isBookmarked와 onBookmarkClick입니다.
-interface RowSearchResultProps extends ComponentProps<'article'> {
-  contentState: SearchResultContentState;
+interface RowSearchResultLoadedProps extends ComponentProps<'article'> {
+  contentState: 'loaded';
   matchCount: number;
   deadline: string;
   matchedKeywords: string;
@@ -22,6 +20,16 @@ interface RowSearchResultProps extends ComponentProps<'article'> {
   isBookmarked: boolean;
   onBookmarkClick: () => void;
 }
+
+// 로딩에는 결과 데이터가 필요 없어요. 기존 결과가 함께 전달되어도 스켈레톤만 표시해요.
+interface RowSearchResultLoadingProps extends Partial<
+  Omit<RowSearchResultLoadedProps, 'contentState'>
+> {
+  contentState: 'loading';
+}
+
+type RowSearchResultProps =
+  RowSearchResultLoadedProps | RowSearchResultLoadingProps;
 
 const RowSearchResult = ({
   contentState,

@@ -32,24 +32,26 @@ const meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof SearchGlobal>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: meta.args,
+};
 
 export const Focused: Story = {
-  args: { state: 'focused' },
+  args: { ...meta.args, state: 'focused' },
 };
 
 export const Typing: Story = {
-  args: { state: 'typing', query: '프로덕트 디자이너' },
+  args: { ...meta.args, state: 'typing', query: '프로덕트 디자이너' },
 };
 
 export const Loading: Story = {
-  args: { state: 'loading', query: '프로덕트 디자이너' },
+  args: { ...meta.args, state: 'loading', query: '프로덕트 디자이너' },
 };
 
 export const Error: Story = {
-  args: { state: 'error', query: '프로덕트 디자이너' },
+  args: { ...meta.args, state: 'error', query: '프로덕트 디자이너' },
 };
 
 const InteractiveSearchGlobal = () => {
@@ -59,7 +61,6 @@ const InteractiveSearchGlobal = () => {
     <SearchGlobal
       query={query}
       placeholder="프로덕트 디자이너"
-      errorMessage="일부 정보를 불러오지 못했습니다"
       state={query.length > 0 ? 'typing' : 'default'}
       onQueryChange={setQuery}
     />
@@ -67,5 +68,6 @@ const InteractiveSearchGlobal = () => {
 };
 
 export const Interactive: Story = {
+  args: meta.args,
   render: () => <InteractiveSearchGlobal />,
 };

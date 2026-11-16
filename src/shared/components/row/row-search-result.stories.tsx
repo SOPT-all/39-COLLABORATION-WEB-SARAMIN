@@ -34,14 +34,18 @@ const meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof RowSearchResult>;
 
-export const Loaded: Story = {};
+export const Loaded: Story = {
+  args: meta.args,
+};
 
 export const Bookmarked: Story = {
-  args: { isBookmarked: true },
+  args: { ...meta.args, isBookmarked: true },
 };
 
 export const Loading: Story = {
   args: { contentState: 'loading' },
+  // 상위 args의 예시 데이터 없이 로딩 상태를 사용할 수 있는지 확인해요.
+  render: () => <RowSearchResult contentState="loading" />,
 };

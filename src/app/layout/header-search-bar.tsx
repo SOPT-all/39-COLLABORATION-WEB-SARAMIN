@@ -38,7 +38,6 @@ const HeaderSearchBar = () => {
         query={query}
         placeholder="프로덕트 디자이너"
         state={query ? 'typing' : 'default'}
-        errorMessage="일부 정보를 불러오지 못했습니다"
         onQueryChange={setQuery}
       />
     </form>
