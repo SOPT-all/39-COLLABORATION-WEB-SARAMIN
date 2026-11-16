@@ -1,24 +1,27 @@
-import type { FormEvent } from 'react';
+import { type FormEvent, useState } from 'react';
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router';
 
+import SearchGlobal from '@/shared/components/search/search-global';
 import { ROUTES } from '@/shared/constants/routes';
 import { SEARCH_KEYWORD_PARAM } from '@/shared/constants/search';
 
-import IcFilters from '@/shared/assets/icons/ic-filters.svg?react';
-import IcSearch from '@/shared/assets/icons/ic-search.svg?react';
-
-// 검색하면 /search?keyword=검색어로 이동해요. 디자인은 검색 컴포넌트(#30)로 교체할 예정이에요.
+// 검색하면 /search?keyword=검색어로 이동해요.
 const HeaderSearchBar = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const currentKeyword = searchParams.get(SEARCH_KEYWORD_PARAM) ?? '';
+  const [query, setQuery] = useState(currentKeyword);
+  const [prevKeyword, setPrevKeyword] = useState(currentKeyword);
+
+  // 다른 검색어로 이동하면 입력값을 새 검색어로 맞춰요.
+  if (currentKeyword !== prevKeyword) {
+    setPrevKeyword(currentKeyword);
+    setQuery(currentKeyword);
+  }
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const keyword = new FormData(e.currentTarget)
-      .get(SEARCH_KEYWORD_PARAM)
-      ?.toString()
-      .trim();
+    const keyword = query.trim();
     if (!keyword) return;
 
     navigate({
@@ -30,31 +33,14 @@ const HeaderSearchBar = () => {
   };
 
   return (
-    <form
-      role="search"
-      className="flex h-11.5 w-140 items-center justify-between rounded-full border-2 border-blue-90 bg-surface-default px-4 py-1.5"
-      onSubmit={handleSubmit}
-    >
-      <label className="flex items-center gap-2.5">
-        <IcSearch aria-hidden className="shrink-0 text-gray-110" />
-        <input
-          // 다른 검색어로 이동하면 입력값을 새 검색어로 맞춰요.
-          key={currentKeyword}
-          type="search"
-          name={SEARCH_KEYWORD_PARAM}
-          aria-label="검색어 입력"
-          placeholder="프로덕트 디자이너"
-          defaultValue={currentKeyword}
-          className="w-97.5 text-body-14 text-text-primary outline-none placeholder:text-text-secondary"
-        />
-      </label>
-      <button
-        type="button"
-        className="flex h-7.5 w-23 items-center gap-1.5 rounded-[15px] bg-surface-blue-subtle p-1.5 text-label-14 text-blue-90"
-      >
-        <IcFilters aria-hidden className="size-4 shrink-0" />
-        AI 검색
-      </button>
+    <form role="search" className="w-140" onSubmit={handleSubmit}>
+      <SearchGlobal
+        query={query}
+        placeholder="프로덕트 디자이너"
+        state={query ? 'typing' : 'default'}
+        errorMessage="일부 정보를 불러오지 못했습니다"
+        onQueryChange={setQuery}
+      />
     </form>
   );
 };
