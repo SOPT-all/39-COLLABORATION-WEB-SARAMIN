@@ -1,10 +1,10 @@
 import type { ComponentProps } from 'react';
 
 import ActionButton from '@/shared/components/button/action-button';
+import LoadingSpinner from '@/shared/components/loading-spinner/loading-spinner';
 import { cn } from '@/shared/utils/cn';
 
 import IcFilters from '@/shared/assets/icons/ic-filters.svg?react';
-import IcLoadingSpinner from '@/shared/assets/icons/ic-loading-spinner.svg?react';
 import IcSearch from '@/shared/assets/icons/ic-search.svg?react';
 
 type SearchGlobalState = 'default' | 'focused' | 'typing' | 'loading' | 'error';
@@ -56,7 +56,7 @@ const SearchGlobal = ({
       >
         <div className="flex min-w-0 flex-1 items-center gap-2.5">
           {isLoading ? (
-            <IcLoadingSpinner aria-hidden className="shrink-0" />
+            <LoadingSpinner />
           ) : (
             <IcSearch aria-hidden className="shrink-0 text-text-secondary" />
           )}
