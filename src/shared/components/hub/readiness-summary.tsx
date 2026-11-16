@@ -4,6 +4,8 @@
 //          title · description - 문구. 기본값 '필수 서류 3/3 준비' · '최근 업데이트 10분 전'
 //          className, 나머지 div 속성 통과
 // 구조   : [36px 원 아이콘] [title / description] [ChipStickyReview '검토 ON']
+// 폭     : 글자 자리가 110px인데 '필수 서류 3/3 준비'가 브라우저에서 110.5px라 말줄임표가 생김
+//          글자 영역을 칩 쪽으로 1px 넓혀서(-mr-px) 해결. 칩 안쪽 여백과 겹치므로 보이는 위치는 그대로
 // 재사용 : 주형 님 ChipStickyReview, 피그마 readiness_icon을 뽑은 ic-readiness-check · ic-readiness-alert
 // 접근성 : ✓ · ! 아이콘은 장식이라 aria-hidden. 상태는 문구가 읽어 줌
 
@@ -44,7 +46,7 @@ const ReadinessSummary = ({
       {...props}
     >
       <Icon aria-hidden className="shrink-0" />
-      <div className="flex min-w-0 flex-1 flex-col gap-px">
+      <div className="-mr-px flex min-w-0 flex-1 flex-col gap-px">
         <p className="truncate text-label-14 text-text-primary">{title}</p>
         <p className="truncate text-caption-11 text-text-secondary">
           {description}

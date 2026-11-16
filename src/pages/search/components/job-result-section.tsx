@@ -1,11 +1,10 @@
 import type { SearchResult } from '@/pages/search/types/search';
+import MyfitSearchButton from '@/shared/components/button/myfit-search-button';
 import ChipNumber from '@/shared/components/chip/chip-number';
 import RowSearchResult from '@/shared/components/row/row-search-result';
 import SkeletonSearchResultItem from '@/shared/components/skeleton/skeleton-search-result-item';
 import StateSearchResults from '@/shared/components/state-search-results/state-search-results';
 import { cn } from '@/shared/utils/cn';
-
-import IcBookmark from '@/shared/assets/icons/ic-bookmark.svg?react';
 
 const SORT_OPTIONS = [
   { label: '매칭순', widthClassName: 'w-32.75' },
@@ -122,14 +121,7 @@ const JobResultSection = ({
       )}
 
       <div className="mx-2.25 flex flex-col items-end">
-        <button
-          type="button"
-          className="flex h-11.5 w-47 items-center justify-center gap-1 rounded-lg bg-blue-90 px-5 text-label-14 text-white"
-        >
-          <IcBookmark aria-hidden className="shrink-0 fill-white text-white" />
-          저장한 공고 보기
-          <span className="text-body-12 text-blue-30">2개</span>
-        </button>
+        <MyfitSearchButton resultCount={2}>저장한 공고 보기</MyfitSearchButton>
         {hasResults && (
           <nav
             aria-label="페이지 이동"

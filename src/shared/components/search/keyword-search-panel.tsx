@@ -81,7 +81,9 @@ const KeywordSearchPanel = ({
         <p className="text-center text-caption-12 text-text-secondary">
           키워드 {keywords.length}개 선택됨
         </p>
-        <MyfitSearchButton className="w-full" onClick={onSearch} />
+        <MyfitSearchButton className="w-full" onClick={onSearch}>
+          검색하기
+        </MyfitSearchButton>
       </div>
     </section>
   );
