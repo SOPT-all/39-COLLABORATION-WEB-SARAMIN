@@ -58,6 +58,7 @@ const CompanyInfoSection = () => {
                 title={title}
                 meta={condition}
                 deadline={deadline}
+                badge="홈페이지 지원"
               />
             </li>
           ))}
