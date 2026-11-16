@@ -3,6 +3,7 @@ import {
   MOCK_SEARCH_RESULTS,
 } from '@/pages/search/constants/mock-search';
 import ChipNumber from '@/shared/components/chip/chip-number';
+import RowSearchResult from '@/shared/components/row/row-search-result';
 import { cn } from '@/shared/utils/cn';
 
 import IcBookmark from '@/shared/assets/icons/ic-bookmark.svg?react';
@@ -52,13 +53,20 @@ const JobResultSection = () => {
       </div>
 
       <ul className="mx-4.75">
-        {/* TODO(#55): 결과 행 자리를 RowSearchResult(#47)로 교체하고 result를 그대로 넘겨요. */}
         {MOCK_SEARCH_RESULTS.map((result) => (
-          <li
-            key={result.id}
-            className="flex h-41.25 items-center justify-center border-b border-gray-30 text-body-14 text-text-tertiary"
-          >
-            검색 결과 행 자리 · {result.title}
+          <li key={result.id}>
+            <RowSearchResult
+              contentState="loaded"
+              matchCount={result.matchCount}
+              deadline={result.deadline}
+              matchedKeywords={result.matchedKeywords}
+              title={result.title}
+              meta={result.meta}
+              companyName={result.companyName}
+              companyMeta={result.companyMeta}
+              isBookmarked={result.isBookmarked}
+              onBookmarkClick={() => {}}
+            />
           </li>
         ))}
       </ul>
