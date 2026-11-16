@@ -6,6 +6,15 @@ import CardJob from '@/shared/components/card-job/card-job';
 import type { CardJobTag } from '@/shared/components/card-job/card-job.types';
 import DropZoneApplication from '@/shared/components/drop-zone/drop-zone-application';
 
+import LogoDanggeun from '@/shared/assets/logo/logo_danggeun.svg';
+import LogoHyundaiAutoever from '@/shared/assets/logo/logo_hyundai_autoever.svg';
+import LogoKakaopay from '@/shared/assets/logo/logo_kakaopay.svg';
+import LogoMusinsa from '@/shared/assets/logo/logo_musinsa.svg';
+import LogoNaverCloud from '@/shared/assets/logo/logo_naver_cloud.svg';
+import LogoOliveYoung from '@/shared/assets/logo/logo_olive_young.svg';
+import LogoTodaysHome from '@/shared/assets/logo/logo_todays_home.svg';
+import LogoToss from '@/shared/assets/logo/logo_toss.svg';
+
 // 목데이터의 지원상태를 CardJob 상태로 변환
 const CARD_JOB_STATE_MAP = {
   ready: 'default',
@@ -23,6 +32,17 @@ const DROP_ZONE_STATUS_MAP = {
   applied: 'applied',
   closed: 'closed',
 } as const;
+
+const COMPANY_LOGO_MAP: Record<number, string> = {
+  1: LogoKakaopay,
+  2: LogoMusinsa,
+  3: LogoTodaysHome,
+  4: LogoNaverCloud,
+  5: LogoDanggeun,
+  6: LogoToss,
+  7: LogoHyundaiAutoever,
+  8: LogoOliveYoung,
+};
 
 interface RecruitDisplayInfo {
   companyBadge?: string;
@@ -107,11 +127,12 @@ const RecruitFeedSection = ({ selectedFilter }: RecruitFeedSectionProps) => {
                     <CardJob
                       company={recruit.companyName}
                       jobTitle={recruit.title}
-                      // TODO: API 및 로고 에셋 확인 후 실제 기업 로고 연결
                       logo={
-                        <div className="flex h-full w-full items-center justify-center rounded-lg bg-surface-subtle text-label-12 text-text-secondary">
-                          {recruit.companyName.charAt(0)}
-                        </div>
+                        <img
+                          src={COMPANY_LOGO_MAP[recruit.id]}
+                          alt=""
+                          className="size-8 rounded-lg"
+                        />
                       }
                       companyBadge={displayInfo?.companyBadge}
                       tags={recruit.tags.map((tag, index) => ({
