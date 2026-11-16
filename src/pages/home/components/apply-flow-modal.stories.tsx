@@ -2,9 +2,13 @@
 // 위치 : Pages/Home/ApplyFlowModal
 // 상태 : 단계별 모달 5개 + 목 제출 함수로 처음부터 끝까지 눌러 보는 Flow
 
+import { type ReactNode, useState } from 'react';
+import { MemoryRouter } from 'react-router';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { createMockSubmitApplication } from '@/pages/home/api/create-mock-submit-application';
+import ApplicationHistoryModal from '@/pages/home/components/application-history-modal';
 import { useApplyFlow } from '@/pages/home/hooks/use-apply-flow';
 import type { ApplyResult, ApplyTarget } from '@/pages/home/types/apply-flow';
 
@@ -60,6 +64,12 @@ const ApplyFlowDemo = ({ result }: ApplyFlowDemoProps) => {
   const { step, target, openApplyFlow, closeApplyFlow, submit } = useApplyFlow({
     submitApplication: createMockSubmitApplication(result),
   });
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
+  const handleViewHistory = () => {
+    closeApplyFlow();
+    setIsHistoryOpen(true);
+  };
 
   return (
     <>
@@ -76,17 +86,41 @@ const ApplyFlowDemo = ({ result }: ApplyFlowDemoProps) => {
         onClose={closeApplyFlow}
         onSubmit={submit}
         onRetry={submit}
-        onViewHistory={closeApplyFlow}
+        onViewHistory={handleViewHistory}
+      />
+      <ApplicationHistoryModal
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
       />
     </>
   );
 };
 
+// 지원 내역 모달이 목 지원 내역을 불러오고 공고 찾기로 이동할 수 있게 감싸요.
+interface FlowProvidersProps {
+  children: ReactNode;
+}
+
+const FlowProviders = ({ children }: FlowProvidersProps) => {
+  const [queryClient] = useState(() => new QueryClient());
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter>{children}</MemoryRouter>
+    </QueryClientProvider>
+  );
+};
+
 // 버튼을 눌러 드롭을 흉내 내요. result로 제출 결과(성공 · 실패 · 결과 모름)를 고를 수 있어요.
+// 지원 내역 보기를 누르면 지원 내역 모달로 넘어가요.
 export const Flow: StoryObj<ApplyFlowDemoProps> = {
   args: { result: 'success' },
   argTypes: {
     result: { control: 'radio', options: ['success', 'error', 'unknown'] },
   },
-  render: (args) => <ApplyFlowDemo {...args} />,
+  render: (args) => (
+    <FlowProviders>
+      <ApplyFlowDemo {...args} />
+    </FlowProviders>
+  ),
 };
