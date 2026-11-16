@@ -17,6 +17,14 @@ const meta = {
   ],
   args: {
     contentState: 'loaded',
+    matchCount: 2,
+    deadline: 'D-4',
+    matchedKeywords: 'Figma · 프로토타이핑',
+    title: '[첫차]와 함께 할 프로덕트 디자이너를 찾습니다.',
+    meta: '서울 강남구 · 신입·경력 · 학력무관 · 정규직',
+    companyName: '(주)미스터픽',
+    companyMeta: '관심기업 TOP 100',
+    isBookmarked: false,
     onBookmarkClick: () => {},
   },
   argTypes: {

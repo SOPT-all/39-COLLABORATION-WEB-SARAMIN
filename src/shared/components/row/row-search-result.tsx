@@ -10,31 +10,29 @@ type SearchResultContentState = 'loaded' | 'loading';
 // 페이지 연결: 불러오기 여부는 contentState, 일치 개수는 matchCount, 마감은 deadline,
 // 일치 키워드는 matchedKeywords, 공고는 title, 조건은 meta, 회사는 companyName,
 // 회사 설명은 companyMeta, 북마크는 isBookmarked와 onBookmarkClick입니다.
-// 기본값은 피그마 예시 문구입니다.
-// 로딩(contentState="loading")은 SkeletonSearchResultItem을 보여 줍니다. 폭은 부모에 맞춥니다.
 interface RowSearchResultProps extends ComponentProps<'article'> {
-  contentState?: SearchResultContentState;
-  matchCount?: number;
-  deadline?: string;
-  matchedKeywords?: string;
-  title?: string;
-  meta?: string;
-  companyName?: string;
-  companyMeta?: string;
-  isBookmarked?: boolean;
-  onBookmarkClick?: () => void;
+  contentState: SearchResultContentState;
+  matchCount: number;
+  deadline: string;
+  matchedKeywords: string;
+  title: string;
+  meta: string;
+  companyName: string;
+  companyMeta: string;
+  isBookmarked: boolean;
+  onBookmarkClick: () => void;
 }
 
 const RowSearchResult = ({
-  contentState = 'loaded',
-  matchCount = 2,
-  deadline = 'D-4',
-  matchedKeywords = 'Figma · 프로토타이핑',
-  title = '[첫차]와 함께 할 프로덕트 디자이너를 찾습니다.',
-  meta = '서울 강남구 · 신입·경력 · 학력무관 · 정규직',
-  companyName = '(주)미스터픽',
-  companyMeta = '관심기업 TOP 100',
-  isBookmarked = false,
+  contentState,
+  matchCount,
+  deadline,
+  matchedKeywords,
+  title,
+  meta,
+  companyName,
+  companyMeta,
+  isBookmarked,
   onBookmarkClick,
   className,
   ...props
