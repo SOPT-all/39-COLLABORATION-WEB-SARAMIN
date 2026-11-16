@@ -9,11 +9,10 @@
 
 import type { ApplyFlowStep, ApplyTarget } from '@/pages/home/types/apply-flow';
 import ModalButton from '@/shared/components/button/modal-button';
+import LoadingSpinner from '@/shared/components/loading-spinner/loading-spinner';
 import Modal from '@/shared/components/modal/modal';
 import ModalApplyReview from '@/shared/components/modal/modal-apply-review';
 import ModalFeedback from '@/shared/components/modal/modal-feedback';
-
-import IcLoadingSpinner from '@/shared/assets/icons/ic-loading-spinner.svg?react';
 
 const RESULT_CONTENTS = {
   success: {
@@ -88,7 +87,7 @@ const ApplyFlowModal = ({
           role="status"
           className="flex flex-1 flex-col items-center justify-center gap-3 text-center"
         >
-          <IcLoadingSpinner aria-hidden className="shrink-0 animate-spin" />
+          <LoadingSpinner />
           <div className="flex flex-col gap-1">
             <p className="text-title-16 text-text-primary">
               지원서를 제출하고 있습니다
