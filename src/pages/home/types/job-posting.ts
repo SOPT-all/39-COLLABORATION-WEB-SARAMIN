@@ -22,11 +22,11 @@ export interface JobPosting {
   keywords: string[];
   matchedKeywordCount: number;
   applied: boolean;
-  requiredDocumentCount: number;
-  matchedDocumentCount: number;
-  // 값이 없으면 null로 와요.
+  // 이미 지원한 공고는 서류 정보와 postedAt이 null로 와요.
+  requiredDocumentCount: number | null;
+  matchedDocumentCount: number | null;
   missingDocuments: string[] | null;
-  postedAt: string;
+  postedAt: string | null;
   appliedAt: string | null;
 }
 
