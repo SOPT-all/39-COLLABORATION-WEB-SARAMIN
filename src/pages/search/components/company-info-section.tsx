@@ -2,6 +2,8 @@ import {
   MOCK_COMPANY_INFO,
   MOCK_COMPANY_TOTAL,
 } from '@/pages/search/constants/mock-search';
+import ListCompanyFact from '@/shared/components/list/list-company-fact';
+import ListCompanyPosition from '@/shared/components/list/list-company-position';
 
 const CompanyInfoSection = () => {
   return (
@@ -40,43 +42,23 @@ const CompanyInfoSection = () => {
 
         <div className="flex gap-6 border border-gray-30 bg-surface-subtle py-6 pr-5 pl-7.5 text-body-12">
           {MOCK_COMPANY_INFO.factColumns.map((facts) => (
-            <dl key={facts[0].label} className="flex flex-1 flex-col gap-2">
+            <div key={facts[0].label} className="flex flex-1 flex-col gap-2">
               {facts.map(({ label, value }) => (
-                <div key={label} className="flex gap-3">
-                  <dt className="w-17.5 shrink-0 text-gray-70">{label}</dt>
-                  <dd className="whitespace-pre text-text-secondary">
-                    {value}
-                  </dd>
-                </div>
+                <ListCompanyFact key={label} label={label} value={value} />
               ))}
-            </dl>
+            </div>
           ))}
         </div>
 
         <ul className="text-body-12">
           {MOCK_COMPANY_INFO.positions.map(({ title, condition, deadline }) => (
-            <li
-              key={title}
-              className="flex min-h-11.25 items-center gap-3 border-b border-gray-30"
-            >
-              <span className="w-21.25 shrink-0 text-center text-blue-80">
-                채용중
-              </span>
-              <a href="#" className="min-w-45 flex-1 text-gray-120">
-                {title}
-              </a>
-              <span className="max-w-54 min-w-35 flex-1 text-gray-70">
-                {condition}
-              </span>
-              <span className="w-18 shrink-0 text-right text-gray-70">
-                {deadline}
-              </span>
-              <a
-                href="#"
-                className="flex h-6 w-22.25 shrink-0 items-center justify-center rounded-[3px] border border-gray-30 bg-surface-default text-label-12 text-blue-90"
-              >
-                홈페이지 지원
-              </a>
+            <li key={title}>
+              <ListCompanyPosition
+                status="채용중"
+                title={title}
+                meta={condition}
+                deadline={deadline}
+              />
             </li>
           ))}
         </ul>
