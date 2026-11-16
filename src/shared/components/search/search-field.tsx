@@ -1,9 +1,9 @@
 import { type ComponentProps, useState } from 'react';
 
+import LoadingSpinner from '@/shared/components/loading-spinner/loading-spinner';
 import { cn } from '@/shared/utils/cn';
 
 import IcClose from '@/shared/assets/icons/ic-close.svg?react';
-import IcLoadingSpinner from '@/shared/assets/icons/ic-loading-spinner.svg?react';
 import IcSearch from '@/shared/assets/icons/ic-search.svg?react';
 
 type SearchFieldState =
@@ -98,7 +98,7 @@ const SearchField = ({
             <IcClose aria-hidden />
           </button>
         )}
-        {isLoading && <IcLoadingSpinner aria-hidden className="shrink-0" />}
+        {isLoading && <LoadingSpinner />}
       </label>
       {state === 'error' && (
         <p className="text-body-12 text-status-danger">{message}</p>

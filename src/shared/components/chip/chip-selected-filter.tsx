@@ -31,7 +31,7 @@ const ChipSelectedFilter = ({
       {...props}
     >
       <span>
-        검색어 · {children}{' '}
+        {children}{' '}
         <button
           type="button"
           aria-label={`${children} 삭제`}
