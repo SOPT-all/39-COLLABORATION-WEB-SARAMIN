@@ -10,7 +10,7 @@ const KeywordPanelSection = ({ keywords }: KeywordPanelSectionProps) => {
   return (
     <section
       aria-labelledby="keyword-panel-title"
-      className="flex flex-col gap-5 rounded-xl border border-border-default bg-surface-blue-subtle p-4 shadow-[0_2px_4px_rgba(0,0,0,0.08)]"
+      className="flex flex-col gap-5 rounded-xl border border-border-default bg-surface-blue-subtle p-4 shadow-panel"
     >
       <div>
         <h2
