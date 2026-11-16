@@ -8,7 +8,11 @@ import SearchFilterBand from '@/pages/search/components/search-filter-band';
 import SearchSatisfactionSection from '@/pages/search/components/search-satisfaction-section';
 import SearchSummary from '@/pages/search/components/search-summary';
 import SearchUtilities from '@/pages/search/components/search-utilities';
-import { MOCK_MYFIT_KEYWORDS } from '@/pages/search/constants/mock-search';
+import {
+  MOCK_MYFIT_KEYWORDS,
+  MOCK_SEARCH_RESULT_TOTAL,
+  MOCK_SEARCH_RESULTS,
+} from '@/pages/search/constants/mock-search';
 import KeywordSearchPanel from '@/shared/components/search/keyword-search-panel';
 import { ROUTES } from '@/shared/constants/routes';
 import { SEARCH_KEYWORD_PARAM } from '@/shared/constants/search';
@@ -63,7 +67,11 @@ const SearchPage = () => {
           </aside>
 
           <div className="w-238 rounded-2xl border border-gray-30 bg-surface-default">
-            <JobResultSection />
+            {/* TODO(#72): 목 데이터를 쿼리 결과로 바꾸고 isLoading, isError, onRetry를 연결해요. */}
+            <JobResultSection
+              results={MOCK_SEARCH_RESULTS}
+              totalCount={MOCK_SEARCH_RESULT_TOTAL}
+            />
             <div className="mx-2.75 flex flex-col pt-12.5">
               <CompanyInfoSection />
               <div className="mt-4">

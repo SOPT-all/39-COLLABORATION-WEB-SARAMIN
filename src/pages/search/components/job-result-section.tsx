@@ -1,9 +1,8 @@
-import {
-  MOCK_SEARCH_RESULT_TOTAL,
-  MOCK_SEARCH_RESULTS,
-} from '@/pages/search/constants/mock-search';
+import type { SearchResult } from '@/pages/search/types/search';
 import ChipNumber from '@/shared/components/chip/chip-number';
 import RowSearchResult from '@/shared/components/row/row-search-result';
+import SkeletonSearchResultItem from '@/shared/components/skeleton/skeleton-search-result-item';
+import StateSearchResults from '@/shared/components/state-search-results/state-search-results';
 import { cn } from '@/shared/utils/cn';
 
 import IcBookmark from '@/shared/assets/icons/ic-bookmark.svg?react';
@@ -15,7 +14,28 @@ const SORT_OPTIONS = [
 
 const PAGE_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-const JobResultSection = () => {
+const LOADING_ROW_COUNT = 3; // 로딩 중 보여줄 스켈레톤 개수 임의 설정
+
+interface JobResultSectionProps {
+  results: SearchResult[];
+  totalCount: number;
+  isLoading?: boolean;
+  isError?: boolean;
+  onRetry?: () => void;
+}
+
+const JobResultSection = ({
+  results,
+  totalCount,
+  isLoading = false,
+  isError = false,
+  onRetry,
+}: JobResultSectionProps) => {
+  // 요청 중이거나 실패한 경우에는 이전 결과 수와 페이지 번호를 표시하지 않아요.
+  const hasLoaded = !isLoading && !isError;
+  const hasResults = hasLoaded && results.length > 0;
+  const isEmpty = hasLoaded && results.length === 0;
+
   return (
     <section aria-labelledby="job-result-title">
       <div className="flex items-center gap-2 px-6.75 py-4.5">
@@ -25,9 +45,11 @@ const JobResultSection = () => {
         >
           채용정보
         </h2>
-        <span className="text-body-14 text-text-tertiary">
-          총 {MOCK_SEARCH_RESULT_TOTAL.toLocaleString()}건
-        </span>
+        {hasLoaded && (
+          <span className="text-body-14 text-text-tertiary">
+            총 {(isEmpty ? 0 : totalCount).toLocaleString()}건
+          </span>
+        )}
       </div>
 
       <div className="mx-6.25 flex gap-2 px-3 py-2">
@@ -52,24 +74,51 @@ const JobResultSection = () => {
         })}
       </div>
 
-      <ul className="mx-4.75">
-        {MOCK_SEARCH_RESULTS.map((result) => (
-          <li key={result.id}>
-            <RowSearchResult
-              contentState="loaded"
-              matchCount={result.matchCount}
-              deadline={result.deadline}
-              matchedKeywords={result.matchedKeywords}
-              title={result.title}
-              meta={result.meta}
-              companyName={result.companyName}
-              companyMeta={result.companyMeta}
-              isBookmarked={result.isBookmarked}
-              onBookmarkClick={() => {}} // TODO: 북마크 클릭 시 북마크 상태 업데이트
-            />
-          </li>
-        ))}
-      </ul>
+      {isLoading && (
+        <StateSearchResults
+          contentState="loading"
+          className="w-full"
+          loadingSlot={
+            <div className="mx-4.75">
+              {Array.from({ length: LOADING_ROW_COUNT }, (_, index) => (
+                <SkeletonSearchResultItem key={index} className="w-full" />
+              ))}
+            </div>
+          }
+        />
+      )}
+      {isEmpty && (
+        <StateSearchResults contentState="empty" className="w-full" />
+      )}
+      {!isLoading && isError && (
+        <StateSearchResults
+          contentState="error"
+          className="w-full"
+          action={
+            onRetry ? { label: '다시 시도', onClick: onRetry } : undefined
+          }
+        />
+      )}
+      {hasResults && (
+        <ul className="mx-4.75">
+          {results.map((result) => (
+            <li key={result.id}>
+              <RowSearchResult
+                contentState="loaded"
+                matchCount={result.matchCount}
+                deadline={result.deadline}
+                matchedKeywords={result.matchedKeywords}
+                title={result.title}
+                meta={result.meta}
+                companyName={result.companyName}
+                companyMeta={result.companyMeta}
+                isBookmarked={result.isBookmarked}
+                onBookmarkClick={() => {}} // TODO: 북마크 클릭 시 북마크 상태 업데이트
+              />
+            </li>
+          ))}
+        </ul>
+      )}
 
       <div className="mx-2.25 flex flex-col items-end">
         <button
@@ -80,22 +129,24 @@ const JobResultSection = () => {
           저장한 공고 보기
           <span className="text-body-12 text-blue-30">2개</span>
         </button>
-        <nav
-          aria-label="페이지 이동"
-          className="flex h-20 w-full items-center justify-center gap-1.5"
-        >
-          {PAGE_NUMBERS.map((pageNumber) => (
-            <ChipNumber key={pageNumber} isSelected={pageNumber === 1}>
-              {pageNumber}
-            </ChipNumber>
-          ))}
-          <button
-            type="button"
-            className="ml-1.5 text-body-14 text-text-secondary"
+        {hasResults && (
+          <nav
+            aria-label="페이지 이동"
+            className="flex h-20 w-full items-center justify-center gap-1.5"
           >
-            다음 ›
-          </button>
-        </nav>
+            {PAGE_NUMBERS.map((pageNumber) => (
+              <ChipNumber key={pageNumber} isSelected={pageNumber === 1}>
+                {pageNumber}
+              </ChipNumber>
+            ))}
+            <button
+              type="button"
+              className="ml-1.5 text-body-14 text-text-secondary"
+            >
+              다음 ›
+            </button>
+          </nav>
+        )}
       </div>
     </section>
   );
