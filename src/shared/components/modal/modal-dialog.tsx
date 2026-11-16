@@ -55,6 +55,16 @@ const ModalDialog = ({
     onClose();
   };
 
+  // 크롬은 ESC를 연달아 누르면 cancel 없이 dialog를 바로 닫아요.
+  // 부모 상태가 아직 열림이면 다시 열고 닫기 요청만 전달해요.
+  const handleClose = () => {
+    const dialog = dialogRef.current;
+    if (!isOpen || !dialog || dialog.open) return;
+
+    dialog.showModal();
+    onClose();
+  };
+
   // 모달 바깥(배경)을 누르면 이벤트 대상이 dialog 자신이에요.
   const handleClick = (e: MouseEvent<HTMLDialogElement>) => {
     if (canCloseOnBackdropClick && e.target === e.currentTarget) onClose();
@@ -69,6 +79,7 @@ const ModalDialog = ({
         className,
       )}
       onCancel={handleCancel}
+      onClose={handleClose}
       onClick={handleClick}
       {...props}
     >
