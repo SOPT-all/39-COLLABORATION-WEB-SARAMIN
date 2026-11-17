@@ -15,11 +15,9 @@ import KeywordSearchPanel from '@/shared/components/search/keyword-search-panel'
 import { ROUTES } from '@/shared/constants/routes';
 import { SEARCH_KEYWORD_PARAM } from '@/shared/constants/search';
 
-const SEARCH_PAGE_SIZE = 40; // 검색결과 페이지당 보여줄 개수
+const SEARCH_PAGE_SIZE = 40;
 
-// TODO(#72): MY FIT은 칩 편집과 적용 조건을 분리하고 검색하기 클릭 시 조회해요.
 const SearchPage = () => {
-  // URL 검색값 가져오기
   const [searchParams] = useSearchParams();
   const keyword = searchParams.get(SEARCH_KEYWORD_PARAM)?.trim() ?? '';
 
@@ -28,40 +26,53 @@ const SearchPage = () => {
     page: 0,
   });
 
-  // URL 검색어가 바뀌면 첫 페이지부터 조회해요.
+  // 검색어가 바뀌면 첫 페이지부터 다시 조회해요.
   const currentPage = pagination.keyword === keyword ? pagination.page : 0;
 
   if (pagination.keyword !== keyword) {
     setPagination({ keyword, page: 0 });
   }
 
-  // 쿼리 훅 호출
+  // TODO(#72): 조건이 바뀌면 이전 결과를 유지하지 않아요. 이전 결과 유지는 후속 작업이에요.
   const searchQuery = useSearchJobPostingsQuery({
     query: keyword,
     page: currentPage,
     size: SEARCH_PAGE_SIZE,
   });
-  // 쿼리 결과를 화면에서 보여줄 검색결과 데이터로 변환
-  const results =
-    searchQuery.data?.content.map(convertSearchJobPostingToSearchResult) ?? [];
-  // 쿼리 결과의 총 개수
-  const totalCount = searchQuery.data?.totalElements ?? 0;
+  const searchData = searchQuery.data;
+  const totalPages = searchData?.totalPages ?? 0;
+  // 공고가 줄어 보고 있던 페이지가 없어지면 마지막 페이지로 돌아와요.
+  const isPageOutOfRange =
+    pagination.keyword === keyword &&
+    searchQuery.isSuccess &&
+    searchData !== undefined &&
+    searchData.page === currentPage &&
+    currentPage > 0 &&
+    currentPage >= totalPages;
+  const resolvedPage = isPageOutOfRange
+    ? Math.max(totalPages - 1, 0)
+    : currentPage;
 
-  const totalPages = searchQuery.data?.totalPages ?? 0;
+  if (isPageOutOfRange) {
+    setPagination({ keyword, page: resolvedPage });
+  }
+
+  const results =
+    searchData?.content.map(convertSearchJobPostingToSearchResult) ?? [];
+  const totalCount = searchData?.totalElements ?? 0;
+  const isResultPending = searchQuery.isLoading || isPageOutOfRange;
 
   const handlePageChange = (nextPage: number) => {
-    if (nextPage < 0 || nextPage >= totalPages || nextPage === currentPage) {
+    if (nextPage < 0 || nextPage >= totalPages || nextPage === resolvedPage) {
       return;
     }
     setPagination({ keyword, page: nextPage });
   };
 
-  // 현재 검색 조건으로 다시 요청해요.
   const handleRetry = () => {
     void searchQuery.refetch();
   };
 
-  // MY FIT 검색어 상태 관리
   const [myFitKeywords, setMyFitKeywords] = useState(MOCK_MYFIT_KEYWORDS);
   const [myFitInput, setMyFitInput] = useState('');
 
@@ -73,20 +84,18 @@ const SearchPage = () => {
     );
   };
 
-  // 주소창에 /search만 입력하는 등 검색어가 없으면 홈으로 보내요.
+  // 검색어 없이 /search에 들어오면 공고를 요청하지 않고 홈으로 보내요.
   if (!keyword) return <Navigate to={ROUTES.HOME} replace />;
 
   return (
     <>
       <SearchFilterBand keyword={keyword} />
-      {/*SearchFilterBand에 검색어 (keyword) 전달*/}
       <SearchSummary
         keyword={keyword}
         totalCount={totalCount}
-        isLoading={searchQuery.isLoading}
+        isLoading={isResultPending}
         isError={searchQuery.isError}
       />
-      {/*SearchSummary에 검색어 (keyword) 전달*/}
       <div className="mx-auto w-315 pt-6.5 pb-14.5">
         <div className="flex items-center justify-between">
           <h1 className="text-heading-20 text-text-primary">
@@ -99,9 +108,14 @@ const SearchPage = () => {
 
         <div className="mt-5 flex items-start gap-8">
           <aside aria-label="MY FIT" className="sticky top-6 w-69 shrink-0">
-            {/* TODO(FR-09): 입력값으로 후보를 조회하고, 후보 선택 시 myFitKeywords에 추가해요. */}
-            {/* TODO(#72): 검색하기 버튼에 편집한 키워드 적용을 연결해요. */}
-            {/*KeywordSearchPanel에 검색어 (myFitKeywords) 전달*/}
+            {/*
+              TODO(FR-09): 서버 조회가 아니라 키워드 시트 목록에서 입력값으로 후보를 거르고,
+              선택하면 myFitKeywords에 추가해요.
+            */}
+            {/*
+              TODO(#72): #71 머지 후 MY FIT 기본 조회를 재사용하고,
+              검색하기를 누르면 편집한 키워드 조건을 적용해요.
+            */}
             <KeywordSearchPanel
               keywords={myFitKeywords}
               keyword={myFitInput}
@@ -111,16 +125,15 @@ const SearchPage = () => {
           </aside>
 
           <div className="w-238 rounded-2xl border border-gray-30 bg-surface-default">
-            {/* 키워드 조건은 아직 보내지 않으므로 배지 분모도 0이에요. */}
-            {/*JobResultSection에 검색결과 (results) 전달*/}
+            {/* 키워드 조건은 아직 요청에 넣지 않아서 배지 분모는 0이에요. */}
             <JobResultSection
               results={results}
               totalCount={totalCount}
               keywordCount={0}
-              currentPage={currentPage}
+              currentPage={resolvedPage}
               totalPages={totalPages}
               onPageChange={handlePageChange}
-              isLoading={searchQuery.isLoading}
+              isLoading={isResultPending}
               isError={searchQuery.isError}
               onRetry={handleRetry}
             />

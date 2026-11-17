@@ -14,7 +14,7 @@ interface SearchSummaryProps {
 
 const SEARCH_TABS = ['통합검색', '✦ AI 검색', '채용정보', '기업정보'];
 
-// 정적 UI예요. 필터 삭제 · 탭 전환은 API 연동 때 붙여요.
+// 필터 삭제와 탭 전환은 아직 동작하지 않아요.
 const handleRemoveFilter = () => {};
 
 const SearchSummary = ({

@@ -8,6 +8,21 @@ import {
 
 import JobResultSection from './job-result-section';
 
+const changeStoryPage = (
+  page: number,
+  currentPage: number,
+  totalPages: number,
+  onPageChange: (page: number) => void,
+  updateCurrentPage: (page: number) => void,
+) => {
+  if (page < 0 || page >= totalPages || page === currentPage) {
+    return;
+  }
+
+  onPageChange(page);
+  updateCurrentPage(page);
+};
+
 const meta = {
   title: 'Pages/Search/JobResultSection',
   component: JobResultSection,
@@ -28,20 +43,24 @@ const meta = {
     isLoading: false,
     isError: false,
   },
+  // 예시 목록은 그대로 두고, 선택 번호와 이전·다음 상태만 바꿔요.
   render: (args) => {
     const [, updateArgs] = useArgs();
 
-    // 실제 API 호출 없이 선택 번호와 이전·다음 버튼 상태를 확인해요.
-    // 공고 목록은 페이지가 바뀌어도 동일한 예시 데이터를 유지해요.
-    const handlePageChange = (page: number) => {
-      if (page < 0 || page >= args.totalPages || page === args.currentPage) {
-        return;
-      }
-      args.onPageChange(page);
-      updateArgs({ currentPage: page });
-    };
-
-    return <JobResultSection {...args} onPageChange={handlePageChange} />;
+    return (
+      <JobResultSection
+        {...args}
+        onPageChange={(page) =>
+          changeStoryPage(
+            page,
+            args.currentPage,
+            args.totalPages,
+            args.onPageChange,
+            (nextPage) => updateArgs({ currentPage: nextPage }),
+          )
+        }
+      />
+    );
   },
 } satisfies Meta<typeof JobResultSection>;
 
@@ -84,14 +103,26 @@ export const Empty: Story = {
   args: { results: [], totalCount: 0, totalPages: 0 },
 };
 
+// 다시 시도하면 오류를 해제해요. 그 뒤의 페이지 이동도 동작해야 해요.
 export const Error: Story = {
   args: { isError: true },
   render: (args) => {
     const [, updateArgs] = useArgs();
 
-    // 실제 요청 대신 오류 해제로 재시도 콜백 연결을 확인해요.
-    const handleRetry = () => updateArgs({ isError: false });
-
-    return <JobResultSection {...args} onRetry={handleRetry} />;
+    return (
+      <JobResultSection
+        {...args}
+        onPageChange={(page) =>
+          changeStoryPage(
+            page,
+            args.currentPage,
+            args.totalPages,
+            args.onPageChange,
+            (nextPage) => updateArgs({ currentPage: nextPage }),
+          )
+        }
+        onRetry={() => updateArgs({ isError: false })}
+      />
+    );
   },
 };

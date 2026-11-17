@@ -11,17 +11,16 @@ const SORT_OPTIONS = [
   { label: '마감임박', widthClassName: 'w-29.5' },
 ];
 
-const PAGE_GROUP_SIZE = 10; // 한 번에 보여줄 페이지 번호 개수
-
-const LOADING_ROW_COUNT = 3; // 로딩 중 보여줄 스켈레톤 개수 임의 설정
+const PAGE_GROUP_SIZE = 10; // 한 번에 보여줄 번호 개수예요.
+const LOADING_ROW_COUNT = 3;
 
 interface JobResultSectionProps {
   results: SearchResult[];
   totalCount: number;
-  keywordCount: number; // 이 결과를 검색할 때 적용한 MY FIT 키워드 수예요.
-  currentPage: number; // API와 같은 0 기반 번호예요. 화면에서는 1을 더해 표시해요.
-  totalPages: number; // 서버가 반환한 전체 페이지 수예요.
-  onPageChange: (page: number) => void; // 이동할 0 기반 페이지 번호를 전달해요.
+  keywordCount: number; // 적용한 MY FIT 키워드 수예요. 조건을 아직 안 보내면 0이에요.
+  currentPage: number; // 0부터 시작해요. 화면 번호는 1을 더해 보여요.
+  totalPages: number;
+  onPageChange: (page: number) => void;
   isLoading?: boolean;
   isError?: boolean;
   onRetry?: () => void;
@@ -38,7 +37,7 @@ const JobResultSection = ({
   isError = false,
   onRetry,
 }: JobResultSectionProps) => {
-  // 요청 중이거나 실패한 경우에는 이전 결과 수와 페이지 번호를 표시하지 않아요.
+  // 로딩·오류 중에는 건수와 페이지 번호를 숨겨요.
   const hasLoaded = !isLoading && !isError;
   const hasResults = hasLoaded && results.length > 0;
   const isEmpty = hasLoaded && results.length === 0;
@@ -118,10 +117,13 @@ const JobResultSection = ({
       )}
       {hasResults && (
         <ul className="mx-4.75">
-          {results.map((result) => (
+          {results.map((result, index) => (
             <li key={result.id}>
               <RowSearchResult
                 contentState="loaded"
+                className={
+                  index === results.length - 1 ? 'border-b-0' : undefined
+                }
                 matchCount={result.matchCount}
                 keywordCount={keywordCount}
                 deadline={result.deadline}
@@ -131,7 +133,7 @@ const JobResultSection = ({
                 companyName={result.companyName}
                 companyMeta={result.companyMeta}
                 isBookmarked={result.isBookmarked}
-                // TODO: 북마크 저장·해제의 후속 작업 범위를 정한 뒤 공고 id별 상태 변경을 연결해요. 현재는 표시만 해요.
+                // TODO: 후속 북마크 구현에서 공고별 저장·해제를 연결해요.
                 onBookmarkClick={() => {}}
               />
             </li>

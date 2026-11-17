@@ -4,7 +4,7 @@ import type {
   SearchResult,
 } from '@/pages/search/types/search';
 
-// API가 나오기 전까지 쓰는 검색 페이지 목 데이터예요. (피그마 예시 문구 그대로)
+// 아직 API에 연결하지 않은 영역과 Storybook에서 쓰는 예시 데이터예요.
 
 export const MOCK_SEARCH_RESULT_TOTAL = 729;
 export const MOCK_COMPANY_TOTAL = 49094;
