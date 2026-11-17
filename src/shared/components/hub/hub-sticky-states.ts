@@ -1,18 +1,18 @@
 // [스펙] 스티키 허브 상태 표
-// 역할   : status 4개마다 뱃지 · 안내 문구 · 요약 카드 · 패키지 카드 · 바깥 테두리를 모아 둠. 컴포넌트는 이 표를 읽기만 함
+// 역할   : status 5개마다 뱃지 · 안내 문구 · 요약 카드 · 패키지 카드 · 바깥 테두리를 모아 둠. 컴포넌트는 이 표를 읽기만 함
 // 문구   : 피그마 그대로 고정. "3/3"처럼 숫자가 바뀌는 건 API 나오면 분리 검토
 // loading: 본문을 통째로 스켈레톤으로 바꾸므로 표에는 뱃지 · 문구만 있고 쓰이지 않음
 
 import type { BundleApplicationState } from '@/shared/components/bundle-application/bundle-application.types';
 
 export type HubStickyStatus =
-  'ready' | 'dragging' | 'needsDocument' | 'loading';
+  'ready' | 'dragging' | 'needsDocument' | 'unready' | 'loading';
 
 export interface HubStickyState {
   badgeVariant: 'primary' | 'danger';
   badge: string;
   description: string;
-  summaryTone: 'ready' | 'warning';
+  summaryTone: 'ready' | 'warning' | 'unready';
   summaryTitle: string;
   summaryDescription: string;
   bundleState: BundleApplicationState;
@@ -46,6 +46,15 @@ export const HUB_STICKY_STATES: Record<HubStickyStatus, HubStickyState> = {
     summaryTone: 'warning',
     summaryTitle: '필수 서류 2/3 준비',
     summaryDescription: '경력기술서 보완 필요',
+    bundleState: 'disabled',
+  },
+  unready: {
+    badgeVariant: 'primary',
+    badge: '0/3 완료',
+    description: '원하는 공고의 지원 영역에 놓아주세요',
+    summaryTone: 'unready',
+    summaryTitle: '필수 서류 0/3 준비',
+    summaryDescription: '최근 업데이트 10분 전',
     bundleState: 'disabled',
   },
   loading: {
