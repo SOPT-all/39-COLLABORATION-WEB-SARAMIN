@@ -18,6 +18,7 @@ const LOADING_ROW_COUNT = 3; // 로딩 중 보여줄 스켈레톤 개수 임의 
 interface JobResultSectionProps {
   results: SearchResult[];
   totalCount: number;
+  keywordCount: number; // 이 결과를 검색할 때 적용한 MY FIT 키워드 수예요.
   isLoading?: boolean;
   isError?: boolean;
   onRetry?: () => void;
@@ -26,6 +27,7 @@ interface JobResultSectionProps {
 const JobResultSection = ({
   results,
   totalCount,
+  keywordCount,
   isLoading = false,
   isError = false,
   onRetry,
@@ -46,7 +48,7 @@ const JobResultSection = ({
         </h2>
         {hasLoaded && (
           <span className="text-body-14 text-text-tertiary">
-            총 {(isEmpty ? 0 : totalCount).toLocaleString()}건
+            총 {totalCount.toLocaleString()}건
           </span>
         )}
       </div>
@@ -105,6 +107,7 @@ const JobResultSection = ({
               <RowSearchResult
                 contentState="loaded"
                 matchCount={result.matchCount}
+                keywordCount={keywordCount}
                 deadline={result.deadline}
                 matchedKeywords={result.matchedKeywords}
                 title={result.title}

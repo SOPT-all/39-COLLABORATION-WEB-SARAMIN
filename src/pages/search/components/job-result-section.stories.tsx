@@ -21,6 +21,7 @@ const meta = {
   args: {
     results: MOCK_SEARCH_RESULTS,
     totalCount: MOCK_SEARCH_RESULT_TOTAL,
+    keywordCount: 3,
     isLoading: false,
     isError: false,
   },
@@ -31,6 +32,18 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Loaded: Story = {};
+
+export const WithoutKeywords: Story = {
+  args: {
+    keywordCount: 0,
+    results: MOCK_SEARCH_RESULTS.map((result) => ({
+      ...result,
+      matchCount: 0,
+      matchedKeywords: '',
+      companyMeta: '',
+    })),
+  },
+};
 
 export const Loading: Story = {
   args: { results: [], totalCount: 0, isLoading: true },

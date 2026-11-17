@@ -2,13 +2,17 @@ import type { ComponentProps } from 'react';
 
 import { cn } from '@/shared/utils/cn';
 
-const TOTAL_KEYWORD_COUNT = 3;
-
 interface BadgeMatchProps extends Omit<ComponentProps<'span'>, 'children'> {
   matchCount: number;
+  keywordCount: number;
 }
 
-const BadgeMatch = ({ matchCount, className, ...props }: BadgeMatchProps) => {
+const BadgeMatch = ({
+  matchCount,
+  keywordCount,
+  className,
+  ...props
+}: BadgeMatchProps) => {
   return (
     <span
       className={cn(
@@ -17,7 +21,7 @@ const BadgeMatch = ({ matchCount, className, ...props }: BadgeMatchProps) => {
       )}
       {...props}
     >
-      내 키워드 {matchCount}/{TOTAL_KEYWORD_COUNT} 일치
+      내 키워드 {matchCount}/{keywordCount} 일치
     </span>
   );
 };

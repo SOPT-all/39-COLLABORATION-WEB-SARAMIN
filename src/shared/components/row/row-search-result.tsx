@@ -11,6 +11,7 @@ import { cn } from '@/shared/utils/cn';
 interface RowSearchResultLoadedProps extends ComponentProps<'article'> {
   contentState: 'loaded';
   matchCount: number;
+  keywordCount: number;
   deadline: string;
   matchedKeywords: string;
   title: string;
@@ -34,6 +35,7 @@ type RowSearchResultProps =
 const RowSearchResult = ({
   contentState,
   matchCount,
+  keywordCount,
   deadline,
   matchedKeywords,
   title,
@@ -67,7 +69,7 @@ const RowSearchResult = ({
       {...props}
     >
       <div className="flex items-start justify-between px-4">
-        <BadgeMatch matchCount={matchCount} />
+        <BadgeMatch matchCount={matchCount} keywordCount={keywordCount} />
         <p className="w-12.5 shrink-0 text-center text-caption-12 text-status-danger">
           {deadline}
         </p>
