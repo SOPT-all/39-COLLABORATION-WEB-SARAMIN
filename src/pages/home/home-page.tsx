@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { createMockSubmitApplication } from '@/pages/home/api/create-mock-submit-application';
+import { useMyDocumentsQuery } from '@/pages/home/api/use-my-documents-query';
 import ApplicationHistoryModal from '@/pages/home/components/application-history-modal';
 import ApplyFilterBar from '@/pages/home/components/apply-filter-bar';
 import ApplyFlowModal from '@/pages/home/components/apply-flow-modal';
@@ -20,19 +21,22 @@ import { useApplyDrag } from '@/pages/home/hooks/use-apply-drag';
 import { useApplyFilter } from '@/pages/home/hooks/use-apply-filter';
 import { useApplyFlow } from '@/pages/home/hooks/use-apply-flow';
 import type { JobCardItem } from '@/pages/home/types/job-card';
+import { createApplyDocumentSummary } from '@/pages/home/utils/create-apply-document-summary';
 import { getApplyStatusCounts } from '@/pages/home/utils/get-apply-status-counts';
 
 const APPLY_STATUS_COUNTS = getApplyStatusCounts(
   Object.values(MOCK_RECRUITS).flat(),
 );
 
-// 지원 API가 없어서 목 제출 함수로 항상 성공 처리해요.
+// 지원 API가 없어 목 제출 함수로 항상 성공 처리
 const submitApplication = createMockSubmitApplication('success');
 
-// 섹션 배치와 섹션끼리 주고받는 상태(지원 패키지 드래그 · 지원 플로우 · 지원 내역)를 담당해요.
+// 섹션 배치와 섹션끼리 주고받는 상태(지원 패키지 드래그 · 지원 플로우 · 지원 내역) 담당
 const HomePage = () => {
   const { selectedFilter, toggleFilter } = useApplyFilter();
   const { isDragging, bundleProps } = useApplyDrag();
+  // 스티키 레일과 같은 쿼리 키라 요청은 한 번만 나감
+  const { data: myDocuments } = useMyDocumentsQuery();
   const [appliedAtByRecruitId, setAppliedAtByRecruitId] = useState<
     ReadonlyMap<number, string>
   >(() => new Map());
@@ -51,7 +55,9 @@ const HomePage = () => {
       recruitId: recruit.id,
       companyName: recruit.companyName,
       positionName: recruit.title,
-      documentSummary: APPLY_DOCUMENT_SUMMARY,
+      documentSummary: myDocuments
+        ? createApplyDocumentSummary(myDocuments)
+        : APPLY_DOCUMENT_SUMMARY,
     });
   };
 
