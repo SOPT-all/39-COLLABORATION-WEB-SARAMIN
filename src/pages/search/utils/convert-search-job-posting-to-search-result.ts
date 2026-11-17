@@ -32,6 +32,7 @@ export const convertSearchJobPostingToSearchResult = (
     jobPosting.requiredEducation,
     jobPosting.hireType,
   ].join(' · '),
-  companyMeta: '', // TODO: ranking을 활용한 회사 메타 정보 표시 여부 결정
-  isBookmarked: false, // TODO: 북마크 API 연동 후 북마크 상태 표시
+  companyMeta: `관심기업 TOP ${jobPosting.ranking}`,
+  // TODO: 후속 북마크 구현에서 연결해요.
+  isBookmarked: false,
 });
