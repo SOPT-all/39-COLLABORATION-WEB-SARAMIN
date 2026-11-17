@@ -1,6 +1,10 @@
-import type { JobCardItem } from '@/pages/home/types/job-card';
+import type {
+  JobCardDocuments,
+  JobCardItem,
+} from '@/pages/home/types/job-card';
 import type { JobPosting } from '@/pages/home/types/job-posting';
 import type { ApplyStatus } from '@/pages/home/types/recruit';
+import { convertDateToMonthDay } from '@/pages/home/utils/convert-date-to-month-day';
 import type { CardJobTag } from '@/shared/components/card-job/card-job.types';
 import { convertAddressToRegion } from '@/shared/utils/convert-address-to-region';
 import { convertCareerYears } from '@/shared/utils/convert-career-years';
@@ -31,9 +35,22 @@ const convertKeywordsToTags = (
     variant: index === 0 ? 'role' : 'skill',
   }));
 
-// '2026-10-31T15:00:00' → '10.31'
-const convertDateToMonthDay = (date: Date) =>
-  `${date.getMonth() + 1}.${String(date.getDate()).padStart(2, '0')}`;
+// 서류 수가 null(지원한 공고)이면 서류 정보 없이 둬요.
+const convertToDocuments = ({
+  requiredDocumentCount,
+  matchedDocumentCount,
+  missingDocuments,
+}: JobPosting): JobCardDocuments | undefined => {
+  if (requiredDocumentCount === null || matchedDocumentCount === null) {
+    return undefined;
+  }
+
+  return {
+    requiredCount: requiredDocumentCount,
+    matchedCount: matchedDocumentCount,
+    missingNames: missingDocuments ?? [],
+  };
+};
 
 // 지원한 공고는 지원일, 아니면 등록일을 보여 줘요.
 // 지원 → '10.31 지원' / 등록 → '오늘' · '어제' · '3일 전 등록' / 값 없음 → ''
@@ -76,4 +93,6 @@ export const convertJobPostingToCardItem = (
   applyStatus: getApplyStatus(jobPosting),
   // 북마크 API가 없어서 항상 false예요.
   isBookmarked: false,
+  documents: convertToDocuments(jobPosting),
+  appliedAt: jobPosting.appliedAt ?? undefined,
 });

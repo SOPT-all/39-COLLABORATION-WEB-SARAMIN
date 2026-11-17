@@ -1,6 +1,7 @@
 // [스펙] DropZoneApplication
 // 역할   : 공고 옆에서 지원 패키지를 끌어다 놓는 영역. 컴포넌트 1개가 상태 12개를 표현
 // props  : status - 상태 12개 중 하나 (기본 'idle'). 이 값 하나로 배경 · 아이콘 · 문구 · 뱃지가 모두 정해짐
+//          statusTitle · statusDescription · badge - 공고 데이터로 바꿀 문구. 안 주면 상태 표의 피그마 문구
 //          className - 크기 · 여백 조정
 //          onDrop · onDragOver 등 드래그 이벤트는 div 속성으로 받음. 실제 동작은 페이지에서 연결
 // 상태   : 색 · 아이콘 · 문구는 drop-zone-application-states.ts 표에서 꺼냄. 여기에는 if 분기 없음
@@ -19,21 +20,24 @@ import { cn } from '@/shared/utils/cn';
 
 interface DropZoneApplicationProps extends ComponentProps<'div'> {
   status?: DropZoneApplicationStatus;
+  statusTitle?: string;
+  statusDescription?: string;
+  badge?: string;
 }
 
 const DropZoneApplication = ({
   status = 'idle',
+  statusTitle,
+  statusDescription,
+  badge: badgeProp,
   className,
   ...props
 }: DropZoneApplicationProps) => {
-  const {
-    tone,
-    icon: Icon,
-    title,
-    description,
-    badge,
-    isBadgeHighlighted,
-  } = DROP_ZONE_APPLICATION_STATES[status];
+  const { tone, icon: Icon, ...texts } = DROP_ZONE_APPLICATION_STATES[status];
+  const title = statusTitle ?? texts.title;
+  const description = statusDescription ?? texts.description;
+  const badge = badgeProp ?? texts.badge;
+  const { isBadgeHighlighted } = texts;
 
   return (
     <div

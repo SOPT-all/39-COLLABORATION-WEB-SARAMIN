@@ -33,16 +33,16 @@ const submitApplication = createMockSubmitApplication('success');
 const HomePage = () => {
   const { selectedFilter, toggleFilter } = useApplyFilter();
   const { isDragging, bundleProps } = useApplyDrag();
-  const [appliedRecruitIds, setAppliedRecruitIds] = useState<
-    ReadonlySet<number>
-  >(() => new Set());
+  const [appliedAtByRecruitId, setAppliedAtByRecruitId] = useState<
+    ReadonlyMap<number, string>
+  >(() => new Map());
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   const { step, target, openApplyFlow, closeApplyFlow, submit } = useApplyFlow({
     submitApplication,
     onApplySuccess: ({ recruitId }) =>
-      setAppliedRecruitIds((previousIds) =>
-        new Set(previousIds).add(recruitId),
+      setAppliedAtByRecruitId((previous) =>
+        new Map(previous).set(recruitId, new Date().toISOString()),
       ),
   });
 
@@ -82,7 +82,7 @@ const HomePage = () => {
           <RecruitFeedSection
             selectedFilter={selectedFilter}
             isDragging={isDragging}
-            appliedRecruitIds={appliedRecruitIds}
+            appliedAtByRecruitId={appliedAtByRecruitId}
             onApplyDrop={handleApplyDrop}
           />
         </div>

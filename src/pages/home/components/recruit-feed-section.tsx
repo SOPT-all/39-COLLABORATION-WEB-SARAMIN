@@ -97,15 +97,15 @@ interface DragOverTarget {
 interface RecruitFeedSectionProps {
   selectedFilter: ApplyFilter | null;
   isDragging: boolean;
-  // 이번 방문에서 지원을 마친 공고예요. 지원 API가 없어서 화면에서만 지원 완료로 바꿔요.
-  appliedRecruitIds: ReadonlySet<number>;
+  // 이번 방문에서 지원을 마친 공고 id와 지원 시각이에요. 지원 API가 없어서 화면에서만 지원 완료로 바꿔요.
+  appliedAtByRecruitId: ReadonlyMap<number, string>;
   onApplyDrop: (recruit: JobCardItem) => void;
 }
 
 const RecruitFeedSection = ({
   selectedFilter,
   isDragging,
-  appliedRecruitIds,
+  appliedAtByRecruitId,
   onApplyDrop,
 }: RecruitFeedSectionProps) => {
   // 같은 공고가 여러 섹션에 나올 수 있어서 섹션까지 같이 기억해요.
@@ -139,11 +139,12 @@ const RecruitFeedSection = ({
             isError,
             onRetry,
           } = getSectionContent(type);
-          const recruits = sectionRecruits.map((recruit) =>
-            appliedRecruitIds.has(recruit.id)
-              ? { ...recruit, applyStatus: 'applied' as const }
-              : recruit,
-          );
+          const recruits = sectionRecruits.map((recruit) => {
+            const appliedAt = appliedAtByRecruitId.get(recruit.id);
+            return appliedAt
+              ? { ...recruit, applyStatus: 'applied' as const, appliedAt }
+              : recruit;
+          });
           const isLoaded = !isPending && !isError;
           const filteredRecruits = recruits.filter(
             ({ applyStatus }) =>

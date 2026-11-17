@@ -3,6 +3,7 @@ import type { DragEvent } from 'react';
 import CompanyLogo from '@/pages/home/components/company-logo';
 import { APPLY_BUNDLE_DRAG_TYPE } from '@/pages/home/constants/apply-drag';
 import type { JobCardItem } from '@/pages/home/types/job-card';
+import { getDropZoneTexts } from '@/pages/home/utils/get-drop-zone-texts';
 import CardJob from '@/shared/components/card-job/card-job';
 import DropZoneApplication from '@/shared/components/drop-zone/drop-zone-application';
 import SkeletonJobCard from '@/shared/components/skeleton/skeleton-job-card';
@@ -111,6 +112,8 @@ const RecruitCardList = ({
           isDragging && isDroppable
             ? getDragStates(dragOverId === recruit.id)
             : null;
+        const dropZoneStatus =
+          dragStates?.dropZone ?? DROP_ZONE_STATUS_MAP[recruit.applyStatus];
 
         const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
           if (!isBundleDrag(e)) return;
@@ -151,10 +154,8 @@ const RecruitCardList = ({
               }
               applicationSlot={
                 <DropZoneApplication
-                  status={
-                    dragStates?.dropZone ??
-                    DROP_ZONE_STATUS_MAP[recruit.applyStatus]
-                  }
+                  status={dropZoneStatus}
+                  {...getDropZoneTexts(recruit, dropZoneStatus)}
                   {...(isDroppable && {
                     onDragOver: handleDragOver,
                     onDragLeave: handleDragLeave,
