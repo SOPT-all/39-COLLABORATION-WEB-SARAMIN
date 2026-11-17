@@ -23,10 +23,22 @@ const SearchPage = () => {
   const [searchParams] = useSearchParams();
   const keyword = searchParams.get(SEARCH_KEYWORD_PARAM)?.trim() ?? '';
 
+  const [pagination, setPagination] = useState({
+    keyword,
+    page: 0,
+  });
+
+  // URL 검색어가 바뀌면 첫 페이지부터 조회해요.
+  const currentPage = pagination.keyword === keyword ? pagination.page : 0;
+
+  if (pagination.keyword !== keyword) {
+    setPagination({ keyword, page: 0 });
+  }
+
   // 쿼리 훅 호출
   const searchQuery = useSearchJobPostingsQuery({
     query: keyword,
-    page: 0,
+    page: currentPage,
     size: SEARCH_PAGE_SIZE,
   });
   // 쿼리 결과를 화면에서 보여줄 검색결과 데이터로 변환
@@ -34,6 +46,16 @@ const SearchPage = () => {
     searchQuery.data?.content.map(convertSearchJobPostingToSearchResult) ?? [];
   // 쿼리 결과의 총 개수
   const totalCount = searchQuery.data?.totalElements ?? 0;
+
+  const totalPages = searchQuery.data?.totalPages ?? 0;
+
+  const handlePageChange = (nextPage: number) => {
+    if (nextPage < 0 || nextPage >= totalPages || nextPage === currentPage) {
+      return;
+    }
+    setPagination({ keyword, page: nextPage });
+  };
+
   // 현재 검색 조건으로 다시 요청해요.
   const handleRetry = () => {
     void searchQuery.refetch();
@@ -95,6 +117,9 @@ const SearchPage = () => {
               results={results}
               totalCount={totalCount}
               keywordCount={0}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
               isLoading={searchQuery.isLoading}
               isError={searchQuery.isError}
               onRetry={handleRetry}

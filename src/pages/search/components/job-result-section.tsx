@@ -11,7 +11,7 @@ const SORT_OPTIONS = [
   { label: '마감임박', widthClassName: 'w-29.5' },
 ];
 
-const PAGE_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const PAGE_GROUP_SIZE = 10; // 한 번에 보여줄 페이지 번호 개수
 
 const LOADING_ROW_COUNT = 3; // 로딩 중 보여줄 스켈레톤 개수 임의 설정
 
@@ -19,6 +19,9 @@ interface JobResultSectionProps {
   results: SearchResult[];
   totalCount: number;
   keywordCount: number; // 이 결과를 검색할 때 적용한 MY FIT 키워드 수예요.
+  currentPage: number; // API와 같은 0 기반 번호예요. 화면에서는 1을 더해 표시해요.
+  totalPages: number; // 서버가 반환한 전체 페이지 수예요.
+  onPageChange: (page: number) => void; // 이동할 0 기반 페이지 번호를 전달해요.
   isLoading?: boolean;
   isError?: boolean;
   onRetry?: () => void;
@@ -28,6 +31,9 @@ const JobResultSection = ({
   results,
   totalCount,
   keywordCount,
+  currentPage,
+  totalPages,
+  onPageChange,
   isLoading = false,
   isError = false,
   onRetry,
@@ -36,6 +42,16 @@ const JobResultSection = ({
   const hasLoaded = !isLoading && !isError;
   const hasResults = hasLoaded && results.length > 0;
   const isEmpty = hasLoaded && results.length === 0;
+  const pageGroupStart =
+    Math.floor(currentPage / PAGE_GROUP_SIZE) * PAGE_GROUP_SIZE;
+  const visiblePageCount = Math.max(
+    0,
+    Math.min(PAGE_GROUP_SIZE, totalPages - pageGroupStart),
+  );
+  const pageNumbers = Array.from(
+    { length: visiblePageCount },
+    (_, index) => pageGroupStart + index,
+  );
 
   return (
     <section aria-labelledby="job-result-title">
@@ -125,19 +141,34 @@ const JobResultSection = ({
 
       <div className="mx-2.25 flex flex-col items-end">
         <MyfitSearchButton resultCount={2}>저장한 공고 보기</MyfitSearchButton>
-        {hasResults && (
+        {hasResults && totalPages > 0 && (
           <nav
             aria-label="페이지 이동"
             className="flex h-20 w-full items-center justify-center gap-1.5"
           >
-            {PAGE_NUMBERS.map((pageNumber) => (
-              <ChipNumber key={pageNumber} isSelected={pageNumber === 1}>
-                {pageNumber}
+            <button
+              type="button"
+              disabled={currentPage === 0}
+              onClick={() => onPageChange(currentPage - 1)}
+              className="mr-1.5 text-body-14 text-text-secondary disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              ‹ 이전
+            </button>
+
+            {pageNumbers.map((page) => (
+              <ChipNumber
+                key={page}
+                isSelected={page === currentPage}
+                onClick={() => onPageChange(page)}
+              >
+                {page + 1}
               </ChipNumber>
             ))}
             <button
               type="button"
-              className="ml-1.5 text-body-14 text-text-secondary"
+              disabled={currentPage >= totalPages - 1}
+              onClick={() => onPageChange(currentPage + 1)}
+              className="ml-1.5 text-body-14 text-text-secondary disabled:cursor-not-allowed disabled:opacity-50"
             >
               다음 ›
             </button>

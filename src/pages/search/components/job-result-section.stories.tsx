@@ -22,8 +22,26 @@ const meta = {
     results: MOCK_SEARCH_RESULTS,
     totalCount: MOCK_SEARCH_RESULT_TOTAL,
     keywordCount: 3,
+    currentPage: 0,
+    totalPages: 19,
+    onPageChange: () => {},
     isLoading: false,
     isError: false,
+  },
+  render: (args) => {
+    const [, updateArgs] = useArgs();
+
+    // 실제 API 호출 없이 선택 번호와 이전·다음 버튼 상태를 확인해요.
+    // 공고 목록은 페이지가 바뀌어도 동일한 예시 데이터를 유지해요.
+    const handlePageChange = (page: number) => {
+      if (page < 0 || page >= args.totalPages || page === args.currentPage) {
+        return;
+      }
+      args.onPageChange(page);
+      updateArgs({ currentPage: page });
+    };
+
+    return <JobResultSection {...args} onPageChange={handlePageChange} />;
   },
 } satisfies Meta<typeof JobResultSection>;
 
@@ -32,6 +50,19 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Loaded: Story = {};
+
+export const SinglePage: Story = {
+  args: { totalPages: 1, totalCount: MOCK_SEARCH_RESULTS.length },
+};
+
+// 다음 클릭 시 11~19번 묶음으로 전환되고, 이전으로 다시 돌아갈 수 있어요.
+export const PageGroupBoundary: Story = {
+  args: { currentPage: 9 },
+};
+
+export const LastPage: Story = {
+  args: { currentPage: 18 },
+};
 
 export const WithoutKeywords: Story = {
   args: {
@@ -46,11 +77,11 @@ export const WithoutKeywords: Story = {
 };
 
 export const Loading: Story = {
-  args: { results: [], totalCount: 0, isLoading: true },
+  args: { results: [], totalCount: 0, totalPages: 0, isLoading: true },
 };
 
 export const Empty: Story = {
-  args: { results: [], totalCount: 0 },
+  args: { results: [], totalCount: 0, totalPages: 0 },
 };
 
 export const Error: Story = {
