@@ -35,3 +35,29 @@ export interface PowerLink {
   url: string;
   description: string;
 }
+
+// /api/v1/job-postings/search 요청 파라미터
+export interface SearchJobPostingParams {
+  query?: string;
+  keywords?: string[];
+  page?: number;
+  size?: number;
+}
+
+// /api/v1/job-postings/search 요청 응답
+export interface SearchJobPostingResponse {
+  id: number;
+  title: string;
+  companyName: string;
+  companyAddress: string;
+  minCareerYears: number;
+  maxCareerYears: number;
+  requiredEducation: string;
+  hireType: string;
+  deadlineType: string;
+  deadlineAt: string | null;
+  ranking: number;
+  keywords: string[];
+  matchedKeywords: string[];
+  totalKeywordCount: number;
+}
