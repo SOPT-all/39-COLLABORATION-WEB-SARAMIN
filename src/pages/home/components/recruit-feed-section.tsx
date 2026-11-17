@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
 
 import { useDeadlineSoonJobPostingsQuery } from '@/pages/home/api/use-deadline-soon-job-postings-query';
@@ -88,11 +89,30 @@ const convertQueryToContent = (
   onRetry: () => void query.refetch(),
 });
 
-interface RecruitFeedSectionProps {
-  selectedFilter: ApplyFilter | null;
+interface DragOverTarget {
+  type: RecruitSectionType;
+  recruitId: number;
 }
 
-const RecruitFeedSection = ({ selectedFilter }: RecruitFeedSectionProps) => {
+interface RecruitFeedSectionProps {
+  selectedFilter: ApplyFilter | null;
+  isDragging: boolean;
+  // 이번 방문에서 지원을 마친 공고예요. 지원 API가 없어서 화면에서만 지원 완료로 바꿔요.
+  appliedRecruitIds: ReadonlySet<number>;
+  onApplyDrop: (recruit: JobCardItem) => void;
+}
+
+const RecruitFeedSection = ({
+  selectedFilter,
+  isDragging,
+  appliedRecruitIds,
+  onApplyDrop,
+}: RecruitFeedSectionProps) => {
+  // 같은 공고가 여러 섹션에 나올 수 있어서 섹션까지 같이 기억해요.
+  const [dragOverTarget, setDragOverTarget] = useState<DragOverTarget | null>(
+    null,
+  );
+
   const viewedQuery = useViewedJobPostingsQuery(VIEWED_PARAMS);
   const deadlineSoonQuery =
     useDeadlineSoonJobPostingsQuery(DEADLINE_SOON_PARAMS);
@@ -113,8 +133,17 @@ const RecruitFeedSection = ({ selectedFilter }: RecruitFeedSectionProps) => {
     <>
       {RECRUIT_SECTIONS.map(
         ({ type, hasCount, emptyTitle, emptyDescription, ...heading }) => {
-          const { recruits, isPending, isError, onRetry } =
-            getSectionContent(type);
+          const {
+            recruits: sectionRecruits,
+            isPending,
+            isError,
+            onRetry,
+          } = getSectionContent(type);
+          const recruits = sectionRecruits.map((recruit) =>
+            appliedRecruitIds.has(recruit.id)
+              ? { ...recruit, applyStatus: 'applied' as const }
+              : recruit,
+          );
           const isLoaded = !isPending && !isError;
           const filteredRecruits = recruits.filter(
             ({ applyStatus }) =>
@@ -139,6 +168,18 @@ const RecruitFeedSection = ({ selectedFilter }: RecruitFeedSectionProps) => {
                 emptyTitle={emptyTitle}
                 emptyDescription={emptyDescription}
                 onRetry={onRetry}
+                isDragging={isDragging}
+                dragOverId={
+                  isDragging && dragOverTarget?.type === type
+                    ? dragOverTarget.recruitId
+                    : null
+                }
+                onDragOverChange={(recruitId) =>
+                  setDragOverTarget(
+                    recruitId === null ? null : { type, recruitId },
+                  )
+                }
+                onApplyDrop={onApplyDrop}
               />
             </section>
           );

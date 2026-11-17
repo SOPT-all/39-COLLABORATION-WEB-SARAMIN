@@ -1,4 +1,9 @@
+import { useState } from 'react';
+
+import { createMockSubmitApplication } from '@/pages/home/api/create-mock-submit-application';
+import ApplicationHistoryModal from '@/pages/home/components/application-history-modal';
 import ApplyFilterBar from '@/pages/home/components/apply-filter-bar';
+import ApplyFlowModal from '@/pages/home/components/apply-flow-modal';
 import CareerCtaSection from '@/pages/home/components/career-cta-section';
 import CareerToolsSection from '@/pages/home/components/career-tools-section';
 import DocumentToolsSection from '@/pages/home/components/document-tools-section';
@@ -6,20 +11,54 @@ import HiringBanner from '@/pages/home/components/hiring-banner';
 import KeywordPanelSection from '@/pages/home/components/keyword-panel-section';
 import RecruitFeedSection from '@/pages/home/components/recruit-feed-section';
 import StickyRailSection from '@/pages/home/components/sticky-rail-section';
+import { APPLY_DOCUMENT_SUMMARY } from '@/pages/home/constants/apply-drag';
 import {
   MOCK_MY_KEYWORDS,
   MOCK_RECRUITS,
 } from '@/pages/home/constants/mock-recruits';
+import { useApplyDrag } from '@/pages/home/hooks/use-apply-drag';
 import { useApplyFilter } from '@/pages/home/hooks/use-apply-filter';
+import { useApplyFlow } from '@/pages/home/hooks/use-apply-flow';
+import type { JobCardItem } from '@/pages/home/types/job-card';
 import { getApplyStatusCounts } from '@/pages/home/utils/get-apply-status-counts';
 
 const APPLY_STATUS_COUNTS = getApplyStatusCounts(
   Object.values(MOCK_RECRUITS).flat(),
 );
 
-// 섹션 배치만 담당해요. 각 섹션은 담당자가 자기 파일에서 작업해요. (#31)
+// 지원 API가 없어서 목 제출 함수로 항상 성공 처리해요.
+const submitApplication = createMockSubmitApplication('success');
+
+// 섹션 배치와 섹션끼리 주고받는 상태(지원 패키지 드래그 · 지원 플로우 · 지원 내역)를 담당해요.
 const HomePage = () => {
   const { selectedFilter, toggleFilter } = useApplyFilter();
+  const { isDragging, bundleProps } = useApplyDrag();
+  const [appliedRecruitIds, setAppliedRecruitIds] = useState<
+    ReadonlySet<number>
+  >(() => new Set());
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
+  const { step, target, openApplyFlow, closeApplyFlow, submit } = useApplyFlow({
+    submitApplication,
+    onApplySuccess: ({ recruitId }) =>
+      setAppliedRecruitIds((previousIds) =>
+        new Set(previousIds).add(recruitId),
+      ),
+  });
+
+  const handleApplyDrop = (recruit: JobCardItem) => {
+    openApplyFlow({
+      recruitId: recruit.id,
+      companyName: recruit.companyName,
+      positionName: recruit.title,
+      documentSummary: APPLY_DOCUMENT_SUMMARY,
+    });
+  };
+
+  const handleViewHistory = () => {
+    closeApplyFlow();
+    setIsHistoryOpen(true);
+  };
 
   return (
     <>
@@ -27,7 +66,11 @@ const HomePage = () => {
 
       {/* 왼쪽 스티키 레일 · 오른쪽 공고 피드 */}
       <div className="mx-auto flex w-315 items-start gap-6 pt-8 pb-18">
-        <StickyRailSection />
+        <StickyRailSection
+          isDragging={isDragging}
+          bundleProps={bundleProps}
+          onApplicationHistoryClick={() => setIsHistoryOpen(true)}
+        />
         <div className="flex w-240 flex-col gap-6">
           <KeywordPanelSection keywords={MOCK_MY_KEYWORDS} />
           <ApplyFilterBar
@@ -36,13 +79,31 @@ const HomePage = () => {
             onFilterChange={toggleFilter}
           />
           <HiringBanner />
-          <RecruitFeedSection selectedFilter={selectedFilter} />
+          <RecruitFeedSection
+            selectedFilter={selectedFilter}
+            isDragging={isDragging}
+            appliedRecruitIds={appliedRecruitIds}
+            onApplyDrop={handleApplyDrop}
+          />
         </div>
       </div>
 
       <CareerToolsSection />
       <DocumentToolsSection />
       <CareerCtaSection />
+
+      <ApplyFlowModal
+        step={step}
+        target={target}
+        onClose={closeApplyFlow}
+        onSubmit={submit}
+        onRetry={submit}
+        onViewHistory={handleViewHistory}
+      />
+      <ApplicationHistoryModal
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+      />
     </>
   );
 };
