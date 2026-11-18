@@ -66,15 +66,21 @@ const RowSearchResult = ({
       {...props}
     >
       <div className="flex items-start justify-between px-4">
-        <BadgeMatch matchCount={matchCount} keywordCount={keywordCount} />
-        <p className="w-12.5 shrink-0 text-center text-caption-12 text-status-danger">
+        {/* 적용한 MY FIT 키워드가 없으면(0/0) 일치 배지를 숨겨요. 마감은 오른쪽에 그대로 둬요. */}
+        {keywordCount > 0 && (
+          <BadgeMatch matchCount={matchCount} keywordCount={keywordCount} />
+        )}
+        <p className="ml-auto w-12.5 shrink-0 text-center text-caption-12 text-status-danger">
           {deadline}
         </p>
       </div>
-      <p className="px-4 pt-3 text-caption-12">
-        <span className="text-green-100">일치</span>
-        <span className="text-text-secondary">{`  ${matchedKeywords}`}</span>
-      </p>
+      {/* 일치 키워드가 없으면 빈 '일치' 줄을 그리지 않아요. */}
+      {matchedKeywords && (
+        <p className="px-4 pt-3 text-caption-12">
+          <span className="text-green-100">일치</span>
+          <span className="text-text-secondary">{`  ${matchedKeywords}`}</span>
+        </p>
+      )}
       <div className="flex min-h-18 items-center gap-3 px-4 pb-4">
         <BookmarkButton
           isSelected={isBookmarked}
