@@ -5,6 +5,7 @@ import { cn } from '@/shared/utils/cn';
 import IcLightning from '@/shared/assets/icons/ic-lightning.svg?react';
 
 // 피그마 원본이 1배 이미지라 흐려서 코드로 다시 그렸어요. (85 × 28, 오른쪽 아래 말풍선 꼬리)
+// 꼬리는 둥근 모서리 곡선이 아닌 아래쪽 평평한 곳에 붙여야 몸통과 이어져 보여요.
 const HiringSeasonBadge = ({ className, ...props }: ComponentProps<'span'>) => {
   return (
     <span className={cn('relative block h-7 w-21.25', className)} {...props}>
@@ -14,7 +15,7 @@ const HiringSeasonBadge = ({ className, ...props }: ComponentProps<'span'>) => {
       </span>
       <span
         aria-hidden
-        className="absolute top-5 right-1 h-1.75 w-2 bg-[#3453FF] [clip-path:polygon(0_0,100%_0,30%_100%)]"
+        className="absolute top-5 right-3.5 h-1.75 w-2 bg-[#3453FF] [clip-path:polygon(0_0,100%_0,30%_100%)]"
       />
     </span>
   );
