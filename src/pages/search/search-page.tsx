@@ -116,6 +116,26 @@ const SearchPage = () => {
     );
   };
 
+  const handleMyFitSearch = () => {
+    if (!hasInitializedMyFitKeywords) return;
+
+    const hasSameKeywords =
+      appliedMyFitKeywords.length === myFitKeywords.length &&
+      appliedMyFitKeywords.every(
+        (appliedKeyword, index) => appliedKeyword === myFitKeywords[index],
+      );
+
+    // 같은 조건의 첫 페이지에서도 검색하기를 누르면 다시 조회해요.
+    if (hasSameKeywords && currentPage === 0) {
+      void searchQuery.refetch();
+      return;
+    }
+
+    // 같은 이벤트에서 함께 갱신해 새 조건과 이전 페이지로 요청하지 않아요.
+    setAppliedMyFitKeywords([...myFitKeywords]);
+    setPagination({ keyword, page: 0 });
+  };
+
   // 검색어 없이 /search에 들어오면 공고를 요청하지 않고 홈으로 보내요.
   if (!keyword) return <Navigate to={ROUTES.HOME} replace />;
 
@@ -144,7 +164,6 @@ const SearchPage = () => {
               TODO(FR-09): 서버 조회가 아니라 키워드 시트 목록에서 입력값으로 후보를 거르고,
               선택하면 myFitKeywords에 추가해요.
             */}
-            {/* TODO(#72): 검색하기를 누르면 편집한 키워드 조건을 적용해요. */}
             {isMyFitInitializationError ? (
               <StateMessage
                 kind="error"
@@ -161,6 +180,7 @@ const SearchPage = () => {
                 keyword={myFitInput}
                 onKeywordChange={setMyFitInput}
                 onRemove={handleMyFitKeywordRemove}
+                onSearch={handleMyFitSearch}
               />
             )}
           </aside>
