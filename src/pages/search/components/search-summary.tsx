@@ -1,8 +1,8 @@
-import {
-  MOCK_RELATED_KEYWORDS,
-  MOCK_SELECTED_FILTERS,
-} from '@/pages/search/constants/mock-search';
+import { useNavigate } from 'react-router';
+
+import { MOCK_RELATED_KEYWORDS } from '@/pages/search/constants/mock-search';
 import ChipSelectedFilter from '@/shared/components/chip/chip-selected-filter';
+import { ROUTES } from '@/shared/constants/routes';
 import { cn } from '@/shared/utils/cn';
 
 interface SearchSummaryProps {
@@ -14,8 +14,7 @@ interface SearchSummaryProps {
 
 const SEARCH_TABS = ['통합검색', '✦ AI 검색', '채용정보', '기업정보'];
 
-// 필터 삭제와 탭 전환은 아직 동작하지 않아요.
-const handleRemoveFilter = () => {};
+// 탭 전환은 아직 동작하지 않아요.
 
 const SearchSummary = ({
   keyword,
@@ -23,23 +22,16 @@ const SearchSummary = ({
   isLoading,
   isError,
 }: SearchSummaryProps) => {
+  const navigate = useNavigate();
   const canShowTotalCount = !isLoading && !isError;
   return (
     <section aria-label="검색 요약" className="mx-auto w-315">
       <div className="flex h-18.5 items-center justify-between px-5">
         <div className="flex items-center gap-2">
-          <ChipSelectedFilter onRemove={handleRemoveFilter}>
+          {/* 적용된 조건은 검색어뿐이라 검색어 칩만 보여 줘요. 지우면 검색어 없이 홈으로 돌아가요. */}
+          <ChipSelectedFilter onRemove={() => navigate(ROUTES.HOME)}>
             {`검색어 · ${keyword}`}
           </ChipSelectedFilter>
-          {MOCK_SELECTED_FILTERS.map((filter) => (
-            <ChipSelectedFilter
-              key={filter}
-              variant="secondary"
-              onRemove={handleRemoveFilter}
-            >
-              {filter}
-            </ChipSelectedFilter>
-          ))}
         </div>
         {canShowTotalCount && (
           <p className="flex h-10 w-47.5 items-center justify-center rounded-lg bg-surface-subtle text-title-16 text-text-primary">

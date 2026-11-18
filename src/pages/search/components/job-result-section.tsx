@@ -1,18 +1,25 @@
 import { useState } from 'react';
 
 import CompareModal from '@/pages/search/components/compare-modal';
-import type { SearchResult } from '@/pages/search/types/search';
+import type { SearchResult, SearchSort } from '@/pages/search/types/search';
+import { sortSearchResults } from '@/pages/search/utils/sort-search-results';
 import MyfitSearchButton from '@/shared/components/button/myfit-search-button';
 import ChipNumber from '@/shared/components/chip/chip-number';
+import ModalJobDetail from '@/shared/components/modal/modal-job-detail';
 import RowSearchResult from '@/shared/components/row/row-search-result';
 import SkeletonSearchResultItem from '@/shared/components/skeleton/skeleton-search-result-item';
 import StateSearchResults from '@/shared/components/state-search-results/state-search-results';
 import { useBookmarks } from '@/shared/hooks/use-bookmarks';
+import type { CompareJob } from '@/shared/types/compare-job';
 import { cn } from '@/shared/utils/cn';
 
-const SORT_OPTIONS = [
-  { label: '매칭순', widthClassName: 'w-32.75' },
-  { label: '마감임박', widthClassName: 'w-29.5' },
+const SORT_OPTIONS: {
+  value: SearchSort;
+  label: string;
+  widthClassName: string;
+}[] = [
+  { value: 'match', label: '매칭순', widthClassName: 'w-32.75' },
+  { value: 'deadline', label: '마감임박', widthClassName: 'w-29.5' },
 ];
 
 const PAGE_GROUP_SIZE = 10; // 한 번에 보여줄 번호 개수예요.
@@ -26,6 +33,7 @@ interface JobResultSectionProps {
   totalPages: number;
   onPageChange: (page: number) => void;
   isLoading?: boolean;
+  isRefreshing?: boolean;
   isError?: boolean;
   onRetry?: () => void;
 }
@@ -38,15 +46,20 @@ const JobResultSection = ({
   totalPages,
   onPageChange,
   isLoading = false,
+  isRefreshing = false,
   isError = false,
   onRetry,
 }: JobResultSectionProps) => {
   const { getIsBookmarked, setBookmark, bookmarkedJobs } = useBookmarks();
   const [isCompareOpen, setIsCompareOpen] = useState(false);
+  const [detailJob, setDetailJob] = useState<CompareJob | null>(null);
+  // 고른 정렬은 페이지를 넘기거나 검색어를 바꿔도 유지돼요.
+  const [sort, setSort] = useState<SearchSort>('match');
+  const sortedResults = sortSearchResults(results, sort);
   // 로딩·오류 중에는 건수와 페이지 번호를 숨겨요.
   const hasLoaded = !isLoading && !isError;
   const hasResults = hasLoaded && results.length > 0;
-  const isEmpty = hasLoaded && results.length === 0;
+  const isEmpty = hasLoaded && !isRefreshing && results.length === 0;
   const pageGroupStart =
     Math.floor(currentPage / PAGE_GROUP_SIZE) * PAGE_GROUP_SIZE;
   const visiblePageCount = Math.max(
@@ -69,19 +82,29 @@ const JobResultSection = ({
         </h2>
         {hasLoaded && (
           <span className="text-body-14 text-text-tertiary">
-            총 {totalCount.toLocaleString()}건
+            {isRefreshing && '이전 결과 · '}총 {totalCount.toLocaleString()}건
           </span>
         )}
       </div>
 
+      {isRefreshing && (
+        <p
+          role="status"
+          className="px-6.75 py-2 text-body-14 text-text-secondary"
+        >
+          검색 결과를 갱신하고 있어요.
+        </p>
+      )}
+
       <div className="mx-6.25 flex gap-2 px-3 py-2">
-        {SORT_OPTIONS.map(({ label, widthClassName }, index) => {
-          const isSelected = index === 0;
+        {SORT_OPTIONS.map(({ value, label, widthClassName }) => {
+          const isSelected = value === sort;
           return (
             <button
-              key={label}
+              key={value}
               type="button"
               aria-pressed={isSelected}
+              onClick={() => setSort(value)}
               className={cn(
                 'flex h-8 items-center justify-center rounded-2xl text-label-14',
                 widthClassName,
@@ -123,7 +146,7 @@ const JobResultSection = ({
       )}
       {hasResults && (
         <ul className="mx-4.75">
-          {results.map((result, index) => {
+          {sortedResults.map((result, index) => {
             const isBookmarked = getIsBookmarked(
               result.id,
               result.isBookmarked,
@@ -144,6 +167,11 @@ const JobResultSection = ({
                   companyName={result.companyName}
                   companyMeta={result.companyMeta}
                   isBookmarked={isBookmarked}
+                  onTitleClick={
+                    result.compareJob
+                      ? () => setDetailJob(result.compareJob ?? null)
+                      : undefined
+                  }
                   onBookmarkClick={() =>
                     setBookmark(result.id, !isBookmarked, result.compareJob)
                   }
@@ -170,7 +198,7 @@ const JobResultSection = ({
           >
             <button
               type="button"
-              disabled={currentPage === 0}
+              disabled={isRefreshing || currentPage === 0}
               onClick={() => onPageChange(currentPage - 1)}
               className="mr-1.5 text-body-14 text-text-secondary disabled:cursor-not-allowed disabled:opacity-50"
             >
@@ -181,6 +209,8 @@ const JobResultSection = ({
               <ChipNumber
                 key={page}
                 isSelected={page === currentPage}
+                disabled={isRefreshing}
+                className="disabled:cursor-not-allowed disabled:opacity-50"
                 onClick={() => onPageChange(page)}
               >
                 {page + 1}
@@ -188,7 +218,7 @@ const JobResultSection = ({
             ))}
             <button
               type="button"
-              disabled={currentPage >= totalPages - 1}
+              disabled={isRefreshing || currentPage >= totalPages - 1}
               onClick={() => onPageChange(currentPage + 1)}
               className="ml-1.5 text-body-14 text-text-secondary disabled:cursor-not-allowed disabled:opacity-50"
             >
@@ -197,6 +227,7 @@ const JobResultSection = ({
           </nav>
         )}
       </div>
+      <ModalJobDetail job={detailJob} onClose={() => setDetailJob(null)} />
       <CompareModal
         isOpen={isCompareOpen}
         onClose={() => setIsCompareOpen(false)}

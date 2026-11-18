@@ -167,10 +167,13 @@ const CardJob = ({
             )}
 
             <footer className="mt-auto flex shrink-0 items-center gap-2 border-t border-border-default pt-2">
-              <span className="flex min-w-0 items-center gap-1 text-label-12 text-text-primary">
-                <MatchIcon aria-hidden className="shrink-0" />
-                <span className="truncate">{matchReason}</span>
-              </span>
+              {/* 일치 사유가 없으면(일치 0개) 아이콘과 문구를 그리지 않아요. */}
+              {matchReason && (
+                <span className="flex min-w-0 items-center gap-1 text-label-12 text-text-primary">
+                  <MatchIcon aria-hidden className="shrink-0" />
+                  <span className="truncate">{matchReason}</span>
+                </span>
+              )}
 
               <span className="ml-auto flex shrink-0 items-center gap-1.5">
                 <span className="text-label-12 text-action-primary">

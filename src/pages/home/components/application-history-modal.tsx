@@ -1,15 +1,17 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { createSearchParams, useNavigate } from 'react-router';
 
 import ApplicationHistoryDetail from '@/pages/home/components/application-history-detail';
 import ApplicationHistoryList from '@/pages/home/components/application-history-list';
 import ApplicationHistorySectionHeader from '@/pages/home/components/application-history-section-header';
 import { useApplications } from '@/pages/home/hooks/use-applications';
+import { useMyKeywordsQuery } from '@/shared/api/use-my-keywords-query';
 import ModalButton from '@/shared/components/button/modal-button';
 import Modal from '@/shared/components/modal/modal';
 import ModalFeedback from '@/shared/components/modal/modal-feedback';
 import SkeletonModalRow from '@/shared/components/skeleton/skeleton-modal-row';
 import { ROUTES } from '@/shared/constants/routes';
+import { SEARCH_KEYWORD_PARAM } from '@/shared/constants/search';
 
 const SKELETON_ROW_COUNT = 4;
 
@@ -31,6 +33,8 @@ const ApplicationHistoryModal = ({
     isError,
     refetch,
   } = useApplications({ enabled: isOpen });
+
+  const { data: myKeywords } = useMyKeywordsQuery();
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [lastSelectedId, setLastSelectedId] = useState<number | null>(null);
@@ -55,9 +59,19 @@ const ApplicationHistoryModal = ({
 
   const handleBackToList = () => setSelectedId(null);
 
+  // 검색 화면은 검색어가 있어야 열려서, 내 MY FIT 첫 키워드로 검색해요.
+  // 키워드가 없으면 모달만 닫고 홈 공고 피드를 보게 해요.
   const handleSearchJobs = () => {
     onClose();
-    navigate(ROUTES.SEARCH);
+    const firstKeyword = myKeywords?.[0]?.name;
+    if (!firstKeyword) return;
+
+    navigate({
+      pathname: ROUTES.SEARCH,
+      search: createSearchParams({
+        [SEARCH_KEYWORD_PARAM]: firstKeyword,
+      }).toString(),
+    });
   };
 
   const handleRetry = () => {
