@@ -95,4 +95,22 @@ export const convertJobPostingToCardItem = (
   isBookmarked: false,
   documents: convertToDocuments(jobPosting),
   appliedAt: jobPosting.appliedAt ?? undefined,
+  compareJob: {
+    id: jobPosting.id,
+    companyName: jobPosting.companyName,
+    title: jobPosting.title,
+    deadline: convertDeadlineToDday(jobPosting.deadlineAt, today),
+    region: convertAddressToRegion(jobPosting.companyAddress),
+    career: convertCareerYears(
+      jobPosting.minCareerYears,
+      jobPosting.maxCareerYears,
+    ),
+    education: jobPosting.requiredEducation,
+    hireType: jobPosting.hireType,
+    keywords: jobPosting.keywords,
+    // 홈 공고 응답에는 일치 키워드 목록이 없어 비교 모달에서 내 키워드와 겹치는 키워드로 그려요.
+    matchCount: jobPosting.matchedKeywordCount,
+    totalKeywordCount: jobPosting.keywords.length,
+    matchedKeywords: null,
+  },
 });

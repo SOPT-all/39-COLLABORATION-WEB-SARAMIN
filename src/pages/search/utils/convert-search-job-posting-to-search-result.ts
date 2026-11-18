@@ -35,4 +35,21 @@ export const convertSearchJobPostingToSearchResult = (
   companyMeta: `관심기업 TOP ${jobPosting.ranking}`,
   // TODO: 후속 북마크 구현에서 연결해요.
   isBookmarked: false,
+  compareJob: {
+    id: jobPosting.id,
+    companyName: jobPosting.companyName,
+    title: jobPosting.title,
+    deadline: convertDeadlineToDday(jobPosting.deadlineAt),
+    region: convertAddressToRegion(jobPosting.companyAddress),
+    career: convertCareerYears(
+      jobPosting.minCareerYears,
+      jobPosting.maxCareerYears,
+    ),
+    education: jobPosting.requiredEducation,
+    hireType: jobPosting.hireType,
+    keywords: jobPosting.keywords,
+    matchCount: jobPosting.matchedKeywords.length,
+    totalKeywordCount: jobPosting.totalKeywordCount,
+    matchedKeywords: jobPosting.matchedKeywords,
+  },
 });

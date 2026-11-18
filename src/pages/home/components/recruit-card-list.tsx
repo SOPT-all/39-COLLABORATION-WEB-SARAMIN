@@ -167,7 +167,7 @@ const RecruitCardList = ({
                 />
               }
               onBookmarkChange={(isBookmarked) =>
-                setBookmark(recruit.id, isBookmarked)
+                setBookmark(recruit.id, isBookmarked, recruit.compareJob)
               }
               // 상세보기 기능 연결 전 임시 처리
               onViewDetail={() => {}}
