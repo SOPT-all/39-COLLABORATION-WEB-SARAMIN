@@ -1,3 +1,5 @@
+import type { CompareJob } from '@/shared/types/compare-job';
+
 // 검색 결과 행의 화면용 데이터예요.
 export interface SearchResult {
   id: number;
@@ -9,6 +11,8 @@ export interface SearchResult {
   companyName: string;
   companyMeta: string;
   isBookmarked: boolean;
+  // 스크랩하면 비교 모달에 담을 정보
+  compareJob?: CompareJob;
 }
 
 // 기업정보 영역의 화면용 데이터예요.
