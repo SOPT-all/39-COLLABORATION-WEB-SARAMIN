@@ -1,6 +1,6 @@
 // [스토리] HubSticky
 // 위치 : Shared/Hub/HubSticky
-// 상태 : status 4개 × size 2개 중 피그마에 있는 5개 + 한 줄에 늘어놓은 AllStates
+// 상태 : status 5개 × size 2개 중 피그마에 있는 6개 + 한 줄에 늘어놓은 AllStates
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -13,7 +13,7 @@ const meta = {
   argTypes: {
     status: {
       control: 'select',
-      options: ['ready', 'dragging', 'needsDocument', 'loading'],
+      options: ['ready', 'dragging', 'needsDocument', 'unready', 'loading'],
     },
     size: { control: 'select', options: ['full', 'compact'] },
   },
@@ -29,9 +29,19 @@ export const NeedsDocument: Story = {
   args: {
     status: 'needsDocument',
     documents: [
-      { label: '이력서', count: 1 },
-      { label: '자기소개서', count: 1 },
-      { label: '경력기술서', state: 'required' },
+      { id: 'resume', label: '이력서', count: 1 },
+      { id: 'coverLetter', label: '자기소개서', count: 1 },
+      { id: 'career', label: '경력기술서', state: 'required' },
+    ],
+  },
+};
+export const Unready: Story = {
+  args: {
+    status: 'unready',
+    documents: [
+      { id: 'resume', label: '이력서', state: 'waiting' },
+      { id: 'coverLetter', label: '자기소개서', state: 'waiting' },
+      { id: 'career', label: '경력기술서', state: 'waiting' },
     ],
   },
 };
@@ -46,9 +56,17 @@ export const AllStates: Story = {
       <HubSticky
         status="needsDocument"
         documents={[
-          { label: '이력서', count: 1 },
-          { label: '자기소개서', count: 1 },
-          { label: '경력기술서', state: 'required' },
+          { id: 'resume', label: '이력서', count: 1 },
+          { id: 'coverLetter', label: '자기소개서', count: 1 },
+          { id: 'career', label: '경력기술서', state: 'required' },
+        ]}
+      />
+      <HubSticky
+        status="unready"
+        documents={[
+          { id: 'resume', label: '이력서', state: 'waiting' },
+          { id: 'coverLetter', label: '자기소개서', state: 'waiting' },
+          { id: 'career', label: '경력기술서', state: 'waiting' },
         ]}
       />
       <HubSticky size="compact" />
