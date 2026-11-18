@@ -5,6 +5,8 @@ interface RecruitSectionHeadingProps {
   description: string;
   actionLabel: string;
   actionVariant: 'viewAll' | 'deadlineAlert';
+  // 전체보기로 펼쳤는지. 넘기면 버튼에 aria-expanded로 알려 줘요.
+  isExpanded?: boolean;
   onActionClick?: () => void;
 }
 
@@ -14,6 +16,7 @@ const RecruitSectionHeading = ({
   description,
   actionLabel,
   actionVariant,
+  isExpanded,
   onActionClick,
 }: RecruitSectionHeadingProps) => {
   return (
@@ -22,7 +25,11 @@ const RecruitSectionHeading = ({
         <h2 className="text-heading-18 text-text-primary">{title}</h2>
         <p className="text-caption-11 text-text-tertiary">{description}</p>
       </div>
-      <ChipSectionAction variant={actionVariant} onClick={onActionClick}>
+      <ChipSectionAction
+        variant={actionVariant}
+        aria-expanded={isExpanded}
+        onClick={onActionClick}
+      >
         {actionLabel}
       </ChipSectionAction>
     </header>

@@ -14,6 +14,8 @@ import { convertJobPostingToCardItem } from '@/pages/home/utils/convert-job-post
 // 조회한 공고는 카드 두 줄(4개), 추천 공고는 한 줄(2개)까지 보여 줘요.
 const VIEWED_PARAMS: JobPostingListParams = { size: 4 };
 const RECOMMENDED_PARAMS: JobPostingListParams = { size: 2 };
+// 전체보기를 누르면 서버 최대값(50개)까지 받아 펼쳐 보여 줘요.
+const EXPANDED_PARAMS: JobPostingListParams = { size: 50 };
 // 마감 임박은 전체보기가 없어서 48시간 안 공고를 전부 보여 줘요.
 const DEADLINE_SOON_PARAMS: JobPostingListParams = { size: 50 };
 const CLOSING_SOON_HOURS = 48;
@@ -58,13 +60,19 @@ const convertQueryToContent = (
 // 홈 공고 피드 섹션별 카드 목록이에요. 피드와 지원 필터 바 개수가 같은 값을 써요.
 export const useRecruitFeed = (
   appliedAtByRecruitId: ReadonlyMap<number, string>,
+  // 전체보기로 펼친 섹션 (추천 · 조회한 공고)
+  expandedSections: ReadonlySet<RecruitSectionType> = new Set(),
 ): Record<RecruitSectionType, RecruitSectionContent> => {
-  const viewedQuery = useViewedJobPostingsQuery(VIEWED_PARAMS);
+  const viewedQuery = useViewedJobPostingsQuery(
+    expandedSections.has('viewedCompanies') ? EXPANDED_PARAMS : VIEWED_PARAMS,
+  );
   const deadlineSoonQuery = useDeadlineSoonJobPostingsQuery(
     DEADLINE_SOON_PARAMS,
     selectClosingSoon,
   );
-  const recommendedQuery = useRecommendedJobPostingsQuery(RECOMMENDED_PARAMS);
+  const recommendedQuery = useRecommendedJobPostingsQuery(
+    expandedSections.has('recommended') ? EXPANDED_PARAMS : RECOMMENDED_PARAMS,
+  );
 
   return {
     recommended: convertQueryToContent(

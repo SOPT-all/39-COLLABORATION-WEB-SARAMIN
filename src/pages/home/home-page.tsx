@@ -5,9 +5,12 @@ import { useMyDocumentsQuery } from '@/pages/home/api/use-my-documents-query';
 import ApplicationHistoryModal from '@/pages/home/components/application-history-modal';
 import ApplyFilterBar from '@/pages/home/components/apply-filter-bar';
 import ApplyFlowModal from '@/pages/home/components/apply-flow-modal';
+import BundleSummaryModal from '@/pages/home/components/bundle-summary-modal';
 import CareerCtaSection from '@/pages/home/components/career-cta-section';
 import CareerToolsSection from '@/pages/home/components/career-tools-section';
+import DocumentManagementModal from '@/pages/home/components/document-management-modal';
 import DocumentToolsSection from '@/pages/home/components/document-tools-section';
+import DocumentUploadModal from '@/pages/home/components/document-upload-modal';
 import HiringBanner from '@/pages/home/components/hiring-banner';
 import KeywordPanelSection from '@/pages/home/components/keyword-panel-section';
 import RecruitFeedSection from '@/pages/home/components/recruit-feed-section';
@@ -18,6 +21,7 @@ import { useApplyFilter } from '@/pages/home/hooks/use-apply-filter';
 import { useApplyFlow } from '@/pages/home/hooks/use-apply-flow';
 import { useRecruitFeed } from '@/pages/home/hooks/use-recruit-feed';
 import type { JobCardItem } from '@/pages/home/types/job-card';
+import type { RecruitSectionType } from '@/pages/home/types/recruit';
 import { createApplyDocumentSummary } from '@/pages/home/utils/create-apply-document-summary';
 import { getApplyStatusCounts } from '@/pages/home/utils/get-apply-status-counts';
 import { useMyKeywordsQuery } from '@/shared/api/use-my-keywords-query';
@@ -36,7 +40,17 @@ const HomePage = () => {
     ReadonlyMap<number, string>
   >(() => new Map());
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const recruitSections = useRecruitFeed(appliedAtByRecruitId);
+  const [isBundleOpen, setIsBundleOpen] = useState(false);
+  const [isDocumentManagementOpen, setIsDocumentManagementOpen] =
+    useState(false);
+  const [isDocumentUploadOpen, setIsDocumentUploadOpen] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<
+    ReadonlySet<RecruitSectionType>
+  >(() => new Set());
+  const recruitSections = useRecruitFeed(
+    appliedAtByRecruitId,
+    expandedSections,
+  );
   const applyStatusCounts = getApplyStatusCounts(
     Object.values(recruitSections).flatMap(({ recruits }) => recruits),
   );
@@ -60,6 +74,32 @@ const HomePage = () => {
     });
   };
 
+  const handleToggleExpand = (type: RecruitSectionType) => {
+    setExpandedSections((previous) => {
+      const next = new Set(previous);
+      if (next.has(type)) next.delete(type);
+      else next.add(type);
+      return next;
+    });
+  };
+
+  // 지원 패키지 모달에서 서류 관리로 넘어가요.
+  const handleBundleDocumentManageClick = () => {
+    setIsBundleOpen(false);
+    setIsDocumentManagementOpen(true);
+  };
+
+  // 서류 관리 ↔ 서류 추가 모달을 오가요. 추가를 마치거나 취소하면 서류 관리로 돌아가요.
+  const handleAddDocumentClick = () => {
+    setIsDocumentManagementOpen(false);
+    setIsDocumentUploadOpen(true);
+  };
+
+  const handleDocumentUploadClose = () => {
+    setIsDocumentUploadOpen(false);
+    setIsDocumentManagementOpen(true);
+  };
+
   const handleViewHistory = () => {
     closeApplyFlow();
     setIsHistoryOpen(true);
@@ -74,6 +114,8 @@ const HomePage = () => {
         <StickyRailSection
           isDragging={isDragging}
           bundleProps={bundleProps}
+          onBundleClick={() => setIsBundleOpen(true)}
+          onDocumentManageClick={() => setIsDocumentManagementOpen(true)}
           onApplicationHistoryClick={() => setIsHistoryOpen(true)}
         />
         <div className="flex w-240 flex-col gap-6">
@@ -93,6 +135,8 @@ const HomePage = () => {
             selectedFilter={selectedFilter}
             isDragging={isDragging}
             sections={recruitSections}
+            expandedSections={expandedSections}
+            onToggleExpand={handleToggleExpand}
             onApplyDrop={handleApplyDrop}
           />
         </div>
@@ -109,6 +153,23 @@ const HomePage = () => {
         onSubmit={submit}
         onRetry={submit}
         onViewHistory={handleViewHistory}
+      />
+      {myDocuments && (
+        <BundleSummaryModal
+          isOpen={isBundleOpen}
+          onClose={() => setIsBundleOpen(false)}
+          myDocuments={myDocuments}
+          onDocumentManageClick={handleBundleDocumentManageClick}
+        />
+      )}
+      <DocumentManagementModal
+        isOpen={isDocumentManagementOpen}
+        onClose={() => setIsDocumentManagementOpen(false)}
+        onAddDocumentClick={handleAddDocumentClick}
+      />
+      <DocumentUploadModal
+        isOpen={isDocumentUploadOpen}
+        onClose={handleDocumentUploadClose}
       />
       <ApplicationHistoryModal
         isOpen={isHistoryOpen}
