@@ -17,6 +17,8 @@ interface RowSearchResultLoadedProps extends ComponentProps<'article'> {
   companyMeta: string;
   isBookmarked: boolean;
   onBookmarkClick: () => void;
+  // 공고 제목을 누르면 공고 상세 모달을 열어요. 없으면 제목은 글자만 보여요.
+  onTitleClick?: () => void;
 }
 
 // 로딩에는 결과 데이터가 필요 없어요. 기존 결과가 함께 전달되어도 스켈레톤만 표시해요.
@@ -41,6 +43,7 @@ const RowSearchResult = ({
   companyMeta,
   isBookmarked,
   onBookmarkClick,
+  onTitleClick,
   className,
   ...props
 }: RowSearchResultProps) => {
@@ -88,7 +91,18 @@ const RowSearchResult = ({
           onClick={onBookmarkClick}
         />
         <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <p className="text-heading-20 text-text-primary">{title}</p>
+          {onTitleClick ? (
+            <button
+              type="button"
+              aria-haspopup="dialog"
+              className="text-left text-heading-20 text-text-primary hover:underline"
+              onClick={onTitleClick}
+            >
+              {title}
+            </button>
+          ) : (
+            <p className="text-heading-20 text-text-primary">{title}</p>
+          )}
           <p className="text-body-14 text-text-secondary">{meta}</p>
         </div>
         <div className="flex w-47.5 shrink-0 flex-col items-end gap-0.75 text-right">
