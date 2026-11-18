@@ -10,7 +10,7 @@ interface BookmarkButtonProps extends ComponentProps<'button'> {
 
 const ICON_CLASS_NAMES = {
   default:
-    'fill-white/0 text-gray-70 group-hover:fill-white group-hover:text-white group-focus-visible:fill-white group-focus-visible:text-white',
+    'fill-white/0 text-gray-70 group-hover:fill-blue-30 group-hover:text-blue-30 group-focus-visible:fill-blue-30 group-focus-visible:text-blue-30',
   selected: 'fill-blue-70 text-blue-70',
 };
 

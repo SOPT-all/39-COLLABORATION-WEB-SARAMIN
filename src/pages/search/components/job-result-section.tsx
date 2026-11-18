@@ -100,10 +100,13 @@ const JobResultSection = ({
       )}
       {hasResults && (
         <ul className="mx-4.75">
-          {results.map((result) => (
+          {results.map((result, index) => (
             <li key={result.id}>
               <RowSearchResult
                 contentState="loaded"
+                className={
+                  index === results.length - 1 ? 'border-b-0' : undefined
+                }
                 matchCount={result.matchCount}
                 deadline={result.deadline}
                 matchedKeywords={result.matchedKeywords}
