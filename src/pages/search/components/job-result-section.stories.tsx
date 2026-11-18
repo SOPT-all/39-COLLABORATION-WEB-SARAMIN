@@ -99,6 +99,15 @@ export const Loading: Story = {
   args: { results: [], totalCount: 0, totalPages: 0, isLoading: true },
 };
 
+// 이전 목록·배지·선택 페이지를 유지하고 페이지 이동은 막아요.
+export const Refreshing: Story = {
+  args: { isRefreshing: true, currentPage: 2 },
+};
+
+export const RefreshingEmpty: Story = {
+  args: { isRefreshing: true, results: [], totalCount: 0, totalPages: 0 },
+};
+
 export const Empty: Story = {
   args: { results: [], totalCount: 0, totalPages: 0 },
 };

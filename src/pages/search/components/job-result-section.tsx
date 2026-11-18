@@ -33,6 +33,7 @@ interface JobResultSectionProps {
   totalPages: number;
   onPageChange: (page: number) => void;
   isLoading?: boolean;
+  isRefreshing?: boolean;
   isError?: boolean;
   onRetry?: () => void;
 }
@@ -45,6 +46,7 @@ const JobResultSection = ({
   totalPages,
   onPageChange,
   isLoading = false,
+  isRefreshing = false,
   isError = false,
   onRetry,
 }: JobResultSectionProps) => {
@@ -57,7 +59,7 @@ const JobResultSection = ({
   // 로딩·오류 중에는 건수와 페이지 번호를 숨겨요.
   const hasLoaded = !isLoading && !isError;
   const hasResults = hasLoaded && results.length > 0;
-  const isEmpty = hasLoaded && results.length === 0;
+  const isEmpty = hasLoaded && !isRefreshing && results.length === 0;
   const pageGroupStart =
     Math.floor(currentPage / PAGE_GROUP_SIZE) * PAGE_GROUP_SIZE;
   const visiblePageCount = Math.max(
@@ -80,10 +82,19 @@ const JobResultSection = ({
         </h2>
         {hasLoaded && (
           <span className="text-body-14 text-text-tertiary">
-            총 {totalCount.toLocaleString()}건
+            {isRefreshing && '이전 결과 · '}총 {totalCount.toLocaleString()}건
           </span>
         )}
       </div>
+
+      {isRefreshing && (
+        <p
+          role="status"
+          className="px-6.75 py-2 text-body-14 text-text-secondary"
+        >
+          검색 결과를 갱신하고 있어요.
+        </p>
+      )}
 
       <div className="mx-6.25 flex gap-2 px-3 py-2">
         {SORT_OPTIONS.map(({ value, label, widthClassName }) => {
@@ -187,7 +198,7 @@ const JobResultSection = ({
           >
             <button
               type="button"
-              disabled={currentPage === 0}
+              disabled={isRefreshing || currentPage === 0}
               onClick={() => onPageChange(currentPage - 1)}
               className="mr-1.5 text-body-14 text-text-secondary disabled:cursor-not-allowed disabled:opacity-50"
             >
@@ -198,6 +209,8 @@ const JobResultSection = ({
               <ChipNumber
                 key={page}
                 isSelected={page === currentPage}
+                disabled={isRefreshing}
+                className="disabled:cursor-not-allowed disabled:opacity-50"
                 onClick={() => onPageChange(page)}
               >
                 {page + 1}
@@ -205,7 +218,7 @@ const JobResultSection = ({
             ))}
             <button
               type="button"
-              disabled={currentPage >= totalPages - 1}
+              disabled={isRefreshing || currentPage >= totalPages - 1}
               onClick={() => onPageChange(currentPage + 1)}
               className="ml-1.5 text-body-14 text-text-secondary disabled:cursor-not-allowed disabled:opacity-50"
             >

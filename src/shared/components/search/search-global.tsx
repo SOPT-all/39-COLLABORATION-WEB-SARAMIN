@@ -79,7 +79,7 @@ const SearchGlobal = ({
             readOnly={isLoading}
             aria-busy={isLoading}
             onChange={(event) => onQueryChange?.(event.target.value)}
-            className="h-5 min-w-0 flex-1 bg-transparent text-body-14 text-text-secondary outline-none placeholder:text-text-secondary"
+            className="h-5 min-w-0 flex-1 bg-transparent text-body-14 text-text-secondary outline-none placeholder:text-text-secondary focus:placeholder:text-transparent [&::-webkit-search-cancel-button]:hidden"
           />
         </div>
         <button
