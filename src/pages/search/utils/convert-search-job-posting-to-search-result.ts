@@ -26,6 +26,7 @@ export const convertSearchJobPostingToSearchResult = (
   matchCount: jobPosting.matchedKeywords.length,
   matchedKeywords: jobPosting.matchedKeywords.join(' · '),
   deadline: convertDeadlineToDday(jobPosting.deadlineAt),
+  deadlineAt: jobPosting.deadlineAt,
   meta: [
     convertAddressToRegion(jobPosting.companyAddress),
     convertCareerYears(jobPosting.minCareerYears, jobPosting.maxCareerYears),
