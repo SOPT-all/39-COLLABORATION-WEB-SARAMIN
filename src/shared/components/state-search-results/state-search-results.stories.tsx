@@ -13,11 +13,26 @@ const loadingContent = (
   </div>
 );
 
+const EXAMPLE_SEARCH_RESULT = {
+  contentState: 'loaded',
+  matchCount: 2,
+  keywordCount: 3,
+  deadline: 'D-4',
+  matchedKeywords: 'Figma · 프로토타이핑',
+  title: '[첫차]와 함께 할 프로덕트 디자이너를 찾습니다.',
+  meta: '서울 강남구 · 신입·경력 · 학력무관 · 정규직',
+  companyName: '(주)미스터픽',
+  companyMeta: '관심기업 TOP 100',
+  isBookmarked: false,
+  onBookmarkClick: () => {},
+} as const;
+
 // 갱신 중 기존 검색 결과를 유지하기 위한 예시 데이터
 const refreshingContent = (
   <div className="flex flex-col gap-3">
-    <RowSearchResult />
+    <RowSearchResult {...EXAMPLE_SEARCH_RESULT} />
     <RowSearchResult
+      {...EXAMPLE_SEARCH_RESULT}
       matchCount={3}
       deadline="D-7"
       matchedKeywords="React · TypeScript · 협업"
@@ -106,7 +121,11 @@ export const ManyResults: Story = {
           { id: 'job-9', title: 'React 엔지니어' },
           { id: 'job-10', title: '프론트엔드 엔지니어' },
         ].map((job) => (
-          <RowSearchResult key={job.id} title={job.title} />
+          <RowSearchResult
+            key={job.id}
+            {...EXAMPLE_SEARCH_RESULT}
+            title={job.title}
+          />
         ))}
       </div>
     ),

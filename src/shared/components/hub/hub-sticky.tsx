@@ -1,11 +1,12 @@
 // [스펙] HubSticky
 // 역할   : 홈 왼쪽에 고정되는 "나의 취업 in" 카드. 서류 준비 상태를 보여주고 지원 패키지를 끌어가는 출발점
-// props  : status - ready · dragging · needsDocument · loading (기본 ready)
+// props  : status - ready · dragging · needsDocument · unready · loading (기본 ready)
 //          size - full · compact (기본 full). compact는 헤더 + 패키지 카드 + 푸터만
-//          documents - 서류 행 목록 [{ label, state, count }]. 기본값 피그마 3개
+//          documents - 서류 행 목록 [{ id, label, state, count }]. 기본값 피그마 3개
 //          badge · summaryTitle · summaryDescription - API 값이 들어갈 문구. 안 주면 상태 표의 피그마 문구
 //          bundleTitle · bundleMeta - 지원 패키지 카드 문구. 안 주면 피그마 문구
 //          bundleProps - 지원 패키지 카드(BundleApplication)에 그대로 넘기는 속성. draggable · onDragStart 등 드래그 연결용
+//          onDocumentClick - 서류 행을 누르면 그 행의 id를 넘김. 체크 변경 연결용
 //          onDocumentManageClick · onApplicationHistoryClick - 푸터 버튼 클릭
 //          className, 나머지 div 속성 통과 (허브 바깥 div)
 // 상태   : status 하나로 뱃지 문구 · 뱃지 색 · 안내 문구 · 요약 카드 tone/문구 · 패키지 카드 state · 바깥 흰 테두리가 정해짐
@@ -33,18 +34,21 @@ import RowStickyDocument from '@/shared/components/row/row-sticky-document';
 import SkeletonStickyHub from '@/shared/components/skeleton/skeleton-sticky-hub';
 import { cn } from '@/shared/utils/cn';
 
-type HubStickyDocument = Pick<
+// id : 눌린 행을 구분하는 값. 페이지에서 API 필드 이름(hasResume 등)을 넣음
+interface HubStickyDocument extends Pick<
   ComponentProps<typeof RowStickyDocument>,
   'label' | 'state' | 'count'
->;
+> {
+  id: string;
+}
 
 const DEFAULT_BUNDLE_TITLE = '지원 패키지';
 const DEFAULT_BUNDLE_META = '필수 서류 3개 · 최신';
 
 const DEFAULT_DOCUMENTS: HubStickyDocument[] = [
-  { label: '이력서', count: 1 },
-  { label: '자기소개서', count: 1 },
-  { label: '경력기술서', count: 1 },
+  { id: 'resume', label: '이력서', count: 1 },
+  { id: 'coverLetter', label: '자기소개서', count: 1 },
+  { id: 'career', label: '경력기술서', count: 1 },
 ];
 
 interface HubStickyProps extends ComponentProps<'div'> {
@@ -57,6 +61,7 @@ interface HubStickyProps extends ComponentProps<'div'> {
   bundleTitle?: string;
   bundleMeta?: string;
   bundleProps?: ComponentProps<'section'>;
+  onDocumentClick?: (id: string) => void;
   onDocumentManageClick?: () => void;
   onApplicationHistoryClick?: () => void;
 }
@@ -71,6 +76,7 @@ const HubSticky = ({
   bundleTitle = DEFAULT_BUNDLE_TITLE,
   bundleMeta = DEFAULT_BUNDLE_META,
   bundleProps,
+  onDocumentClick,
   onDocumentManageClick,
   onApplicationHistoryClick,
   className,
@@ -119,9 +125,12 @@ const HubSticky = ({
                   description={summaryDescription}
                 />
                 <ul className="flex flex-col gap-0.5 rounded-xl bg-surface-default p-2">
-                  {documents.map((document) => (
-                    <li key={document.label}>
-                      <RowStickyDocument {...document} />
+                  {documents.map(({ id, ...document }) => (
+                    <li key={id}>
+                      <RowStickyDocument
+                        {...document}
+                        onClick={() => onDocumentClick?.(id)}
+                      />
                     </li>
                   ))}
                 </ul>

@@ -16,16 +16,20 @@ const meta = {
     ),
   ],
   args: {
-    context: 'search',
     state: 'loaded',
+    keywords: [
+      'Figma',
+      'UX디자인',
+      'Adobe XD',
+      'UI',
+      '프로덕트 디자인',
+      'UX',
+      '프로토타이핑',
+    ],
     onRemove: () => {},
     onSearch: () => {},
   },
   argTypes: {
-    context: {
-      control: 'radio',
-      options: ['search', 'compare-background'],
-    },
     state: { control: 'radio', options: ['loaded', 'loading'] },
   },
 } satisfies Meta<typeof KeywordSearchPanel>;
@@ -37,7 +41,17 @@ type Story = StoryObj<typeof meta>;
 export const Search: Story = {};
 
 export const CompareBackground: Story = {
-  args: { context: 'compare-background' },
+  args: {
+    keywords: [
+      'Figma',
+      'Sketch',
+      'Zeplin',
+      'Framer',
+      'ProtoPie',
+      'Adobe XD',
+      'Principle',
+    ],
+  },
 };
 
 export const Loading: Story = {

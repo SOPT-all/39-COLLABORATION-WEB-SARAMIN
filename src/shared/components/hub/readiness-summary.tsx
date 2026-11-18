@@ -1,9 +1,11 @@
 // [스펙] ReadinessSummary
 // 역할   : 스티키 허브 위쪽의 준비 상태 요약. 서류가 다 됐는지 한눈에 보여줌
-// props  : tone - ready · warning (기본 ready). ready는 파란 ✓, warning은 코랄 !
+// props  : tone - ready · warning · unready (기본 ready). ready는 파란 ✓, warning은 코랄 !, unready는 회색 ? + 흐린 글자
 //          title · description - 문구. 기본값 '필수 서류 3/3 준비' · '최근 업데이트 10분 전'
 //          className, 나머지 div 속성 통과
 // 구조   : [36px 원 아이콘] [title / description] [ChipStickyReview '검토 ON']
+// 폭     : 글자 자리가 110px인데 '필수 서류 3/3 준비'가 브라우저에서 110.5px라 말줄임표가 생김
+//          글자 영역을 칩 쪽으로 1px 넓혀서(-mr-px) 해결. 칩 안쪽 여백과 겹치므로 보이는 위치는 그대로
 // 재사용 : 주형 님 ChipStickyReview, 피그마 readiness_icon을 뽑은 ic-readiness-check · ic-readiness-alert
 // 접근성 : ✓ · ! 아이콘은 장식이라 aria-hidden. 상태는 문구가 읽어 줌
 
@@ -14,10 +16,12 @@ import { cn } from '@/shared/utils/cn';
 
 import IcReadinessAlert from '@/shared/assets/icons/ic-readiness-alert.svg?react';
 import IcReadinessCheck from '@/shared/assets/icons/ic-readiness-check.svg?react';
+import IcReadinessUnready from '@/shared/assets/icons/ic-readiness-unready.svg?react';
 
 const TONE_ICONS = {
   ready: IcReadinessCheck,
   warning: IcReadinessAlert,
+  unready: IcReadinessUnready,
 };
 
 interface ReadinessSummaryProps extends ComponentProps<'div'> {
@@ -34,6 +38,7 @@ const ReadinessSummary = ({
   ...props
 }: ReadinessSummaryProps) => {
   const Icon = TONE_ICONS[tone];
+  const isUnready = tone === 'unready';
 
   return (
     <div
@@ -44,9 +49,21 @@ const ReadinessSummary = ({
       {...props}
     >
       <Icon aria-hidden className="shrink-0" />
-      <div className="flex min-w-0 flex-1 flex-col gap-px">
-        <p className="truncate text-label-14 text-text-primary">{title}</p>
-        <p className="truncate text-caption-11 text-text-secondary">
+      <div className="-mr-px flex min-w-0 flex-1 flex-col gap-px">
+        <p
+          className={cn(
+            'truncate text-label-14 text-text-primary',
+            isUnready && 'text-text-tertiary',
+          )}
+        >
+          {title}
+        </p>
+        <p
+          className={cn(
+            'truncate text-caption-11 text-text-secondary',
+            isUnready && 'text-text-tertiary',
+          )}
+        >
           {description}
         </p>
       </div>

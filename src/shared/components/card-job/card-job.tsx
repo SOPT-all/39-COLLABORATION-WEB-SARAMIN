@@ -125,7 +125,7 @@ const CardJob = ({
               )}
 
               <BookmarkButton
-                className="relative z-10 ml-auto flex size-6 shrink-0 items-center justify-center rounded-sm hover:bg-action-primary focus-visible:bg-action-primary focus-visible:outline-2 focus-visible:outline-action-primary"
+                className="relative z-10 ml-auto flex size-6 shrink-0 items-center justify-center rounded-sm focus-visible:outline-2 focus-visible:outline-action-primary"
                 aria-label={`${company} ${jobTitle} 북마크`}
                 isSelected={isBookmarked}
                 onClick={handleBookmarkClick}

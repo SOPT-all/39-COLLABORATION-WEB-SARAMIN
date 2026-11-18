@@ -1,50 +1,51 @@
 import {
   MOCK_RELATED_KEYWORDS,
-  MOCK_SEARCH_RESULT_TOTAL,
   MOCK_SELECTED_FILTERS,
 } from '@/pages/search/constants/mock-search';
 import ChipSelectedFilter from '@/shared/components/chip/chip-selected-filter';
 import { cn } from '@/shared/utils/cn';
 
-import IcRemove from '@/shared/assets/icons/ic-remove.svg?react';
-
 interface SearchSummaryProps {
   keyword: string;
+  totalCount: number;
+  isLoading: boolean;
+  isError: boolean;
 }
 
 const SEARCH_TABS = ['통합검색', '✦ AI 검색', '채용정보', '기업정보'];
 
-// 정적 UI예요. 필터 삭제 · 탭 전환은 API 연동 때 붙여요.
+// 필터 삭제와 탭 전환은 아직 동작하지 않아요.
 const handleRemoveFilter = () => {};
 
-const SearchSummary = ({ keyword }: SearchSummaryProps) => {
+const SearchSummary = ({
+  keyword,
+  totalCount,
+  isLoading,
+  isError,
+}: SearchSummaryProps) => {
+  const canShowTotalCount = !isLoading && !isError;
   return (
     <section aria-label="검색 요약" className="mx-auto w-315">
       <div className="flex h-18.5 items-center justify-between px-5">
         <div className="flex items-center gap-2">
           <ChipSelectedFilter onRemove={handleRemoveFilter}>
-            {keyword}
+            {`검색어 · ${keyword}`}
           </ChipSelectedFilter>
-          {/* ChipSelectedFilter는 '검색어 · ' 접두어가 고정이라 일반 필터는 직접 그려요. */}
           {MOCK_SELECTED_FILTERS.map((filter) => (
-            <span
+            <ChipSelectedFilter
               key={filter}
-              className="inline-flex h-8 items-center rounded-2xl border border-border-default bg-surface-default px-3 text-label-14 whitespace-nowrap text-text-secondary"
+              variant="secondary"
+              onRemove={handleRemoveFilter}
             >
-              {filter}{' '}
-              <button
-                type="button"
-                aria-label={`${filter} 삭제`}
-                className="-mr-1.5 flex"
-              >
-                <IcRemove aria-hidden className="size-5" />
-              </button>
-            </span>
+              {filter}
+            </ChipSelectedFilter>
           ))}
         </div>
-        <p className="flex h-10 w-47.5 items-center justify-center rounded-lg bg-surface-subtle text-title-16 text-text-primary">
-          {MOCK_SEARCH_RESULT_TOTAL.toLocaleString()}건 검색완료
-        </p>
+        {canShowTotalCount && (
+          <p className="flex h-10 w-47.5 items-center justify-center rounded-lg bg-surface-subtle text-title-16 text-text-primary">
+            {totalCount.toLocaleString()}건 검색완료
+          </p>
+        )}
       </div>
 
       <div className="flex h-11 items-center gap-4 text-center text-body-14">

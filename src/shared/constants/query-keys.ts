@@ -12,5 +12,7 @@ export const QUERY_KEYS = {
     all: ['user'] as const,
     keywords: ['user', 'keywords'] as const,
     documents: ['user', 'documents'] as const,
+    applications: ['user', 'applications'] as const,
+    documentFiles: ['user', 'documentFiles'] as const,
   },
 } as const;

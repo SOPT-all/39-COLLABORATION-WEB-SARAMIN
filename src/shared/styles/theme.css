@@ -179,4 +179,5 @@
   /* ───────── Shadow (Interaction contract: Card shadow) ───────── */
   --shadow-card: 0 4px 10px rgba(14, 12, 31, 0.1);
   --shadow-card-strong: 0 4px 10px rgba(14, 12, 31, 0.15);
+  --shadow-panel: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
