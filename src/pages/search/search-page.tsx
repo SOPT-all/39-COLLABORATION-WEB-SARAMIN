@@ -54,7 +54,6 @@ const SearchPage = () => {
     setPagination({ keyword, page: 0 });
   }
 
-  // TODO(#72): 조건이 바뀌면 이전 결과를 유지하지 않아요. 이전 결과 유지는 후속 작업이에요.
   const searchQuery = useSearchJobPostingsQuery(
     {
       query: keyword,
@@ -70,6 +69,7 @@ const SearchPage = () => {
   const isPageOutOfRange =
     pagination.keyword === keyword &&
     searchQuery.isSuccess &&
+    !searchQuery.isPlaceholderData &&
     searchData !== undefined &&
     searchData.page === currentPage &&
     currentPage > 0 &&
@@ -92,9 +92,21 @@ const SearchPage = () => {
   const isResultError =
     isMyFitInitializationError ||
     (hasInitializedMyFitKeywords && searchQuery.isError);
+  const isResultRefreshing =
+    searchData !== undefined &&
+    !isResultPending &&
+    !isResultError &&
+    (searchQuery.isFetching || searchQuery.isPlaceholderData);
 
   const handlePageChange = (nextPage: number) => {
-    if (nextPage < 0 || nextPage >= totalPages || nextPage === resolvedPage) {
+    if (
+      isResultPending ||
+      isResultError ||
+      isResultRefreshing ||
+      nextPage < 0 ||
+      nextPage >= totalPages ||
+      nextPage === resolvedPage
+    ) {
       return;
     }
     setPagination({ keyword, page: nextPage });
@@ -145,7 +157,7 @@ const SearchPage = () => {
       <SearchSummary
         keyword={keyword}
         totalCount={totalCount}
-        isLoading={isResultPending}
+        isLoading={isResultPending || isResultRefreshing}
         isError={isResultError}
       />
       <div className="mx-auto w-315 pt-6.5 pb-14.5">
@@ -154,7 +166,7 @@ const SearchPage = () => {
             ‘{keyword}’에 대한 취업정보
           </h1>
           <span className="text-body-14 whitespace-pre text-text-secondary">
-            관련도순 · 40개씩
+            관련도순 · {SEARCH_PAGE_SIZE}개씩
           </span>
         </div>
 
@@ -189,11 +201,12 @@ const SearchPage = () => {
             <JobResultSection
               results={results}
               totalCount={totalCount}
-              keywordCount={appliedMyFitKeywords?.length ?? 0}
-              currentPage={resolvedPage}
+              keywordCount={searchData?.keywordCount ?? 0}
+              currentPage={searchData?.page ?? resolvedPage}
               totalPages={totalPages}
               onPageChange={handlePageChange}
               isLoading={isResultPending}
+              isRefreshing={isResultRefreshing}
               isError={isResultError}
               onRetry={handleRetry}
             />
