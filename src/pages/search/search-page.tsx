@@ -15,7 +15,7 @@ import KeywordSearchPanel from '@/shared/components/search/keyword-search-panel'
 import { ROUTES } from '@/shared/constants/routes';
 import { SEARCH_KEYWORD_PARAM } from '@/shared/constants/search';
 
-const SEARCH_PAGE_SIZE = 40;
+const SEARCH_PAGE_SIZE = 7;
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();

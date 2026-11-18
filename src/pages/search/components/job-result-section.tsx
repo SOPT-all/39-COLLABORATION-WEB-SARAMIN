@@ -143,7 +143,7 @@ const JobResultSection = ({
 
       <div className="mx-2.25 flex flex-col items-end">
         <MyfitSearchButton resultCount={2}>저장한 공고 보기</MyfitSearchButton>
-        {hasResults && totalPages > 0 && (
+        {hasResults && totalPages > 1 && (
           <nav
             aria-label="페이지 이동"
             className="flex h-20 w-full items-center justify-center gap-1.5"
