@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { MOCK_DOCUMENT_FILES } from '@/pages/home/constants/mock-document-files';
 import type { DocumentFile } from '@/pages/home/types/document-file';
@@ -27,4 +27,17 @@ export const useDocumentFiles = ({
     queryFn: getDocumentFiles,
     enabled,
   });
+};
+
+// 서류 추가에서 "이 서류 사용"을 누르면 서류 목록 캐시 맨 앞에 넣어요.
+// 서버 저장이 없어서 새로고침하면 사라져요.
+export const useAddDocumentFile = () => {
+  const queryClient = useQueryClient();
+
+  return (document: DocumentFile) => {
+    queryClient.setQueryData<DocumentFile[]>(
+      QUERY_KEYS.USER.documentFiles,
+      (previousDocuments = []) => [document, ...previousDocuments],
+    );
+  };
 };
