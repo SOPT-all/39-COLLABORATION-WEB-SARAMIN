@@ -1,3 +1,6 @@
+import { useState } from 'react';
+
+import CompareModal from '@/pages/search/components/compare-modal';
 import type { SearchResult } from '@/pages/search/types/search';
 import MyfitSearchButton from '@/shared/components/button/myfit-search-button';
 import ChipNumber from '@/shared/components/chip/chip-number';
@@ -38,7 +41,8 @@ const JobResultSection = ({
   isError = false,
   onRetry,
 }: JobResultSectionProps) => {
-  const { getIsBookmarked, setBookmark } = useBookmarks();
+  const { getIsBookmarked, setBookmark, bookmarkedJobs } = useBookmarks();
+  const [isCompareOpen, setIsCompareOpen] = useState(false);
   // 로딩·오류 중에는 건수와 페이지 번호를 숨겨요.
   const hasLoaded = !isLoading && !isError;
   const hasResults = hasLoaded && results.length > 0;
@@ -140,7 +144,9 @@ const JobResultSection = ({
                   companyName={result.companyName}
                   companyMeta={result.companyMeta}
                   isBookmarked={isBookmarked}
-                  onBookmarkClick={() => setBookmark(result.id, !isBookmarked)}
+                  onBookmarkClick={() =>
+                    setBookmark(result.id, !isBookmarked, result.compareJob)
+                  }
                 />
               </li>
             );
@@ -149,7 +155,14 @@ const JobResultSection = ({
       )}
 
       <div className="mx-2.25 flex flex-col items-end">
-        <MyfitSearchButton resultCount={2}>저장한 공고 보기</MyfitSearchButton>
+        {/* 스크랩한 공고 = 비교 대상. 홈에서 스크랩한 공고도 함께 세요. (기능명세서 FR-07 · FR-10) */}
+        <MyfitSearchButton
+          resultCount={bookmarkedJobs.length}
+          aria-haspopup="dialog"
+          onClick={() => setIsCompareOpen(true)}
+        >
+          저장한 공고 보기
+        </MyfitSearchButton>
         {hasResults && totalPages > 1 && (
           <nav
             aria-label="페이지 이동"
@@ -184,6 +197,10 @@ const JobResultSection = ({
           </nav>
         )}
       </div>
+      <CompareModal
+        isOpen={isCompareOpen}
+        onClose={() => setIsCompareOpen(false)}
+      />
     </section>
   );
 };
