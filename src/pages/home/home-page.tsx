@@ -13,20 +13,14 @@ import KeywordPanelSection from '@/pages/home/components/keyword-panel-section';
 import RecruitFeedSection from '@/pages/home/components/recruit-feed-section';
 import StickyRailSection from '@/pages/home/components/sticky-rail-section';
 import { APPLY_DOCUMENT_SUMMARY } from '@/pages/home/constants/apply-drag';
-import {
-  MOCK_MY_KEYWORDS,
-  MOCK_RECRUITS,
-} from '@/pages/home/constants/mock-recruits';
+import { MOCK_MY_KEYWORDS } from '@/pages/home/constants/mock-recruits';
 import { useApplyDrag } from '@/pages/home/hooks/use-apply-drag';
 import { useApplyFilter } from '@/pages/home/hooks/use-apply-filter';
 import { useApplyFlow } from '@/pages/home/hooks/use-apply-flow';
+import { useRecruitFeed } from '@/pages/home/hooks/use-recruit-feed';
 import type { JobCardItem } from '@/pages/home/types/job-card';
 import { createApplyDocumentSummary } from '@/pages/home/utils/create-apply-document-summary';
 import { getApplyStatusCounts } from '@/pages/home/utils/get-apply-status-counts';
-
-const APPLY_STATUS_COUNTS = getApplyStatusCounts(
-  Object.values(MOCK_RECRUITS).flat(),
-);
 
 // 지원 API가 없어 목 제출 함수로 항상 성공 처리
 const submitApplication = createMockSubmitApplication('success');
@@ -41,6 +35,10 @@ const HomePage = () => {
     ReadonlyMap<number, string>
   >(() => new Map());
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const recruitSections = useRecruitFeed(appliedAtByRecruitId);
+  const applyStatusCounts = getApplyStatusCounts(
+    Object.values(recruitSections).flatMap(({ recruits }) => recruits),
+  );
 
   const { step, target, openApplyFlow, closeApplyFlow, submit } = useApplyFlow({
     submitApplication,
@@ -81,14 +79,14 @@ const HomePage = () => {
           <KeywordPanelSection keywords={MOCK_MY_KEYWORDS} />
           <ApplyFilterBar
             selectedFilter={selectedFilter}
-            counts={APPLY_STATUS_COUNTS}
+            counts={applyStatusCounts}
             onFilterChange={toggleFilter}
           />
           <HiringBanner />
           <RecruitFeedSection
             selectedFilter={selectedFilter}
             isDragging={isDragging}
-            appliedAtByRecruitId={appliedAtByRecruitId}
+            sections={recruitSections}
             onApplyDrop={handleApplyDrop}
           />
         </div>

@@ -12,16 +12,3 @@ export type ApplyFilter = Exclude<ApplyStatus, 'closed'>;
 // 홈 공고 피드의 섹션 종류
 export type RecruitSectionType =
   'recommended' | 'viewedCompanies' | 'closingSoon';
-
-// 홈 공고 카드에 필요한 데이터. API가 나오면 응답에 맞춰 필드를 조정해요.
-export interface Recruit {
-  id: number;
-  companyName: string;
-  title: string;
-  tags: string[];
-  conditions: string[];
-  matchedConditionCount: number;
-  deadline: string;
-  applyStatus: ApplyStatus;
-  isBookmarked: boolean;
-}
