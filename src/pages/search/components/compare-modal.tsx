@@ -13,7 +13,6 @@
 import { type DragEvent, type KeyboardEvent, useId, useState } from 'react';
 
 import CompareJobColumn from '@/pages/search/components/compare-job-column';
-import CompareJobDetailModal from '@/pages/search/components/compare-job-detail-modal';
 import CompareRowEditPanel from '@/pages/search/components/compare-row-edit-panel';
 import {
   COMPARE_APPLY_DOCUMENT_SUMMARY,
@@ -25,6 +24,7 @@ import { useMyKeywordsQuery } from '@/shared/api/use-my-keywords-query';
 import ModalApplyReview from '@/shared/components/modal/modal-apply-review';
 import ModalDialog from '@/shared/components/modal/modal-dialog';
 import ModalFeedback from '@/shared/components/modal/modal-feedback';
+import ModalJobDetail from '@/shared/components/modal/modal-job-detail';
 import { useBookmarks } from '@/shared/hooks/use-bookmarks';
 import type { CompareJob } from '@/shared/types/compare-job';
 import { cn } from '@/shared/utils/cn';
@@ -218,10 +218,7 @@ const CompareModal = ({ isOpen, onClose }: CompareModalProps) => {
         onApply={setRowKeys}
         onClose={() => setIsEditOpen(false)}
       />
-      <CompareJobDetailModal
-        job={detailJob}
-        onClose={() => setDetailJob(null)}
-      />
+      <ModalJobDetail job={detailJob} onClose={() => setDetailJob(null)} />
       {applyTarget && (
         <ModalApplyReview
           isOpen
