@@ -1,6 +1,7 @@
 import type { CompareJobDetail } from '@/pages/search/types/compare';
 
-// 서버 공고 응답에 없는 비교 항목(근무일시 · 급여 · 전형 절차 · 우대사항)을 공고 id별로 채운 목 데이터예요.
+// 서버 공고 응답에 없는 비교 항목을 공고 id별로 채운 목 데이터예요.
+// 기본 항목(근무일시 · 급여 · 전형 절차 · 우대사항)과 비교 항목 편집에서 더할 수 있는 항목(복지 혜택 · 기업 규모 · 평균 연봉 · 재택 · 유연근무 · 모집 인원)
 // 공고가 52개뿐이라 회사 · 직무 · 고용형태 · 키워드에 맞춰 공고마다 만들었어요. 여기 없는 공고는 '미기재'로 보여 줘요.
 export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
   // 카카오페이 · 결제 플랫폼 백엔드 개발자 (Java·Spring)
@@ -9,6 +10,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '면접 후 결정',
     process: '서류→코딩테스트→1차 기술 면접→2차 컬처핏 면접→입사확정',
     preference: 'Java·Spring 실무 경험자, 관련 프로젝트 경험자 우대',
+    welfare: '식대 · 복지포인트 · 자기계발비',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 7,200만원',
+    remoteWork: '유연근무 (재택 혼합)',
+    headcount: '1명',
   },
   // 토스 · 백엔드 개발자 신입 (Java·Spring)
   2: {
@@ -16,6 +22,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 5,000–6,000만원',
     process: '서류→코딩테스트→1차 기술 면접→2차 컬처핏 면접→입사확정',
     preference: 'Java·Spring 실무 경험자, 핀테크 도메인 관심자',
+    welfare: '스톡옵션 · 식대 · 장비 지원',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 7,800만원',
+    remoteWork: '재택 · 자율출퇴근',
+    headcount: '2명',
   },
   // 당근 · 프론트엔드 개발자 신입 (React)
   3: {
@@ -23,6 +34,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 5,000만원 이상',
     process: '서류→코딩테스트→1차 기술 면접→2차 컬처핏 면접→입사확정',
     preference: 'TypeScript·React 실무 경험자, 커뮤니티 도메인 관심자',
+    welfare: '식대 · 장비 지원 · 동호회',
+    companySize: '중견기업 (500명 이상)',
+    averageSalary: '연 7,000만원',
+    remoteWork: '자율출퇴근',
+    headcount: '2명',
   },
   // 현대오토에버 · iOS 개발자 채용연계형 인턴
   4: {
@@ -30,6 +46,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '월 220–250만원',
     process: '서류→1차 면접→인턴 근무(3개월)→전환 면접',
     preference: 'Swift·SwiftUI 실무 경험자, 모빌리티 도메인 관심자',
+    welfare: '성과급 · 복지포인트 · 사내 식당',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 7,100만원',
+    remoteWork: '시차출퇴근',
+    headcount: '3명',
   },
   // 네이버클라우드 · 안드로이드 개발자 인턴
   5: {
@@ -37,6 +58,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '월 220–250만원',
     process: '서류→면접→합격',
     preference: 'Kotlin·Jetpack Compose 실무 경험자, 에듀테크 도메인 관심자',
+    welfare: '복지포인트 · 건강검진 · 교육비',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 6,900만원',
+    remoteWork: '시차출퇴근 · 재택 혼합',
+    headcount: '3명',
   },
   // 오늘의 집 · UI/UX 디자이너 신입
   6: {
@@ -44,6 +70,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 4,000–4,600만원',
     process: '서류·포트폴리오→과제 전형→1차 면접→최종 면접',
     preference: 'Figma 실무 경험자, 콘텐츠 도메인 관심자',
+    welfare: '식대 · 장비 지원 · 도서 구입비',
+    companySize: '중견기업 (300명 이상)',
+    averageSalary: '연 5,800만원',
+    remoteWork: '재택 혼합',
+    headcount: '2명',
   },
   // 무신사 · 커머스 서비스 기획자 신입
   7: {
@@ -51,6 +82,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 3,800–4,400만원',
     process: '서류→과제 전형→1차 실무 면접→2차 면접',
     preference: 'Figma·GA4 실무 경험자, 이커머스 도메인 관심자',
+    welfare: '임직원 할인 · 식대 · 자기계발비',
+    companySize: '중견기업 (500명 이상)',
+    averageSalary: '연 5,600만원',
+    remoteWork: '시차출퇴근',
+    headcount: '2명',
   },
   // 올리브영 · 헬스케어 데이터 분석 인턴
   8: {
@@ -58,6 +94,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '월 220–250만원',
     process: '서류→면접→합격',
     preference: 'Python·SQL 실무 경험자, 헬스케어 도메인 관심자',
+    welfare: '임직원 할인 · 복지포인트 · 건강검진',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 5,500만원',
+    remoteWork: '불가',
+    headcount: '3명',
   },
   // 네이버클라우드 · 백엔드 개발자 채용연계형 인턴 (Python)
   9: {
@@ -65,6 +106,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '월 220–250만원',
     process: '서류→1차 면접→인턴 근무(3개월)→전환 면접',
     preference: 'Python·Django 실무 경험자, 에듀테크 도메인 관심자',
+    welfare: '복지포인트 · 건강검진 · 교육비',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 6,900만원',
+    remoteWork: '시차출퇴근 · 재택 혼합',
+    headcount: '3명',
   },
   // 토스 · 프론트엔드 개발자 신입·주니어 (Next.js)
   10: {
@@ -72,6 +118,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 5,000–6,000만원',
     process: '서류→코딩테스트→1차 기술 면접→2차 컬처핏 면접→입사확정',
     preference: 'TypeScript·React 실무 경험자, B2B SaaS 도메인 관심자',
+    welfare: '스톡옵션 · 식대 · 장비 지원',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 7,800만원',
+    remoteWork: '재택 · 자율출퇴근',
+    headcount: '2명',
   },
   // 당근 · 백엔드 개발자 주니어 (Node.js)
   11: {
@@ -79,6 +130,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '면접 후 결정',
     process: '서류→코딩테스트→1차 기술 면접→2차 컬처핏 면접→입사확정',
     preference: 'Node.js·TypeScript 실무 경험자, 콘텐츠 도메인 관심자',
+    welfare: '식대 · 장비 지원 · 동호회',
+    companySize: '중견기업 (500명 이상)',
+    averageSalary: '연 7,000만원',
+    remoteWork: '자율출퇴근',
+    headcount: '1명',
   },
   // 현대오토에버 · 모빌리티 UI/UX 디자인 인턴
   12: {
@@ -86,6 +142,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '월 220–250만원',
     process: '서류→면접→합격',
     preference: 'Figma 실무 경험자, 모빌리티 도메인 관심자',
+    welfare: '성과급 · 복지포인트 · 사내 식당',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 7,100만원',
+    remoteWork: '시차출퇴근',
+    headcount: '3명',
   },
   // 당근 · 게임 서비스 QA 엔지니어 신입
   13: {
@@ -93,6 +154,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 5,000만원 이상',
     process: '서류→코딩테스트→1차 기술 면접→2차 컬처핏 면접→입사확정',
     preference: 'SQL·Jest 실무 경험자, 게임 도메인 관심자',
+    welfare: '식대 · 장비 지원 · 동호회',
+    companySize: '중견기업 (500명 이상)',
+    averageSalary: '연 7,000만원',
+    remoteWork: '자율출퇴근',
+    headcount: '2명',
   },
   // 네이버클라우드 · DevOps 엔지니어 주니어
   14: {
@@ -100,6 +166,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '면접 후 결정',
     process: '서류→코딩테스트→1차 기술 면접→2차 컬처핏 면접→입사확정',
     preference: 'AWS·Docker 실무 경험자, B2B SaaS 도메인 관심자',
+    welfare: '복지포인트 · 건강검진 · 교육비',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 6,900만원',
+    remoteWork: '시차출퇴근 · 재택 혼합',
+    headcount: '1명',
   },
   // 당근 · 커뮤니티 서비스 기획 인턴
   15: {
@@ -107,6 +178,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '월 220–250만원',
     process: '서류→면접→합격',
     preference: 'Figma·SQL 실무 경험자, 커뮤니티 도메인 관심자',
+    welfare: '식대 · 장비 지원 · 동호회',
+    companySize: '중견기업 (500명 이상)',
+    averageSalary: '연 7,000만원',
+    remoteWork: '자율출퇴근',
+    headcount: '3명',
   },
   // 카카오페이 · 핀테크 백엔드 개발자 신입
   16: {
@@ -114,6 +190,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 4,800–5,600만원',
     process: '서류→코딩테스트→1차 기술 면접→2차 컬처핏 면접→입사확정',
     preference: 'Java·Spring 실무 경험자, 핀테크 도메인 관심자',
+    welfare: '식대 · 복지포인트 · 자기계발비',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 7,200만원',
+    remoteWork: '유연근무 (재택 혼합)',
+    headcount: '2명',
   },
   // 무신사 · 이커머스 프론트엔드 개발 인턴
   17: {
@@ -121,6 +202,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '월 220–250만원',
     process: '서류→면접→합격',
     preference: 'JavaScript·React 실무 경험자, 이커머스 도메인 관심자',
+    welfare: '임직원 할인 · 식대 · 자기계발비',
+    companySize: '중견기업 (500명 이상)',
+    averageSalary: '연 5,600만원',
+    remoteWork: '시차출퇴근',
+    headcount: '3명',
   },
   // 올리브영 · 안드로이드 개발자 주니어
   18: {
@@ -128,6 +214,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '면접 후 결정',
     process: '서류→코딩테스트→1차 기술 면접→2차 컬처핏 면접→입사확정',
     preference: 'Kotlin·Jetpack Compose 실무 경험자, 헬스케어 도메인 관심자',
+    welfare: '임직원 할인 · 복지포인트 · 건강검진',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 5,500만원',
+    remoteWork: '불가',
+    headcount: '1명',
   },
   // 오늘의 집 · iOS 개발자 신입 (SwiftUI)
   19: {
@@ -135,6 +226,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 4,000–4,600만원',
     process: '서류→코딩테스트→1차 기술 면접→2차 컬처핏 면접→입사확정',
     preference: 'Swift·SwiftUI 실무 경험자, 콘텐츠 도메인 관심자',
+    welfare: '식대 · 장비 지원 · 도서 구입비',
+    companySize: '중견기업 (300명 이상)',
+    averageSalary: '연 5,800만원',
+    remoteWork: '재택 혼합',
+    headcount: '2명',
   },
   // 무신사 · 커머스 데이터 분석가 신입
   20: {
@@ -142,6 +238,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 3,800–4,400만원',
     process: '서류→SQL 과제→1차 실무 면접→2차 면접',
     preference: 'Python·SQL 실무 경험자, 이커머스 도메인 관심자',
+    welfare: '임직원 할인 · 식대 · 자기계발비',
+    companySize: '중견기업 (500명 이상)',
+    averageSalary: '연 5,600만원',
+    remoteWork: '시차출퇴근',
+    headcount: '2명',
   },
   // 네이버클라우드 · 머신러닝 리서치 인턴
   21: {
@@ -149,6 +250,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '월 220–250만원',
     process: '서류→면접→합격',
     preference: 'Python·TensorFlow 실무 경험자, 인공지능 도메인 관심자',
+    welfare: '복지포인트 · 건강검진 · 교육비',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 6,900만원',
+    remoteWork: '시차출퇴근 · 재택 혼합',
+    headcount: '3명',
   },
   // 무신사 · 백엔드 개발자 주니어 계약직 (Spring)
   22: {
@@ -156,6 +262,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 3,000–3,400만원',
     process: '서류→코딩테스트→1차 기술 면접→2차 컬처핏 면접→입사확정',
     preference: 'Java·Spring 실무 경험자, 이커머스 도메인 관심자',
+    welfare: '임직원 할인 · 식대 · 자기계발비',
+    companySize: '중견기업 (500명 이상)',
+    averageSalary: '연 5,600만원',
+    remoteWork: '시차출퇴근',
+    headcount: '1명',
   },
   // 네이버클라우드 · 프론트엔드 개발자 신입 계약직
   23: {
@@ -163,6 +274,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 3,000–3,400만원',
     process: '서류→코딩테스트→1차 기술 면접→2차 컬처핏 면접→입사확정',
     preference: 'React·TypeScript 실무 경험자, 에듀테크 도메인 관심자',
+    welfare: '복지포인트 · 건강검진 · 교육비',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 6,900만원',
+    remoteWork: '시차출퇴근 · 재택 혼합',
+    headcount: '1명',
   },
   // 토스 · B2B SaaS UI/UX 디자이너 주니어
   24: {
@@ -170,6 +286,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '면접 후 결정',
     process: '서류·포트폴리오→과제 전형→1차 면접→최종 면접',
     preference: 'Figma 실무 경험자, B2B SaaS 도메인 관심자',
+    welfare: '스톡옵션 · 식대 · 장비 지원',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 7,800만원',
+    remoteWork: '재택 · 자율출퇴근',
+    headcount: '1명',
   },
   // 토스 · 핀테크 서비스 기획자 주니어
   25: {
@@ -177,6 +298,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '면접 후 결정',
     process: '서류→과제 전형→1차 실무 면접→2차 면접',
     preference: 'SQL·Figma 실무 경험자, 핀테크 도메인 관심자',
+    welfare: '스톡옵션 · 식대 · 장비 지원',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 7,800만원',
+    remoteWork: '재택 · 자율출퇴근',
+    headcount: '1명',
   },
   // 네이버클라우드 · 클라우드 보안 엔지니어 신입
   26: {
@@ -184,6 +310,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 4,600–5,200만원',
     process: '서류→코딩테스트→1차 기술 면접→2차 컬처핏 면접→입사확정',
     preference: 'Python·AWS 실무 경험자, B2B SaaS 도메인 관심자',
+    welfare: '복지포인트 · 건강검진 · 교육비',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 6,900만원',
+    remoteWork: '시차출퇴근 · 재택 혼합',
+    headcount: '2명',
   },
   // 네이버클라우드 · AI 서비스 백엔드 개발 인턴 (FastAPI)
   27: {
@@ -191,6 +322,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '월 220–250만원',
     process: '서류→면접→합격',
     preference: 'Python·FastAPI 실무 경험자, 인공지능 도메인 관심자',
+    welfare: '복지포인트 · 건강검진 · 교육비',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 6,900만원',
+    remoteWork: '시차출퇴근 · 재택 혼합',
+    headcount: '3명',
   },
   // 당근 · 콘텐츠 프론트엔드 개발자 신입
   28: {
@@ -198,6 +334,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 5,000만원 이상',
     process: '서류→코딩테스트→1차 기술 면접→2차 컬처핏 면접→입사확정',
     preference: 'React·TypeScript 실무 경험자, 콘텐츠 도메인 관심자',
+    welfare: '식대 · 장비 지원 · 동호회',
+    companySize: '중견기업 (500명 이상)',
+    averageSalary: '연 7,000만원',
+    remoteWork: '자율출퇴근',
+    headcount: '2명',
   },
   // 현대오토에버 · 모빌리티 백엔드 개발자 신입
   29: {
@@ -205,6 +346,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 4,800–5,400만원',
     process: '서류→코딩테스트→1차 기술 면접→2차 컬처핏 면접→입사확정',
     preference: 'Java·Spring 실무 경험자, 모빌리티 도메인 관심자',
+    welfare: '성과급 · 복지포인트 · 사내 식당',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 7,100만원',
+    remoteWork: '시차출퇴근',
+    headcount: '2명',
   },
   // 오늘의 집 · 콘텐츠 프론트엔드 개발 인턴
   30: {
@@ -212,6 +358,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '월 220–250만원',
     process: '서류→면접→합격',
     preference: 'JavaScript·React 실무 경험자, 콘텐츠 도메인 관심자',
+    welfare: '식대 · 장비 지원 · 도서 구입비',
+    companySize: '중견기업 (300명 이상)',
+    averageSalary: '연 5,800만원',
+    remoteWork: '재택 혼합',
+    headcount: '3명',
   },
   // 네이버클라우드 · 에듀테크 서비스 기획 인턴
   31: {
@@ -219,6 +370,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '월 220–250만원',
     process: '서류→면접→합격',
     preference: 'Figma·GA4 실무 경험자, 에듀테크 도메인 관심자',
+    welfare: '복지포인트 · 건강검진 · 교육비',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 6,900만원',
+    remoteWork: '시차출퇴근 · 재택 혼합',
+    headcount: '3명',
   },
   // 올리브영 · 콘텐츠 마케팅 체험형 인턴
   32: {
@@ -226,6 +382,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '월 220–250만원',
     process: '서류→면접→합격',
     preference: 'GA4·Notion 실무 경험자, 광고·마케팅 도메인 관심자',
+    welfare: '임직원 할인 · 복지포인트 · 건강검진',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 5,500만원',
+    remoteWork: '불가',
+    headcount: '3명',
   },
   // 당근 · 퍼포먼스 마케터 신입
   33: {
@@ -233,6 +394,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 5,000만원 이상',
     process: '서류→1차 실무 면접→2차 임원 면접→입사확정',
     preference: 'Google Ads·Meta Ads 실무 경험자, 광고·마케팅 도메인 관심자',
+    welfare: '식대 · 장비 지원 · 동호회',
+    companySize: '중견기업 (500명 이상)',
+    averageSalary: '연 7,000만원',
+    remoteWork: '자율출퇴근',
+    headcount: '2명',
   },
   // 무신사 · 브랜드 마케터 신입
   34: {
@@ -240,6 +406,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 3,800–4,400만원',
     process: '서류→1차 실무 면접→2차 임원 면접→입사확정',
     preference: 'PowerPoint·Excel 실무 경험자, 패션·뷰티 도메인 관심자',
+    welfare: '임직원 할인 · 식대 · 자기계발비',
+    companySize: '중견기업 (500명 이상)',
+    averageSalary: '연 5,600만원',
+    remoteWork: '시차출퇴근',
+    headcount: '2명',
   },
   // 토스 · 인사·채용 운영 인턴
   35: {
@@ -247,6 +418,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '월 220–250만원',
     process: '서류→면접→합격',
     preference: 'Excel·Google Sheets 실무 경험자, B2B SaaS 도메인 관심자',
+    welfare: '스톡옵션 · 식대 · 장비 지원',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 7,800만원',
+    remoteWork: '재택 · 자율출퇴근',
+    headcount: '3명',
   },
   // 올리브영 · 재무·회계 담당자 신입
   36: {
@@ -254,6 +430,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 3,800–4,200만원',
     process: '서류→1차 실무 면접→2차 임원 면접→입사확정',
     preference: 'Excel·Google Sheets 실무 경험자, 무역·유통 도메인 관심자',
+    welfare: '임직원 할인 · 복지포인트 · 건강검진',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 5,500만원',
+    remoteWork: '불가',
+    headcount: '2명',
   },
   // 현대오토에버 · 경영지원 운영 인턴
   37: {
@@ -261,6 +442,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '월 220–250만원',
     process: '서류→면접→합격',
     preference: 'Excel·PowerPoint 실무 경험자, B2B SaaS 도메인 관심자',
+    welfare: '성과급 · 복지포인트 · 사내 식당',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 7,100만원',
+    remoteWork: '시차출퇴근',
+    headcount: '3명',
   },
   // 네이버클라우드 · B2B 영업·고객관리 신입
   38: {
@@ -268,6 +454,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 4,600–5,200만원',
     process: '서류→1차 실무 면접→2차 임원 면접→입사확정',
     preference: 'Salesforce·Excel 실무 경험자, B2B SaaS 도메인 관심자',
+    welfare: '복지포인트 · 건강검진 · 교육비',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 6,900만원',
+    remoteWork: '시차출퇴근 · 재택 혼합',
+    headcount: '2명',
   },
   // 오늘의 집 · 커머스 사업기획 주니어
   39: {
@@ -275,6 +466,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '면접 후 결정',
     process: '서류→1차 실무 면접→2차 임원 면접→입사확정',
     preference: 'Excel·PowerPoint 실무 경험자, 이커머스 도메인 관심자',
+    welfare: '식대 · 장비 지원 · 도서 구입비',
+    companySize: '중견기업 (300명 이상)',
+    averageSalary: '연 5,800만원',
+    remoteWork: '재택 혼합',
+    headcount: '1명',
   },
   // 카카오페이 · PR·홍보 어시스턴트 인턴
   40: {
@@ -282,6 +478,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '월 220–250만원',
     process: '서류→면접→합격',
     preference: 'PowerPoint·Notion 실무 경험자, 미디어·출판 도메인 관심자',
+    welfare: '식대 · 복지포인트 · 자기계발비',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 7,200만원',
+    remoteWork: '유연근무 (재택 혼합)',
+    headcount: '3명',
   },
   // 무신사 · 패션·뷰티 온라인 MD 신입
   41: {
@@ -289,6 +490,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 3,800–4,400만원',
     process: '서류→1차 실무 면접→2차 임원 면접→입사확정',
     preference: 'Excel·GA4 실무 경험자, 패션·뷰티 도메인 관심자',
+    welfare: '임직원 할인 · 식대 · 자기계발비',
+    companySize: '중견기업 (500명 이상)',
+    averageSalary: '연 5,600만원',
+    remoteWork: '시차출퇴근',
+    headcount: '2명',
   },
   // 카카오페이 · CRM 마케터 신입
   42: {
@@ -296,6 +502,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 4,800–5,600만원',
     process: '서류→1차 실무 면접→2차 임원 면접→입사확정',
     preference: 'HubSpot·SQL 실무 경험자, 이커머스 도메인 관심자',
+    welfare: '식대 · 복지포인트 · 자기계발비',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 7,200만원',
+    remoteWork: '유연근무 (재택 혼합)',
+    headcount: '2명',
   },
   // 오늘의 집 · 콘텐츠 에디터 인턴
   43: {
@@ -303,6 +514,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '월 220–250만원',
     process: '서류→면접→합격',
     preference: 'Notion·Adobe Photoshop 실무 경험자, 미디어·출판 도메인 관심자',
+    welfare: '식대 · 장비 지원 · 도서 구입비',
+    companySize: '중견기업 (300명 이상)',
+    averageSalary: '연 5,800만원',
+    remoteWork: '재택 혼합',
+    headcount: '3명',
   },
   // 현대오토에버 · 해외영업 담당자 신입
   44: {
@@ -310,6 +526,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 4,800–5,400만원',
     process: '서류→1차 실무 면접→2차 임원 면접→입사확정',
     preference: 'Excel·PowerPoint 실무 경험자, 무역·유통 도메인 관심자',
+    welfare: '성과급 · 복지포인트 · 사내 식당',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 7,100만원',
+    remoteWork: '시차출퇴근',
+    headcount: '2명',
   },
   // 현대오토에버 · 교육 프로그램 운영 매니저 신입
   45: {
@@ -317,6 +538,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 4,800–5,400만원',
     process: '서류→1차 실무 면접→2차 임원 면접→입사확정',
     preference: 'Google Sheets·Notion 실무 경험자, 교육서비스 도메인 관심자',
+    welfare: '성과급 · 복지포인트 · 사내 식당',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 7,100만원',
+    remoteWork: '시차출퇴근',
+    headcount: '2명',
   },
   // 당근 · 고객경험(CX) 운영 인턴
   46: {
@@ -324,6 +550,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '월 220–250만원',
     process: '서류→면접→합격',
     preference: 'Google Sheets·HubSpot 실무 경험자, 헬스케어 도메인 관심자',
+    welfare: '식대 · 장비 지원 · 동호회',
+    companySize: '중견기업 (500명 이상)',
+    averageSalary: '연 7,000만원',
+    remoteWork: '자율출퇴근',
+    headcount: '3명',
   },
   // 올리브영 · 콘텐츠 마케터 주니어
   47: {
@@ -331,6 +562,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '면접 후 결정',
     process: '서류→1차 실무 면접→2차 임원 면접→입사확정',
     preference: 'GA4·Meta Ads 실무 경험자, 콘텐츠 도메인 관심자',
+    welfare: '임직원 할인 · 복지포인트 · 건강검진',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 5,500만원',
+    remoteWork: '불가',
+    headcount: '1명',
   },
   // 토스 · 인사·채용 담당자 신입
   48: {
@@ -338,6 +574,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 5,000–6,000만원',
     process: '서류→1차 실무 면접→2차 임원 면접→입사확정',
     preference: 'Excel·Notion 실무 경험자, B2B SaaS 도메인 관심자',
+    welfare: '스톡옵션 · 식대 · 장비 지원',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 7,800만원',
+    remoteWork: '재택 · 자율출퇴근',
+    headcount: '2명',
   },
   // 올리브영 · 재무·회계 주니어 계약직
   49: {
@@ -345,6 +586,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 3,000–3,400만원',
     process: '서류→1차 실무 면접→2차 임원 면접→입사확정',
     preference: 'Excel·Google Sheets 실무 경험자, 무역·유통 도메인 관심자',
+    welfare: '임직원 할인 · 복지포인트 · 건강검진',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 5,500만원',
+    remoteWork: '불가',
+    headcount: '1명',
   },
   // 무신사 · 이커머스 MD 채용연계형 인턴
   50: {
@@ -352,6 +598,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '월 220–250만원',
     process: '서류→1차 면접→인턴 근무(3개월)→전환 면접',
     preference: 'Excel·GA4 실무 경험자, 이커머스 도메인 관심자',
+    welfare: '임직원 할인 · 식대 · 자기계발비',
+    companySize: '중견기업 (500명 이상)',
+    averageSalary: '연 5,600만원',
+    remoteWork: '시차출퇴근',
+    headcount: '3명',
   },
   // 카카오페이 · 재무·회계 담당자 신입
   52: {
@@ -359,6 +610,11 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 4,800–5,600만원',
     process: '서류→1차 실무 면접→2차 임원 면접→입사확정',
     preference: 'Excel·PowerPoint 실무 경험자, 공공·비영리 도메인 관심자',
+    welfare: '식대 · 복지포인트 · 자기계발비',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 7,200만원',
+    remoteWork: '유연근무 (재택 혼합)',
+    headcount: '2명',
   },
   // 현대오토에버 · 반도체 공정 데이터 분석 엔지니어 신입
   53: {
@@ -366,5 +622,10 @@ export const MOCK_COMPARE_DETAILS: Record<number, CompareJobDetail> = {
     salary: '연 4,800–5,400만원',
     process: '서류→SQL 과제→1차 실무 면접→2차 면접',
     preference: '머신러닝·Python 실무 경험자, 인공지능 도메인 관심자',
+    welfare: '성과급 · 복지포인트 · 사내 식당',
+    companySize: '대기업 (1,000명 이상)',
+    averageSalary: '연 7,100만원',
+    remoteWork: '시차출퇴근',
+    headcount: '2명',
   },
 };

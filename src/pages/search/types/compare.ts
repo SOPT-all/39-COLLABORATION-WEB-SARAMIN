@@ -4,4 +4,10 @@ export interface CompareJobDetail {
   salary: string;
   process: string;
   preference: string;
+  // 비교 항목 편집에서 더할 수 있는 항목
+  welfare: string;
+  companySize: string;
+  averageSalary: string;
+  remoteWork: string;
+  headcount: string;
 }
