@@ -5,10 +5,12 @@ import type { SearchResult, SearchSort } from '@/pages/search/types/search';
 import { sortSearchResults } from '@/pages/search/utils/sort-search-results';
 import MyfitSearchButton from '@/shared/components/button/myfit-search-button';
 import ChipNumber from '@/shared/components/chip/chip-number';
+import ModalJobDetail from '@/shared/components/modal/modal-job-detail';
 import RowSearchResult from '@/shared/components/row/row-search-result';
 import SkeletonSearchResultItem from '@/shared/components/skeleton/skeleton-search-result-item';
 import StateSearchResults from '@/shared/components/state-search-results/state-search-results';
 import { useBookmarks } from '@/shared/hooks/use-bookmarks';
+import type { CompareJob } from '@/shared/types/compare-job';
 import { cn } from '@/shared/utils/cn';
 
 const SORT_OPTIONS: {
@@ -48,6 +50,7 @@ const JobResultSection = ({
 }: JobResultSectionProps) => {
   const { getIsBookmarked, setBookmark, bookmarkedJobs } = useBookmarks();
   const [isCompareOpen, setIsCompareOpen] = useState(false);
+  const [detailJob, setDetailJob] = useState<CompareJob | null>(null);
   // 고른 정렬은 페이지를 넘기거나 검색어를 바꿔도 유지돼요.
   const [sort, setSort] = useState<SearchSort>('match');
   const sortedResults = sortSearchResults(results, sort);
@@ -153,6 +156,11 @@ const JobResultSection = ({
                   companyName={result.companyName}
                   companyMeta={result.companyMeta}
                   isBookmarked={isBookmarked}
+                  onTitleClick={
+                    result.compareJob
+                      ? () => setDetailJob(result.compareJob ?? null)
+                      : undefined
+                  }
                   onBookmarkClick={() =>
                     setBookmark(result.id, !isBookmarked, result.compareJob)
                   }
@@ -206,6 +214,7 @@ const JobResultSection = ({
           </nav>
         )}
       </div>
+      <ModalJobDetail job={detailJob} onClose={() => setDetailJob(null)} />
       <CompareModal
         isOpen={isCompareOpen}
         onClose={() => setIsCompareOpen(false)}
