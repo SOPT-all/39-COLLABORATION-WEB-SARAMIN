@@ -8,8 +8,11 @@ export interface CompareJob {
   career: string;
   education: string;
   hireType: string;
-  // MY FIT 일치 정보. 홈 공고는 일치 키워드 목록 · 전체 수가 없어 개수만 있어요.
+  // 공고 키워드. 일치 키워드 목록이 없는 홈 공고는 내 MY FIT 키워드와 겹치는 키워드로 일치 칩을 그려요.
+  keywords: string[];
+  // MY FIT 일치 정보. 일치 n / 공고 키워드 m
   matchCount: number;
-  totalKeywordCount: number | null;
-  matchedKeywords: string[];
+  totalKeywordCount: number;
+  // 일치 키워드 목록. 홈 공고는 응답에 없어서 null이에요.
+  matchedKeywords: string[] | null;
 }

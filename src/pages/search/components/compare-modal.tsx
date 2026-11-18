@@ -14,6 +14,7 @@ import {
   COMPARE_APPLY_DOCUMENT_SUMMARY,
   COMPARE_ROWS,
 } from '@/pages/search/constants/compare-rows';
+import { useMyKeywordsQuery } from '@/shared/api/use-my-keywords-query';
 import ModalApplyReview from '@/shared/components/modal/modal-apply-review';
 import ModalDialog from '@/shared/components/modal/modal-dialog';
 import ModalFeedback from '@/shared/components/modal/modal-feedback';
@@ -32,6 +33,8 @@ const CompareModal = ({ isOpen, onClose }: CompareModalProps) => {
   const titleId = useId();
   const { bookmarkedJobs, setBookmark } = useBookmarks();
   const [applyTarget, setApplyTarget] = useState<CompareJob | null>(null);
+  const { data: myKeywords = [] } = useMyKeywordsQuery();
+  const myKeywordNames = myKeywords.map(({ name }) => name);
 
   const renderTable = () => {
     if (bookmarkedJobs.length === 0) {
@@ -81,6 +84,7 @@ const CompareModal = ({ isOpen, onClose }: CompareModalProps) => {
             <CompareJobColumn
               key={job.id}
               job={job}
+              myKeywordNames={myKeywordNames}
               onUnscrap={() => setBookmark(job.id, false)}
               onApply={() => setApplyTarget(job)}
             />

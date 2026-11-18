@@ -47,6 +47,7 @@ export const convertSearchJobPostingToSearchResult = (
     ),
     education: jobPosting.requiredEducation,
     hireType: jobPosting.hireType,
+    keywords: jobPosting.keywords,
     matchCount: jobPosting.matchedKeywords.length,
     totalKeywordCount: jobPosting.totalKeywordCount,
     matchedKeywords: jobPosting.matchedKeywords,

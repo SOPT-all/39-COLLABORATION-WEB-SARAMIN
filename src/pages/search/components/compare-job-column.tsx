@@ -17,21 +17,23 @@ import { cn } from '@/shared/utils/cn';
 
 interface CompareJobColumnProps {
   job: CompareJob;
+  // 내 MY FIT 키워드 이름. 일치 키워드 목록이 없는 홈 공고의 일치 칩을 만들 때 써요.
+  myKeywordNames: string[];
   onUnscrap: () => void;
   onApply: () => void;
 }
 
 const CompareJobColumn = ({
   job,
+  myKeywordNames,
   onUnscrap,
   onApply,
 }: CompareJobColumnProps) => {
-  const { companyName, title, matchCount, totalKeywordCount, matchedKeywords } =
-    job;
-  const matchLabel =
-    totalKeywordCount === null
-      ? `${matchCount}개`
-      : `${matchCount}/${totalKeywordCount}`;
+  const { companyName, title, keywords, matchCount, totalKeywordCount } = job;
+  // 홈 공고는 일치 키워드 목록이 없어서 공고 키워드 중 내 키워드와 겹치는 것을 보여 줘요.
+  const matchedKeywords =
+    job.matchedKeywords ??
+    keywords.filter((keyword) => myKeywordNames.includes(keyword));
 
   return (
     <li className="flex w-74 shrink-0 flex-col gap-3">
@@ -47,7 +49,7 @@ const CompareJobColumn = ({
           <p className="text-label-14 text-text-primary">
             키워드{' '}
             <strong className="text-heading-18 text-blue-90">
-              {matchLabel} 매치
+              {matchCount}/{totalKeywordCount} 매치
             </strong>
           </p>
           {matchedKeywords.length > 0 && (
@@ -62,7 +64,7 @@ const CompareJobColumn = ({
         </div>
 
         {COMPARE_ROWS.map(({ key, heightClassName, getValue }, index) => {
-          const value = getValue?.(job) ?? null;
+          const value = getValue(job);
           const isLast = index === COMPARE_ROWS.length - 1;
 
           return (

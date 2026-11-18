@@ -107,9 +107,10 @@ export const convertJobPostingToCardItem = (
     ),
     education: jobPosting.requiredEducation,
     hireType: jobPosting.hireType,
-    // 홈 공고 응답에는 일치 키워드 목록 · 전체 키워드 수가 없어요.
+    keywords: jobPosting.keywords,
+    // 홈 공고 응답에는 일치 키워드 목록이 없어 비교 모달에서 내 키워드와 겹치는 키워드로 그려요.
     matchCount: jobPosting.matchedKeywordCount,
-    totalKeywordCount: null,
-    matchedKeywords: [],
+    totalKeywordCount: jobPosting.keywords.length,
+    matchedKeywords: null,
   },
 });
