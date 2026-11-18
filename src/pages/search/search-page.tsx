@@ -107,7 +107,7 @@ const SearchPage = () => {
             ‘{keyword}’에 대한 취업정보
           </h1>
           <span className="text-body-14 whitespace-pre text-text-secondary">
-            관련도순 · 40개씩
+            {SEARCH_PAGE_SIZE}개씩
           </span>
         </div>
 
