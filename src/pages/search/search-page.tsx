@@ -9,8 +9,8 @@ import SearchFilterBand from '@/pages/search/components/search-filter-band';
 import SearchSatisfactionSection from '@/pages/search/components/search-satisfaction-section';
 import SearchSummary from '@/pages/search/components/search-summary';
 import SearchUtilities from '@/pages/search/components/search-utilities';
-import { MOCK_MYFIT_KEYWORDS } from '@/pages/search/constants/mock-search';
 import { convertSearchJobPostingToSearchResult } from '@/pages/search/utils/convert-search-job-posting-to-search-result';
+import { useMyKeywordsQuery } from '@/shared/api/use-my-keywords-query';
 import KeywordSearchPanel from '@/shared/components/search/keyword-search-panel';
 import { ROUTES } from '@/shared/constants/routes';
 import { SEARCH_KEYWORD_PARAM } from '@/shared/constants/search';
@@ -73,12 +73,17 @@ const SearchPage = () => {
     void searchQuery.refetch();
   };
 
-  const [myFitKeywords, setMyFitKeywords] = useState(MOCK_MYFIT_KEYWORDS);
+  const myKeywordsQuery = useMyKeywordsQuery();
+  const [editedMyFitKeywords, setEditedMyFitKeywords] = useState<
+    string[] | null
+  >(null);
+  const myFitKeywords =
+    editedMyFitKeywords ?? myKeywordsQuery.data?.map(({ name }) => name) ?? [];
   const [myFitInput, setMyFitInput] = useState('');
 
   const handleMyFitKeywordRemove = (removedKeyword: string) => {
-    setMyFitKeywords((previousKeywords) =>
-      previousKeywords.filter(
+    setEditedMyFitKeywords(
+      myFitKeywords.filter(
         (selectedKeyword) => selectedKeyword !== removedKeyword,
       ),
     );
@@ -112,11 +117,9 @@ const SearchPage = () => {
               TODO(FR-09): 서버 조회가 아니라 키워드 시트 목록에서 입력값으로 후보를 거르고,
               선택하면 myFitKeywords에 추가해요.
             */}
-            {/*
-              TODO(#72): #71 머지 후 MY FIT 기본 조회를 재사용하고,
-              검색하기를 누르면 편집한 키워드 조건을 적용해요.
-            */}
+            {/* TODO(#72): 검색하기를 누르면 편집한 키워드 조건을 적용해요. */}
             <KeywordSearchPanel
+              state={myKeywordsQuery.isPending ? 'loading' : 'loaded'}
               keywords={myFitKeywords}
               keyword={myFitInput}
               onKeywordChange={setMyFitInput}
