@@ -10,6 +10,7 @@ import CareerCtaSection from '@/pages/home/components/career-cta-section';
 import CareerToolsSection from '@/pages/home/components/career-tools-section';
 import DocumentManagementModal from '@/pages/home/components/document-management-modal';
 import DocumentToolsSection from '@/pages/home/components/document-tools-section';
+import DocumentUploadModal from '@/pages/home/components/document-upload-modal';
 import HiringBanner from '@/pages/home/components/hiring-banner';
 import KeywordPanelSection from '@/pages/home/components/keyword-panel-section';
 import RecruitFeedSection from '@/pages/home/components/recruit-feed-section';
@@ -45,6 +46,7 @@ const HomePage = () => {
   const [isBundleOpen, setIsBundleOpen] = useState(false);
   const [isDocumentManagementOpen, setIsDocumentManagementOpen] =
     useState(false);
+  const [isDocumentUploadOpen, setIsDocumentUploadOpen] = useState(false);
 
   const { step, target, openApplyFlow, closeApplyFlow, submit } = useApplyFlow({
     submitApplication,
@@ -68,6 +70,17 @@ const HomePage = () => {
   // 지원 패키지 모달에서 서류 관리로 넘어가요.
   const handleBundleDocumentManageClick = () => {
     setIsBundleOpen(false);
+    setIsDocumentManagementOpen(true);
+  };
+
+  // 서류 관리 ↔ 서류 추가 모달을 오가요. 추가를 마치거나 취소하면 서류 관리로 돌아가요.
+  const handleAddDocumentClick = () => {
+    setIsDocumentManagementOpen(false);
+    setIsDocumentUploadOpen(true);
+  };
+
+  const handleDocumentUploadClose = () => {
+    setIsDocumentUploadOpen(false);
     setIsDocumentManagementOpen(true);
   };
 
@@ -134,8 +147,11 @@ const HomePage = () => {
       <DocumentManagementModal
         isOpen={isDocumentManagementOpen}
         onClose={() => setIsDocumentManagementOpen(false)}
-        // TODO(#101): 서류 추가 흐름 모달로 이어서 열어요.
-        onAddDocumentClick={() => {}}
+        onAddDocumentClick={handleAddDocumentClick}
+      />
+      <DocumentUploadModal
+        isOpen={isDocumentUploadOpen}
+        onClose={handleDocumentUploadClose}
       />
       <ApplicationHistoryModal
         isOpen={isHistoryOpen}
