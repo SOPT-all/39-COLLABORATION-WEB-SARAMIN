@@ -13,7 +13,8 @@ interface RecruitSection {
   emptyDescription: string;
 }
 
-// 홈 공고 피드 섹션 3개 (제목 · 설명은 피그마 문구, 빈 결과 문구는 임시)
+// 홈 공고 피드 섹션 3개 (제목 · 설명은 피그마 문구)
+// 추천 빈 결과 제목은 기능명세서 FN-10 확정 문구, 나머지 빈 결과 문구는 명세에 없어 임시
 export const RECRUIT_SECTIONS: RecruitSection[] = [
   {
     type: 'recommended',
@@ -22,7 +23,7 @@ export const RECRUIT_SECTIONS: RecruitSection[] = [
     actionLabel: '전체보기',
     actionVariant: 'viewAll',
     hasCount: false,
-    emptyTitle: '추천할 공고가 아직 없어요',
+    emptyTitle: '조건에 맞는 공고가 없어요',
     emptyDescription: '내 키워드를 추가하면 맞춤 공고를 추천해 드려요.',
   },
   {
