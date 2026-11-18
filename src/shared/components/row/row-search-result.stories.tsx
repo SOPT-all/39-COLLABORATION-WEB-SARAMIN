@@ -18,6 +18,7 @@ const meta = {
   args: {
     contentState: 'loaded',
     matchCount: 2,
+    keywordCount: 3,
     deadline: 'D-4',
     matchedKeywords: 'Figma · 프로토타이핑',
     title: '[첫차]와 함께 할 프로덕트 디자이너를 찾습니다.',
@@ -42,6 +43,16 @@ export const Loaded: Story = {
 
 export const Bookmarked: Story = {
   args: { ...meta.args, isBookmarked: true },
+};
+
+export const WithoutKeywords: Story = {
+  args: {
+    ...meta.args,
+    matchCount: 0,
+    keywordCount: 0,
+    matchedKeywords: '',
+    companyMeta: '',
+  },
 };
 
 export const Loading: Story = {

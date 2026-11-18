@@ -5,12 +5,10 @@ import BookmarkButton from '@/shared/components/button/bookmark-button';
 import SkeletonSearchResultItem from '@/shared/components/skeleton/skeleton-search-result-item';
 import { cn } from '@/shared/utils/cn';
 
-// 페이지 연결: 불러오기 여부는 contentState, 일치 개수는 matchCount, 마감은 deadline,
-// 일치 키워드는 matchedKeywords, 공고는 title, 조건은 meta, 회사는 companyName,
-// 회사 설명은 companyMeta, 북마크는 isBookmarked와 onBookmarkClick입니다.
 interface RowSearchResultLoadedProps extends ComponentProps<'article'> {
   contentState: 'loaded';
   matchCount: number;
+  keywordCount: number;
   deadline: string;
   matchedKeywords: string;
   title: string;
@@ -34,6 +32,7 @@ type RowSearchResultProps =
 const RowSearchResult = ({
   contentState,
   matchCount,
+  keywordCount,
   deadline,
   matchedKeywords,
   title,
@@ -67,7 +66,7 @@ const RowSearchResult = ({
       {...props}
     >
       <div className="flex items-start justify-between px-4">
-        <BadgeMatch matchCount={matchCount} />
+        <BadgeMatch matchCount={matchCount} keywordCount={keywordCount} />
         <p className="w-12.5 shrink-0 text-center text-caption-12 text-status-danger">
           {deadline}
         </p>

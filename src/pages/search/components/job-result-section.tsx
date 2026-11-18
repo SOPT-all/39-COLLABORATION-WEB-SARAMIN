@@ -11,13 +11,16 @@ const SORT_OPTIONS = [
   { label: '마감임박', widthClassName: 'w-29.5' },
 ];
 
-const PAGE_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-const LOADING_ROW_COUNT = 3; // 로딩 중 보여줄 스켈레톤 개수 임의 설정
+const PAGE_GROUP_SIZE = 10; // 한 번에 보여줄 번호 개수예요.
+const LOADING_ROW_COUNT = 3;
 
 interface JobResultSectionProps {
   results: SearchResult[];
   totalCount: number;
+  keywordCount: number; // 적용한 MY FIT 키워드 수예요. 조건을 아직 안 보내면 0이에요.
+  currentPage: number; // 0부터 시작해요. 화면 번호는 1을 더해 보여요.
+  totalPages: number;
+  onPageChange: (page: number) => void;
   isLoading?: boolean;
   isError?: boolean;
   onRetry?: () => void;
@@ -26,14 +29,28 @@ interface JobResultSectionProps {
 const JobResultSection = ({
   results,
   totalCount,
+  keywordCount,
+  currentPage,
+  totalPages,
+  onPageChange,
   isLoading = false,
   isError = false,
   onRetry,
 }: JobResultSectionProps) => {
-  // 요청 중이거나 실패한 경우에는 이전 결과 수와 페이지 번호를 표시하지 않아요.
+  // 로딩·오류 중에는 건수와 페이지 번호를 숨겨요.
   const hasLoaded = !isLoading && !isError;
   const hasResults = hasLoaded && results.length > 0;
   const isEmpty = hasLoaded && results.length === 0;
+  const pageGroupStart =
+    Math.floor(currentPage / PAGE_GROUP_SIZE) * PAGE_GROUP_SIZE;
+  const visiblePageCount = Math.max(
+    0,
+    Math.min(PAGE_GROUP_SIZE, totalPages - pageGroupStart),
+  );
+  const pageNumbers = Array.from(
+    { length: visiblePageCount },
+    (_, index) => pageGroupStart + index,
+  );
 
   return (
     <section aria-labelledby="job-result-title">
@@ -46,7 +63,7 @@ const JobResultSection = ({
         </h2>
         {hasLoaded && (
           <span className="text-body-14 text-text-tertiary">
-            총 {(isEmpty ? 0 : totalCount).toLocaleString()}건
+            총 {totalCount.toLocaleString()}건
           </span>
         )}
       </div>
@@ -108,6 +125,7 @@ const JobResultSection = ({
                   index === results.length - 1 ? 'border-b-0' : undefined
                 }
                 matchCount={result.matchCount}
+                keywordCount={keywordCount}
                 deadline={result.deadline}
                 matchedKeywords={result.matchedKeywords}
                 title={result.title}
@@ -115,7 +133,7 @@ const JobResultSection = ({
                 companyName={result.companyName}
                 companyMeta={result.companyMeta}
                 isBookmarked={result.isBookmarked}
-                // TODO: 북마크 저장·해제의 후속 작업 범위를 정한 뒤 공고 id별 상태 변경을 연결해요. 현재는 표시만 해요.
+                // TODO: 후속 북마크 구현에서 공고별 저장·해제를 연결해요.
                 onBookmarkClick={() => {}}
               />
             </li>
@@ -125,19 +143,34 @@ const JobResultSection = ({
 
       <div className="mx-2.25 flex flex-col items-end">
         <MyfitSearchButton resultCount={2}>저장한 공고 보기</MyfitSearchButton>
-        {hasResults && (
+        {hasResults && totalPages > 1 && (
           <nav
             aria-label="페이지 이동"
             className="flex h-20 w-full items-center justify-center gap-1.5"
           >
-            {PAGE_NUMBERS.map((pageNumber) => (
-              <ChipNumber key={pageNumber} isSelected={pageNumber === 1}>
-                {pageNumber}
+            <button
+              type="button"
+              disabled={currentPage === 0}
+              onClick={() => onPageChange(currentPage - 1)}
+              className="mr-1.5 text-body-14 text-text-secondary disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              ‹ 이전
+            </button>
+
+            {pageNumbers.map((page) => (
+              <ChipNumber
+                key={page}
+                isSelected={page === currentPage}
+                onClick={() => onPageChange(page)}
+              >
+                {page + 1}
               </ChipNumber>
             ))}
             <button
               type="button"
-              className="ml-1.5 text-body-14 text-text-secondary"
+              disabled={currentPage >= totalPages - 1}
+              onClick={() => onPageChange(currentPage + 1)}
+              className="ml-1.5 text-body-14 text-text-secondary disabled:cursor-not-allowed disabled:opacity-50"
             >
               다음 ›
             </button>

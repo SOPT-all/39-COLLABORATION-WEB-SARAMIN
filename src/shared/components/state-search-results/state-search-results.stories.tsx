@@ -16,6 +16,7 @@ const loadingContent = (
 const EXAMPLE_SEARCH_RESULT = {
   contentState: 'loaded',
   matchCount: 2,
+  keywordCount: 3,
   deadline: 'D-4',
   matchedKeywords: 'Figma · 프로토타이핑',
   title: '[첫차]와 함께 할 프로덕트 디자이너를 찾습니다.',
