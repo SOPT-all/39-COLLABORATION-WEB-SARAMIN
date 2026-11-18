@@ -5,6 +5,7 @@ import { useMyDocumentsQuery } from '@/pages/home/api/use-my-documents-query';
 import ApplicationHistoryModal from '@/pages/home/components/application-history-modal';
 import ApplyFilterBar from '@/pages/home/components/apply-filter-bar';
 import ApplyFlowModal from '@/pages/home/components/apply-flow-modal';
+import BundleSummaryModal from '@/pages/home/components/bundle-summary-modal';
 import CareerCtaSection from '@/pages/home/components/career-cta-section';
 import CareerToolsSection from '@/pages/home/components/career-tools-section';
 import DocumentToolsSection from '@/pages/home/components/document-tools-section';
@@ -40,6 +41,7 @@ const HomePage = () => {
     ReadonlyMap<number, string>
   >(() => new Map());
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isBundleOpen, setIsBundleOpen] = useState(false);
 
   const { step, target, openApplyFlow, closeApplyFlow, submit } = useApplyFlow({
     submitApplication,
@@ -74,6 +76,7 @@ const HomePage = () => {
         <StickyRailSection
           isDragging={isDragging}
           bundleProps={bundleProps}
+          onBundleClick={() => setIsBundleOpen(true)}
           onApplicationHistoryClick={() => setIsHistoryOpen(true)}
         />
         <div className="flex w-240 flex-col gap-6">
@@ -110,6 +113,15 @@ const HomePage = () => {
         onRetry={submit}
         onViewHistory={handleViewHistory}
       />
+      {myDocuments && (
+        <BundleSummaryModal
+          isOpen={isBundleOpen}
+          onClose={() => setIsBundleOpen(false)}
+          myDocuments={myDocuments}
+          // TODO(#100): 지원 서류 관리 모달이 생기면 그 모달로 이어서 열어요.
+          onDocumentManageClick={() => setIsBundleOpen(false)}
+        />
+      )}
       <ApplicationHistoryModal
         isOpen={isHistoryOpen}
         onClose={() => setIsHistoryOpen(false)}
