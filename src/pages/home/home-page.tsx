@@ -8,6 +8,7 @@ import ApplyFlowModal from '@/pages/home/components/apply-flow-modal';
 import BundleSummaryModal from '@/pages/home/components/bundle-summary-modal';
 import CareerCtaSection from '@/pages/home/components/career-cta-section';
 import CareerToolsSection from '@/pages/home/components/career-tools-section';
+import DocumentManagementModal from '@/pages/home/components/document-management-modal';
 import DocumentToolsSection from '@/pages/home/components/document-tools-section';
 import HiringBanner from '@/pages/home/components/hiring-banner';
 import KeywordPanelSection from '@/pages/home/components/keyword-panel-section';
@@ -38,6 +39,8 @@ const HomePage = () => {
   >(() => new Map());
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isBundleOpen, setIsBundleOpen] = useState(false);
+  const [isDocumentManagementOpen, setIsDocumentManagementOpen] =
+    useState(false);
   const recruitSections = useRecruitFeed(appliedAtByRecruitId);
   const applyStatusCounts = getApplyStatusCounts(
     Object.values(recruitSections).flatMap(({ recruits }) => recruits),
@@ -62,6 +65,12 @@ const HomePage = () => {
     });
   };
 
+  // 지원 패키지 모달에서 서류 관리로 넘어가요.
+  const handleBundleDocumentManageClick = () => {
+    setIsBundleOpen(false);
+    setIsDocumentManagementOpen(true);
+  };
+
   const handleViewHistory = () => {
     closeApplyFlow();
     setIsHistoryOpen(true);
@@ -77,6 +86,7 @@ const HomePage = () => {
           isDragging={isDragging}
           bundleProps={bundleProps}
           onBundleClick={() => setIsBundleOpen(true)}
+          onDocumentManageClick={() => setIsDocumentManagementOpen(true)}
           onApplicationHistoryClick={() => setIsHistoryOpen(true)}
         />
         <div className="flex w-240 flex-col gap-6">
@@ -118,10 +128,15 @@ const HomePage = () => {
           isOpen={isBundleOpen}
           onClose={() => setIsBundleOpen(false)}
           myDocuments={myDocuments}
-          // TODO(#100): 지원 서류 관리 모달이 생기면 그 모달로 이어서 열어요.
-          onDocumentManageClick={() => setIsBundleOpen(false)}
+          onDocumentManageClick={handleBundleDocumentManageClick}
         />
       )}
+      <DocumentManagementModal
+        isOpen={isDocumentManagementOpen}
+        onClose={() => setIsDocumentManagementOpen(false)}
+        // TODO(#101): 서류 추가 흐름 모달로 이어서 열어요.
+        onAddDocumentClick={() => {}}
+      />
       <ApplicationHistoryModal
         isOpen={isHistoryOpen}
         onClose={() => setIsHistoryOpen(false)}
