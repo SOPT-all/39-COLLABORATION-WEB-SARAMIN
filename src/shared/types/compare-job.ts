@@ -4,6 +4,9 @@ export interface CompareJob {
   companyName: string;
   title: string;
   deadline: string;
+  // 상세보기에 보여 줄 마감 일시 원문('채용 시 마감'이면 null)과 전체 주소
+  deadlineAt: string | null;
+  address: string;
   region: string;
   career: string;
   education: string;
