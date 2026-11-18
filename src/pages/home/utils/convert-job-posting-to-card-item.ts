@@ -87,7 +87,11 @@ export const convertJobPostingToCardItem = (
     convertCareerYears(jobPosting.minCareerYears, jobPosting.maxCareerYears),
     jobPosting.hireType,
   ].join(' · '),
-  matchReason: `내 조건 ${jobPosting.matchedKeywordCount}개 일치`,
+  // 일치 키워드가 없으면 일치 줄을 그리지 않아요. (0개 일치에 체크 아이콘이 붙어 맞는 것처럼 보이지 않게)
+  matchReason:
+    jobPosting.matchedKeywordCount > 0
+      ? `내 조건 ${jobPosting.matchedKeywordCount}개 일치`
+      : '',
   deadline: convertDeadlineToDday(jobPosting.deadlineAt, today),
   updated: convertToUpdatedLabel(jobPosting, today),
   applyStatus: getApplyStatus(jobPosting),
@@ -95,4 +99,24 @@ export const convertJobPostingToCardItem = (
   isBookmarked: false,
   documents: convertToDocuments(jobPosting),
   appliedAt: jobPosting.appliedAt ?? undefined,
+  compareJob: {
+    id: jobPosting.id,
+    companyName: jobPosting.companyName,
+    title: jobPosting.title,
+    deadline: convertDeadlineToDday(jobPosting.deadlineAt, today),
+    deadlineAt: jobPosting.deadlineAt,
+    address: jobPosting.companyAddress,
+    region: convertAddressToRegion(jobPosting.companyAddress),
+    career: convertCareerYears(
+      jobPosting.minCareerYears,
+      jobPosting.maxCareerYears,
+    ),
+    education: jobPosting.requiredEducation,
+    hireType: jobPosting.hireType,
+    keywords: jobPosting.keywords,
+    // 홈 공고 응답에는 일치 키워드 목록이 없어 비교 모달에서 내 키워드와 겹치는 키워드로 그려요.
+    matchCount: jobPosting.matchedKeywordCount,
+    totalKeywordCount: jobPosting.keywords.length,
+    matchedKeywords: null,
+  },
 });

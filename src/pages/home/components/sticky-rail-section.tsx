@@ -2,6 +2,8 @@
 // 역할   : 홈 왼쪽 레일. 안내 칩 + 스티키 허브를 세로로 쌓고, 스크롤해도 화면에 붙어 있음
 // props  : isDragging - 지원 패키지를 끄는 중이면 허브를 dragging 상태로 그림
 //          bundleProps - 지원 패키지 카드 드래그 연결 (useApplyDrag)
+//          onBundleClick - 지원 패키지 카드 클릭 (지원 패키지 모달)
+//          onDocumentManageClick - 허브 아래 "서류 관리" 버튼 (지원 서류 관리 모달)
 //          onApplicationHistoryClick - 허브 아래 "지원 내역" 버튼
 // 데이터 : 보유 서류 체크 상태를 GET으로 받아 허브 props로 바꿔 넘김. 받는 중 · 실패하면 허브는 loading(스켈레톤)
 //          서류 행을 누르면 그 서류만 뒤집어 세 값을 PATCH. 요청 중에 또 누르면 무시
@@ -14,7 +16,7 @@
 // 재사용 : 안내 칩은 공통 ChipTool(blue). 너비가 고정이라 w-auto로 풀어 씀
 // 접근성 : aside + aria-label. 허브 안의 h2가 제목을 읽어 줌
 
-import type { ComponentProps } from 'react';
+import type { ComponentProps, KeyboardEvent } from 'react';
 
 import { useMyDocumentsMutation } from '@/pages/home/api/use-my-documents-mutation';
 import { useMyDocumentsQuery } from '@/pages/home/api/use-my-documents-query';
@@ -26,12 +28,16 @@ import HubSticky from '@/shared/components/hub/hub-sticky';
 interface StickyRailSectionProps {
   isDragging: boolean;
   bundleProps: ComponentProps<'section'>;
+  onBundleClick: () => void;
+  onDocumentManageClick: () => void;
   onApplicationHistoryClick: () => void;
 }
 
 const StickyRailSection = ({
   isDragging,
   bundleProps,
+  onBundleClick,
+  onDocumentManageClick,
   onApplicationHistoryClick,
 }: StickyRailSectionProps) => {
   const { data: myDocuments } = useMyDocumentsQuery();
@@ -42,6 +48,22 @@ const StickyRailSection = ({
     if (!myDocuments || isChanging || !isMyDocumentField(id)) return;
 
     changeMyDocuments({ ...myDocuments, [id]: !myDocuments[id] });
+  };
+
+  // 패키지 카드는 끌어서 지원하고, 누르면 지원 패키지 모달을 열어요. 키보드는 Enter · Space로 열어요.
+  const handleBundleKeyDown = (e: KeyboardEvent<HTMLElement>) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    onBundleClick();
+  };
+
+  const bundleClickProps: ComponentProps<'section'> = {
+    role: 'button',
+    tabIndex: 0,
+    'aria-haspopup': 'dialog',
+    className: 'cursor-pointer',
+    onClick: onBundleClick,
+    onKeyDown: handleBundleKeyDown,
   };
 
   const hubProps = myDocuments && convertMyDocumentsToHubSticky(myDocuments);
@@ -58,8 +80,11 @@ const StickyRailSection = ({
         <HubSticky
           {...hubProps}
           status={canDrag && isDragging ? 'dragging' : hubProps.status}
-          bundleProps={canDrag ? bundleProps : undefined}
+          bundleProps={
+            canDrag ? { ...bundleClickProps, ...bundleProps } : bundleClickProps
+          }
           onDocumentClick={handleDocumentClick}
+          onDocumentManageClick={onDocumentManageClick}
           onApplicationHistoryClick={onApplicationHistoryClick}
         />
       ) : (

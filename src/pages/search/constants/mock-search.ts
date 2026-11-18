@@ -9,8 +9,6 @@ import type {
 export const MOCK_SEARCH_RESULT_TOTAL = 729;
 export const MOCK_COMPANY_TOTAL = 49094;
 
-export const MOCK_SELECTED_FILTERS = ['서울', '경력 2–7년'];
-
 export const MOCK_RELATED_KEYWORDS = [
   'UX 디자이너',
   'UIUX',

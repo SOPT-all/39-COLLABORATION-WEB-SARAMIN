@@ -7,23 +7,23 @@ import LogoOliveYoung from '@/shared/assets/logo/logo_olive_young.svg';
 import LogoTodaysHome from '@/shared/assets/logo/logo_todays_home.svg';
 import LogoToss from '@/shared/assets/logo/logo_toss.svg';
 
-// 로고 에셋이 있는 기업이에요. 회사명으로 찾아요.
+// 로고 에셋이 있는 기업이에요. 서버 회사명 표기 그대로 찾아요.
 const COMPANY_LOGOS: Record<string, string> = {
   카카오페이: LogoKakaopay,
   무신사: LogoMusinsa,
-  오늘의집: LogoTodaysHome,
-  'NAVER Cloud': LogoNaverCloud,
+  '오늘의 집': LogoTodaysHome,
+  네이버클라우드: LogoNaverCloud,
   당근: LogoDanggeun,
   토스: LogoToss,
   현대오토에버: LogoHyundaiAutoever,
-  CJ올리브영: LogoOliveYoung,
+  올리브영: LogoOliveYoung,
 };
 
 interface CompanyLogoProps {
   companyName: string;
 }
 
-// 로고 에셋이 없는 기업(서버 공고 대부분)은 회사명 첫 글자로 보여 줘요.
+// 로고 에셋이 없는 기업은 회사명 첫 글자로 보여 줘요.
 const CompanyLogo = ({ companyName }: CompanyLogoProps) => {
   const logoSrc = COMPANY_LOGOS[companyName];
 

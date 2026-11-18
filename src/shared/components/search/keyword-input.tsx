@@ -34,7 +34,7 @@ const KeywordInput = ({
   state = 'default',
   keyword = '',
   placeholder = '키워드 입력',
-  message = '해당 검색 결과가 없습니다.',
+  message = '일치하는 키워드가 없어요. 다른 키워드로 검색해 주세요.',
   keywords = [],
   onKeywordChange,
   onRemove,

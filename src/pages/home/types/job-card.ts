@@ -1,5 +1,6 @@
 import type { ApplyStatus } from '@/pages/home/types/recruit';
 import type { CardJobTag } from '@/shared/components/card-job/card-job.types';
+import type { CompareJob } from '@/shared/types/compare-job';
 
 // 공고가 요구하는 서류와 내가 가진 서류예요. 드롭 영역 문구(서류 2/3 · 경력기술서 추가)에 써요.
 export interface JobCardDocuments {
@@ -26,4 +27,6 @@ export interface JobCardItem {
   // 서버가 서류 정보를 주지 않으면(지원한 공고 · 목 데이터) 없어요.
   documents?: JobCardDocuments;
   appliedAt?: string;
+  // 스크랩하면 비교 모달에 담을 정보
+  compareJob?: CompareJob;
 }

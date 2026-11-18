@@ -26,6 +26,7 @@ export const convertSearchJobPostingToSearchResult = (
   matchCount: jobPosting.matchedKeywords.length,
   matchedKeywords: jobPosting.matchedKeywords.join(' · '),
   deadline: convertDeadlineToDday(jobPosting.deadlineAt),
+  deadlineAt: jobPosting.deadlineAt,
   meta: [
     convertAddressToRegion(jobPosting.companyAddress),
     convertCareerYears(jobPosting.minCareerYears, jobPosting.maxCareerYears),
@@ -35,4 +36,23 @@ export const convertSearchJobPostingToSearchResult = (
   companyMeta: `관심기업 TOP ${jobPosting.ranking}`,
   // TODO: 후속 북마크 구현에서 연결해요.
   isBookmarked: false,
+  compareJob: {
+    id: jobPosting.id,
+    companyName: jobPosting.companyName,
+    title: jobPosting.title,
+    deadline: convertDeadlineToDday(jobPosting.deadlineAt),
+    deadlineAt: jobPosting.deadlineAt,
+    address: jobPosting.companyAddress,
+    region: convertAddressToRegion(jobPosting.companyAddress),
+    career: convertCareerYears(
+      jobPosting.minCareerYears,
+      jobPosting.maxCareerYears,
+    ),
+    education: jobPosting.requiredEducation,
+    hireType: jobPosting.hireType,
+    keywords: jobPosting.keywords,
+    matchCount: jobPosting.matchedKeywords.length,
+    totalKeywordCount: jobPosting.totalKeywordCount,
+    matchedKeywords: jobPosting.matchedKeywords,
+  },
 });
