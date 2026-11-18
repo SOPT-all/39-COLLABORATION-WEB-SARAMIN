@@ -8,6 +8,7 @@ import CardJob from '@/shared/components/card-job/card-job';
 import DropZoneApplication from '@/shared/components/drop-zone/drop-zone-application';
 import SkeletonJobCard from '@/shared/components/skeleton/skeleton-job-card';
 import StateMessage from '@/shared/components/state-message/state-message';
+import { useBookmarks } from '@/shared/hooks/use-bookmarks';
 
 const LOADING_CARD_COUNT = 2;
 
@@ -68,6 +69,8 @@ const RecruitCardList = ({
   onDragOverChange,
   onApplyDrop,
 }: RecruitCardListProps) => {
+  const { getIsBookmarked, setBookmark } = useBookmarks();
+
   if (isPending) {
     return (
       <div aria-busy="true" className="grid grid-cols-2 gap-4">
@@ -148,7 +151,7 @@ const RecruitCardList = ({
               matchReason={recruit.matchReason}
               deadline={recruit.deadline}
               updated={recruit.updated}
-              isBookmarked={recruit.isBookmarked}
+              isBookmarked={getIsBookmarked(recruit.id, recruit.isBookmarked)}
               state={
                 dragStates?.card ?? CARD_JOB_STATE_MAP[recruit.applyStatus]
               }
@@ -163,8 +166,9 @@ const RecruitCardList = ({
                   })}
                 />
               }
-              // 북마크 기능 연결 전 임시 처리
-              onBookmarkChange={() => {}}
+              onBookmarkChange={(isBookmarked) =>
+                setBookmark(recruit.id, isBookmarked)
+              }
               // 상세보기 기능 연결 전 임시 처리
               onViewDetail={() => {}}
             />
