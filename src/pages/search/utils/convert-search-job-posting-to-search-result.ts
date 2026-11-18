@@ -40,6 +40,8 @@ export const convertSearchJobPostingToSearchResult = (
     companyName: jobPosting.companyName,
     title: jobPosting.title,
     deadline: convertDeadlineToDday(jobPosting.deadlineAt),
+    deadlineAt: jobPosting.deadlineAt,
+    address: jobPosting.companyAddress,
     region: convertAddressToRegion(jobPosting.companyAddress),
     career: convertCareerYears(
       jobPosting.minCareerYears,

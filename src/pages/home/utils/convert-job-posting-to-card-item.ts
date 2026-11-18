@@ -100,6 +100,8 @@ export const convertJobPostingToCardItem = (
     companyName: jobPosting.companyName,
     title: jobPosting.title,
     deadline: convertDeadlineToDday(jobPosting.deadlineAt, today),
+    deadlineAt: jobPosting.deadlineAt,
+    address: jobPosting.companyAddress,
     region: convertAddressToRegion(jobPosting.companyAddress),
     career: convertCareerYears(
       jobPosting.minCareerYears,
