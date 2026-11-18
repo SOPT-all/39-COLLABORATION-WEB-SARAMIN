@@ -4,7 +4,7 @@ import { MOCK_APPLICATIONS } from '@/pages/home/constants/mock-applications';
 import type { Application } from '@/pages/home/types/application';
 import { QUERY_KEYS } from '@/shared/constants/query-keys';
 
-const MOCK_DELAY_MS = 800;
+const MOCK_DELAY_MS = 500;
 
 // 지원 내역 API는 서버 범위 밖이라 목 데이터를 돌려줘요.
 // 로딩 화면을 보여줄 수 있게 일부러 조금 늦게 응답해요.
