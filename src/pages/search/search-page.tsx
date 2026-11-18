@@ -12,6 +12,7 @@ import SearchUtilities from '@/pages/search/components/search-utilities';
 import { convertSearchJobPostingToSearchResult } from '@/pages/search/utils/convert-search-job-posting-to-search-result';
 import { useMyKeywordsQuery } from '@/shared/api/use-my-keywords-query';
 import KeywordSearchPanel from '@/shared/components/search/keyword-search-panel';
+import StateMessage from '@/shared/components/state-message/state-message';
 import { ROUTES } from '@/shared/constants/routes';
 import { SEARCH_KEYWORD_PARAM } from '@/shared/constants/search';
 
@@ -20,6 +21,26 @@ const SEARCH_PAGE_SIZE = 7;
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
   const keyword = searchParams.get(SEARCH_KEYWORD_PARAM)?.trim() ?? '';
+
+  const myKeywordsQuery = useMyKeywordsQuery();
+  const [appliedMyFitKeywords, setAppliedMyFitKeywords] = useState<
+    string[] | null
+  >(null);
+  const [editedMyFitKeywords, setEditedMyFitKeywords] = useState<
+    string[] | null
+  >(null);
+  const [myFitInput, setMyFitInput] = useState('');
+
+  // null은 초기화 전, []는 기본 키워드가 없는 정상 응답이에요.
+  // 최초 성공한 값만 저장해 재조회가 편집 목록과 검색 조건을 덮어쓰지 않아요.
+  if (appliedMyFitKeywords === null && myKeywordsQuery.isSuccess) {
+    setAppliedMyFitKeywords(myKeywordsQuery.data.map(({ name }) => name));
+  }
+
+  const hasInitializedMyFitKeywords = appliedMyFitKeywords !== null;
+  const isMyFitInitializationError =
+    !hasInitializedMyFitKeywords && myKeywordsQuery.isError;
+  const myFitKeywords = editedMyFitKeywords ?? appliedMyFitKeywords ?? [];
 
   const [pagination, setPagination] = useState({
     keyword,
@@ -34,12 +55,16 @@ const SearchPage = () => {
   }
 
   // TODO(#72): 조건이 바뀌면 이전 결과를 유지하지 않아요. 이전 결과 유지는 후속 작업이에요.
-  const searchQuery = useSearchJobPostingsQuery({
-    query: keyword,
-    page: currentPage,
-    size: SEARCH_PAGE_SIZE,
-  });
-  const searchData = searchQuery.data;
+  const searchQuery = useSearchJobPostingsQuery(
+    {
+      query: keyword,
+      keywords: appliedMyFitKeywords?.length ? appliedMyFitKeywords : undefined,
+      page: currentPage,
+      size: SEARCH_PAGE_SIZE,
+    },
+    hasInitializedMyFitKeywords,
+  );
+  const searchData = hasInitializedMyFitKeywords ? searchQuery.data : undefined;
   const totalPages = searchData?.totalPages ?? 0;
   // 공고가 줄어 보고 있던 페이지가 없어지면 마지막 페이지로 돌아와요.
   const isPageOutOfRange =
@@ -60,7 +85,13 @@ const SearchPage = () => {
   const results =
     searchData?.content.map(convertSearchJobPostingToSearchResult) ?? [];
   const totalCount = searchData?.totalElements ?? 0;
-  const isResultPending = searchQuery.isLoading || isPageOutOfRange;
+  const isResultPending =
+    (!hasInitializedMyFitKeywords && !isMyFitInitializationError) ||
+    searchQuery.isLoading ||
+    isPageOutOfRange;
+  const isResultError =
+    isMyFitInitializationError ||
+    (hasInitializedMyFitKeywords && searchQuery.isError);
 
   const handlePageChange = (nextPage: number) => {
     if (nextPage < 0 || nextPage >= totalPages || nextPage === resolvedPage) {
@@ -70,16 +101,12 @@ const SearchPage = () => {
   };
 
   const handleRetry = () => {
+    if (!hasInitializedMyFitKeywords) {
+      void myKeywordsQuery.refetch();
+      return;
+    }
     void searchQuery.refetch();
   };
-
-  const myKeywordsQuery = useMyKeywordsQuery();
-  const [editedMyFitKeywords, setEditedMyFitKeywords] = useState<
-    string[] | null
-  >(null);
-  const myFitKeywords =
-    editedMyFitKeywords ?? myKeywordsQuery.data?.map(({ name }) => name) ?? [];
-  const [myFitInput, setMyFitInput] = useState('');
 
   const handleMyFitKeywordRemove = (removedKeyword: string) => {
     setEditedMyFitKeywords(
@@ -99,7 +126,7 @@ const SearchPage = () => {
         keyword={keyword}
         totalCount={totalCount}
         isLoading={isResultPending}
-        isError={searchQuery.isError}
+        isError={isResultError}
       />
       <div className="mx-auto w-315 pt-6.5 pb-14.5">
         <div className="flex items-center justify-between">
@@ -118,26 +145,36 @@ const SearchPage = () => {
               선택하면 myFitKeywords에 추가해요.
             */}
             {/* TODO(#72): 검색하기를 누르면 편집한 키워드 조건을 적용해요. */}
-            <KeywordSearchPanel
-              state={myKeywordsQuery.isPending ? 'loading' : 'loaded'}
-              keywords={myFitKeywords}
-              keyword={myFitInput}
-              onKeywordChange={setMyFitInput}
-              onRemove={handleMyFitKeywordRemove}
-            />
+            {isMyFitInitializationError ? (
+              <StateMessage
+                kind="error"
+                scope="section"
+                className="w-full [&>div]:w-full"
+                title="키워드를 불러오지 못했어요"
+                description="잠시 후 다시 시도해 주세요."
+                action={{ label: '다시 시도', onClick: handleRetry }}
+              />
+            ) : (
+              <KeywordSearchPanel
+                state={hasInitializedMyFitKeywords ? 'loaded' : 'loading'}
+                keywords={myFitKeywords}
+                keyword={myFitInput}
+                onKeywordChange={setMyFitInput}
+                onRemove={handleMyFitKeywordRemove}
+              />
+            )}
           </aside>
 
           <div className="w-238 rounded-2xl border border-gray-30 bg-surface-default">
-            {/* 키워드 조건은 아직 요청에 넣지 않아서 배지 분모는 0이에요. */}
             <JobResultSection
               results={results}
               totalCount={totalCount}
-              keywordCount={0}
+              keywordCount={appliedMyFitKeywords?.length ?? 0}
               currentPage={resolvedPage}
               totalPages={totalPages}
               onPageChange={handlePageChange}
               isLoading={isResultPending}
-              isError={searchQuery.isError}
+              isError={isResultError}
               onRetry={handleRetry}
             />
             <div className="mx-2.75 flex flex-col pt-12.5">
