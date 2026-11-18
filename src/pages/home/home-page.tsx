@@ -13,7 +13,6 @@ import KeywordPanelSection from '@/pages/home/components/keyword-panel-section';
 import RecruitFeedSection from '@/pages/home/components/recruit-feed-section';
 import StickyRailSection from '@/pages/home/components/sticky-rail-section';
 import { APPLY_DOCUMENT_SUMMARY } from '@/pages/home/constants/apply-drag';
-import { MOCK_MY_KEYWORDS } from '@/pages/home/constants/mock-recruits';
 import { useApplyDrag } from '@/pages/home/hooks/use-apply-drag';
 import { useApplyFilter } from '@/pages/home/hooks/use-apply-filter';
 import { useApplyFlow } from '@/pages/home/hooks/use-apply-flow';
@@ -21,6 +20,7 @@ import { useRecruitFeed } from '@/pages/home/hooks/use-recruit-feed';
 import type { JobCardItem } from '@/pages/home/types/job-card';
 import { createApplyDocumentSummary } from '@/pages/home/utils/create-apply-document-summary';
 import { getApplyStatusCounts } from '@/pages/home/utils/get-apply-status-counts';
+import { useMyKeywordsQuery } from '@/shared/api/use-my-keywords-query';
 
 // 지원 API가 없어 목 제출 함수로 항상 성공 처리
 const submitApplication = createMockSubmitApplication('success');
@@ -31,6 +31,7 @@ const HomePage = () => {
   const { isDragging, bundleProps } = useApplyDrag();
   // 스티키 레일과 같은 쿼리 키라 요청은 한 번만 나감
   const { data: myDocuments } = useMyDocumentsQuery();
+  const myKeywordsQuery = useMyKeywordsQuery();
   const [appliedAtByRecruitId, setAppliedAtByRecruitId] = useState<
     ReadonlyMap<number, string>
   >(() => new Map());
@@ -76,7 +77,12 @@ const HomePage = () => {
           onApplicationHistoryClick={() => setIsHistoryOpen(true)}
         />
         <div className="flex w-240 flex-col gap-6">
-          <KeywordPanelSection keywords={MOCK_MY_KEYWORDS} />
+          <KeywordPanelSection
+            keywords={myKeywordsQuery.data ?? []}
+            isPending={myKeywordsQuery.isPending}
+            isError={myKeywordsQuery.isError}
+            onRetry={() => void myKeywordsQuery.refetch()}
+          />
           <ApplyFilterBar
             selectedFilter={selectedFilter}
             counts={applyStatusCounts}
