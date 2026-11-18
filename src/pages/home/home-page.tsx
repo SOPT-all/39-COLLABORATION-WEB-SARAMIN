@@ -18,6 +18,7 @@ import { useApplyFilter } from '@/pages/home/hooks/use-apply-filter';
 import { useApplyFlow } from '@/pages/home/hooks/use-apply-flow';
 import { useRecruitFeed } from '@/pages/home/hooks/use-recruit-feed';
 import type { JobCardItem } from '@/pages/home/types/job-card';
+import type { RecruitSectionType } from '@/pages/home/types/recruit';
 import { createApplyDocumentSummary } from '@/pages/home/utils/create-apply-document-summary';
 import { getApplyStatusCounts } from '@/pages/home/utils/get-apply-status-counts';
 import { useMyKeywordsQuery } from '@/shared/api/use-my-keywords-query';
@@ -36,7 +37,13 @@ const HomePage = () => {
     ReadonlyMap<number, string>
   >(() => new Map());
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const recruitSections = useRecruitFeed(appliedAtByRecruitId);
+  const [expandedSections, setExpandedSections] = useState<
+    ReadonlySet<RecruitSectionType>
+  >(() => new Set());
+  const recruitSections = useRecruitFeed(
+    appliedAtByRecruitId,
+    expandedSections,
+  );
   const applyStatusCounts = getApplyStatusCounts(
     Object.values(recruitSections).flatMap(({ recruits }) => recruits),
   );
@@ -57,6 +64,15 @@ const HomePage = () => {
       documentSummary: myDocuments
         ? createApplyDocumentSummary(myDocuments)
         : APPLY_DOCUMENT_SUMMARY,
+    });
+  };
+
+  const handleToggleExpand = (type: RecruitSectionType) => {
+    setExpandedSections((previous) => {
+      const next = new Set(previous);
+      if (next.has(type)) next.delete(type);
+      else next.add(type);
+      return next;
     });
   };
 
@@ -93,6 +109,8 @@ const HomePage = () => {
             selectedFilter={selectedFilter}
             isDragging={isDragging}
             sections={recruitSections}
+            expandedSections={expandedSections}
+            onToggleExpand={handleToggleExpand}
             onApplyDrop={handleApplyDrop}
           />
         </div>
