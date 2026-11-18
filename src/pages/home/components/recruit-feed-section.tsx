@@ -2,10 +2,10 @@ import { useState } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
 
 import { useDeadlineSoonJobPostingsQuery } from '@/pages/home/api/use-deadline-soon-job-postings-query';
+import { useRecommendedJobPostingsQuery } from '@/pages/home/api/use-recommended-job-postings-query';
 import { useViewedJobPostingsQuery } from '@/pages/home/api/use-viewed-job-postings-query';
 import RecruitCardList from '@/pages/home/components/recruit-card-list';
 import RecruitSectionHeading from '@/pages/home/components/recruit-section-heading';
-import { MOCK_RECRUITS } from '@/pages/home/constants/mock-recruits';
 import { RECRUIT_SECTIONS } from '@/pages/home/constants/recruit-sections';
 import type { JobCardItem } from '@/pages/home/types/job-card';
 import type {
@@ -14,61 +14,14 @@ import type {
 } from '@/pages/home/types/job-posting';
 import type {
   ApplyFilter,
-  Recruit,
   RecruitSectionType,
 } from '@/pages/home/types/recruit';
 import { convertJobPostingToCardItem } from '@/pages/home/utils/convert-job-posting-to-card-item';
-import type { CardJobTag } from '@/shared/components/card-job/card-job.types';
 
-// 조회한 공고는 카드 두 줄(4개), 마감 임박 공고는 한 줄(2개)까지 보여 줘요.
+// 조회한 공고는 카드 두 줄(4개), 마감 임박 공고, 추천공고는 한 줄(2개)까지 보여 줘요.
 const VIEWED_PARAMS: JobPostingListParams = { size: 4 };
 const DEADLINE_SOON_PARAMS: JobPostingListParams = { size: 2 };
-
-interface RecruitDisplayInfo {
-  companyBadge?: string;
-  benefit?: string;
-  updated?: string;
-  tagVariants: CardJobTag['variant'][];
-}
-
-// 목 데이터에만 있는 표시 정보예요. 추천(#70)을 API로 바꾸면 지워요.
-const RECRUIT_DISPLAY_INFO: Record<number, RecruitDisplayInfo> = {
-  1: {
-    companyBadge: '기업인증',
-    benefit: '대졸↑ · 유연근무 · 점심 지원',
-    updated: '2일 전 등록',
-    tagVariants: ['role', 'skill', 'benefit'],
-  },
-  2: {
-    companyBadge: '기업인증',
-    benefit: '학력무관 · 주 2회 재택 · 선택근무',
-    updated: '오늘',
-    tagVariants: ['role', 'skill', 'benefit'],
-  },
-};
-
-const convertMockRecruitToCardItem = (recruit: Recruit): JobCardItem => {
-  const displayInfo = RECRUIT_DISPLAY_INFO[recruit.id];
-
-  return {
-    id: recruit.id,
-    companyName: recruit.companyName,
-    title: recruit.title,
-    companyBadge: displayInfo?.companyBadge,
-    tags: recruit.tags.map((tag, index) => ({
-      id: `${recruit.id}-${tag}`,
-      label: tag,
-      variant: displayInfo?.tagVariants[index] ?? 'skill',
-    })),
-    conditions: recruit.conditions.join(' · '),
-    benefit: displayInfo?.benefit,
-    matchReason: `내 조건 ${recruit.matchedConditionCount}개 일치`,
-    deadline: recruit.deadline,
-    updated: displayInfo?.updated ?? '',
-    applyStatus: recruit.applyStatus,
-    isBookmarked: recruit.isBookmarked,
-  };
-};
+const RECOMMENDED_PARAMS: JobPostingListParams = { size: 2 };
 
 interface SectionContent {
   recruits: JobCardItem[];
@@ -116,16 +69,20 @@ const RecruitFeedSection = ({
   const viewedQuery = useViewedJobPostingsQuery(VIEWED_PARAMS);
   const deadlineSoonQuery =
     useDeadlineSoonJobPostingsQuery(DEADLINE_SOON_PARAMS);
+  const recommendedQuery = useRecommendedJobPostingsQuery(RECOMMENDED_PARAMS);
 
-  // 조회한 공고 · 마감 임박은 API, 추천은 #70에서 연결할 때까지 목 데이터를 써요.
+  // 조회한 공고 · 마감 임박 ·  추천 공고 모두 API 데이터를 사용해요.
   const getSectionContent = (type: RecruitSectionType): SectionContent => {
     if (type === 'viewedCompanies') return convertQueryToContent(viewedQuery);
     if (type === 'closingSoon') return convertQueryToContent(deadlineSoonQuery);
 
     return {
-      recruits: MOCK_RECRUITS[type].map(convertMockRecruitToCardItem),
-      isPending: false,
-      isError: false,
+      recruits: (recommendedQuery.data?.jobPostings ?? []).map((jobPosting) =>
+        convertJobPostingToCardItem(jobPosting),
+      ),
+      isPending: recommendedQuery.isPending,
+      isError: recommendedQuery.isError,
+      onRetry: () => void recommendedQuery.refetch(),
     };
   };
 
