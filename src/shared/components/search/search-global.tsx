@@ -60,7 +60,8 @@ const SearchGlobal = ({
     <div className={cn('flex w-full flex-col gap-2', className)} {...props}>
       <div
         className={cn(
-          'flex h-11.5 w-full items-center justify-between rounded-full bg-white px-4 py-1.5',
+          // 키보드 · 마우스로 입력창에 포커스하면 바깥 링으로 위치를 보여 줘요.
+          'flex h-11.5 w-full items-center justify-between rounded-full bg-white px-4 py-1.5 focus-within:ring-4 focus-within:ring-blue-90/15',
           BORDER_CLASS_NAMES[state],
         )}
       >
