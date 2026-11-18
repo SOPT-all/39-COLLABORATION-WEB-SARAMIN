@@ -1,12 +1,14 @@
+import { MOCK_COMPARE_DETAILS } from '@/pages/search/constants/mock-compare-details';
 import type { CompareJob } from '@/shared/types/compare-job';
 
 // 비교 표의 행 (피그마 검색/공고 비교 모달 순서). MY FIT 행은 열 컴포넌트가 따로 그려요.
-// getValue가 없거나 null을 돌려주면 서버에 없는 정보라 '미기재'로 보여 줘요. (기능명세서 FR-06: 없는 값을 지어내지 않음)
+// 공고 마감 ~ 학력은 서버 공고 값, 근무일시 · 급여 · 전형 절차 · 우대사항은 서버에 없어 공고 id별 목 데이터로 채워요.
+// 값이 없으면 '미기재'로 보여 줘요.
 interface CompareRow {
   key: string;
   label: string;
   heightClassName: string;
-  getValue?: (job: CompareJob) => string | null;
+  getValue: (job: CompareJob) => string | null;
 }
 
 export const COMPARE_ROWS: CompareRow[] = [
@@ -22,7 +24,12 @@ export const COMPARE_ROWS: CompareRow[] = [
     heightClassName: 'h-9.5',
     getValue: ({ region }) => region,
   },
-  { key: 'schedule', label: '근무일시', heightClassName: 'h-9.5' },
+  {
+    key: 'schedule',
+    label: '근무일시',
+    heightClassName: 'h-9.5',
+    getValue: ({ id }) => MOCK_COMPARE_DETAILS[id]?.schedule ?? null,
+  },
   {
     key: 'hireType',
     label: '근무형태',
@@ -41,9 +48,24 @@ export const COMPARE_ROWS: CompareRow[] = [
     heightClassName: 'h-9.5',
     getValue: ({ education }) => education,
   },
-  { key: 'salary', label: '급여', heightClassName: 'h-9.5' },
-  { key: 'process', label: '전형 절차', heightClassName: 'h-13.25' },
-  { key: 'preference', label: '우대사항', heightClassName: 'h-13' },
+  {
+    key: 'salary',
+    label: '급여',
+    heightClassName: 'h-9.5',
+    getValue: ({ id }) => MOCK_COMPARE_DETAILS[id]?.salary ?? null,
+  },
+  {
+    key: 'process',
+    label: '전형 절차',
+    heightClassName: 'h-13.25',
+    getValue: ({ id }) => MOCK_COMPARE_DETAILS[id]?.process ?? null,
+  },
+  {
+    key: 'preference',
+    label: '우대사항',
+    heightClassName: 'h-13',
+    getValue: ({ id }) => MOCK_COMPARE_DETAILS[id]?.preference ?? null,
+  },
 ];
 
 export const MISSING_VALUE_LABEL = '미기재';
