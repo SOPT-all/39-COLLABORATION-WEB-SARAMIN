@@ -15,15 +15,15 @@ import StateMessage from '@/shared/components/state-message/state-message';
 import type { StateSearchResultsProps } from '@/shared/components/state-search-results/state-search-results.types';
 import { cn } from '@/shared/utils/cn';
 
-// 검색 결과에 맞는 안내 문구 관리
+// 검색 결과에 맞는 안내 문구 관리 (제목은 기능명세서 FN-10 확정 문구)
 const MESSAGE_CONTENTS = {
   empty: {
-    title: '검색 결과가 없습니다',
-    description: '검색어나 필터 조건을 조정해 주세요',
+    title: '조건에 맞는 공고가 없어요',
+    description: '검색어나 필터 조건을 바꿔 다시 검색해 주세요.',
   },
   error: {
-    title: '정보를 불러오지 못했습니다',
-    description: '입력값은 유지됩니다. 잠시 후 다시 시도해 주세요',
+    title: '공고를 불러오지 못했어요',
+    description: '입력한 조건은 유지돼요. 잠시 후 다시 시도해 주세요.',
   },
 };
 
