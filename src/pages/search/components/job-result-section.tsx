@@ -4,6 +4,7 @@ import ChipNumber from '@/shared/components/chip/chip-number';
 import RowSearchResult from '@/shared/components/row/row-search-result';
 import SkeletonSearchResultItem from '@/shared/components/skeleton/skeleton-search-result-item';
 import StateSearchResults from '@/shared/components/state-search-results/state-search-results';
+import { useBookmarks } from '@/shared/hooks/use-bookmarks';
 import { cn } from '@/shared/utils/cn';
 
 const SORT_OPTIONS = [
@@ -37,6 +38,7 @@ const JobResultSection = ({
   isError = false,
   onRetry,
 }: JobResultSectionProps) => {
+  const { getIsBookmarked, setBookmark } = useBookmarks();
   // 로딩·오류 중에는 건수와 페이지 번호를 숨겨요.
   const hasLoaded = !isLoading && !isError;
   const hasResults = hasLoaded && results.length > 0;
@@ -117,27 +119,32 @@ const JobResultSection = ({
       )}
       {hasResults && (
         <ul className="mx-4.75">
-          {results.map((result, index) => (
-            <li key={result.id}>
-              <RowSearchResult
-                contentState="loaded"
-                className={
-                  index === results.length - 1 ? 'border-b-0' : undefined
-                }
-                matchCount={result.matchCount}
-                keywordCount={keywordCount}
-                deadline={result.deadline}
-                matchedKeywords={result.matchedKeywords}
-                title={result.title}
-                meta={result.meta}
-                companyName={result.companyName}
-                companyMeta={result.companyMeta}
-                isBookmarked={result.isBookmarked}
-                // TODO: 후속 북마크 구현에서 공고별 저장·해제를 연결해요.
-                onBookmarkClick={() => {}}
-              />
-            </li>
-          ))}
+          {results.map((result, index) => {
+            const isBookmarked = getIsBookmarked(
+              result.id,
+              result.isBookmarked,
+            );
+            return (
+              <li key={result.id}>
+                <RowSearchResult
+                  contentState="loaded"
+                  className={
+                    index === results.length - 1 ? 'border-b-0' : undefined
+                  }
+                  matchCount={result.matchCount}
+                  keywordCount={keywordCount}
+                  deadline={result.deadline}
+                  matchedKeywords={result.matchedKeywords}
+                  title={result.title}
+                  meta={result.meta}
+                  companyName={result.companyName}
+                  companyMeta={result.companyMeta}
+                  isBookmarked={isBookmarked}
+                  onBookmarkClick={() => setBookmark(result.id, !isBookmarked)}
+                />
+              </li>
+            );
+          })}
         </ul>
       )}
 
