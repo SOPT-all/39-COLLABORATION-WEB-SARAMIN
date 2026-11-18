@@ -19,16 +19,6 @@ export const MOCK_RELATED_KEYWORDS = [
   '서비스 기획',
 ];
 
-export const MOCK_MYFIT_KEYWORDS = [
-  'Figma',
-  'UX디자인',
-  'Adobe XD',
-  'UI',
-  '프로덕트 디자인',
-  'UX',
-  '프로토타이핑',
-];
-
 export const MOCK_SEARCH_RESULTS: SearchResult[] = [
   {
     id: 1,

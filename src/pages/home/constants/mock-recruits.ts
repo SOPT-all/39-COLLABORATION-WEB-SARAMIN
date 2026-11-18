@@ -1,16 +1,6 @@
 import type { Recruit, RecruitSectionType } from '@/pages/home/types/recruit';
 
 // API가 나오기 전까지 쓰는 목 데이터예요. (피그마 예시 공고 8개)
-export const MOCK_MY_KEYWORDS = [
-  'Figma',
-  'UX디자인',
-  'Adobe XD',
-  'UI',
-  '프로덕트 디자인',
-  'UX',
-  '프로토타이핑',
-];
-
 export const MOCK_RECRUITS: Record<RecruitSectionType, Recruit[]> = {
   recommended: [
     {
