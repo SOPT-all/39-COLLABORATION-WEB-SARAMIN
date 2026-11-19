@@ -157,7 +157,8 @@ const SearchPage = () => {
       <SearchSummary
         keyword={keyword}
         totalCount={totalCount}
-        isLoading={isResultPending || isResultRefreshing}
+        // 재조회 중에도 이전 건수를 유지해 요약이 사라졌다 나타나지 않아요.
+        isLoading={isResultPending}
         isError={isResultError}
       />
       <div className="mx-auto w-315 pt-6.5 pb-14.5">

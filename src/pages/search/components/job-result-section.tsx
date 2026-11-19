@@ -5,11 +5,13 @@ import type { SearchResult, SearchSort } from '@/pages/search/types/search';
 import { sortSearchResults } from '@/pages/search/utils/sort-search-results';
 import MyfitSearchButton from '@/shared/components/button/myfit-search-button';
 import ChipNumber from '@/shared/components/chip/chip-number';
+import LoadingSpinner from '@/shared/components/loading-spinner/loading-spinner';
 import ModalJobDetail from '@/shared/components/modal/modal-job-detail';
 import RowSearchResult from '@/shared/components/row/row-search-result';
 import SkeletonSearchResultItem from '@/shared/components/skeleton/skeleton-search-result-item';
 import StateSearchResults from '@/shared/components/state-search-results/state-search-results';
 import { useBookmarks } from '@/shared/hooks/use-bookmarks';
+import { useDelayedFlag } from '@/shared/hooks/use-delayed-flag';
 import type { CompareJob } from '@/shared/types/compare-job';
 import { cn } from '@/shared/utils/cn';
 
@@ -24,6 +26,8 @@ const SORT_OPTIONS: {
 
 const PAGE_GROUP_SIZE = 10; // 한 번에 보여줄 번호 개수예요.
 const LOADING_ROW_COUNT = 3;
+// 이보다 빨리 끝나는 재조회는 표시하지 않아요. (깜빡임 방지)
+const REFRESH_INDICATOR_DELAY_MS = 300;
 
 interface JobResultSectionProps {
   results: SearchResult[];
@@ -56,6 +60,10 @@ const JobResultSection = ({
   // 고른 정렬은 페이지를 넘기거나 검색어를 바꿔도 유지돼요.
   const [sort, setSort] = useState<SearchSort>('match');
   const sortedResults = sortSearchResults(results, sort);
+  const isRefreshIndicatorShown = useDelayedFlag(
+    isRefreshing,
+    REFRESH_INDICATOR_DELAY_MS,
+  );
   // 로딩·오류 중에는 건수와 페이지 번호를 숨겨요.
   const hasLoaded = !isLoading && !isError;
   const hasResults = hasLoaded && results.length > 0;
@@ -82,19 +90,15 @@ const JobResultSection = ({
         </h2>
         {hasLoaded && (
           <span className="text-body-14 text-text-tertiary">
-            {isRefreshing && '이전 결과 · '}총 {totalCount.toLocaleString()}건
+            총 {totalCount.toLocaleString()}건
           </span>
         )}
+        {/* 재조회 표시는 높이를 바꾸지 않게 건수 옆 스피너로만 보여 줘요. */}
+        {isRefreshIndicatorShown && <LoadingSpinner />}
+        <span role="status" className="sr-only">
+          {isRefreshing ? '검색 결과를 갱신하고 있어요.' : ''}
+        </span>
       </div>
-
-      {isRefreshing && (
-        <p
-          role="status"
-          className="px-6.75 py-2 text-body-14 text-text-secondary"
-        >
-          검색 결과를 갱신하고 있어요.
-        </p>
-      )}
 
       <div className="mx-6.25 flex gap-2 px-3 py-2">
         {SORT_OPTIONS.map(({ value, label, widthClassName }) => {
@@ -145,7 +149,12 @@ const JobResultSection = ({
         />
       )}
       {hasResults && (
-        <ul className="mx-4.75">
+        <ul
+          className={cn(
+            'mx-4.75 transition-opacity',
+            isRefreshIndicatorShown && 'opacity-60',
+          )}
+        >
           {sortedResults.map((result, index) => {
             const isBookmarked = getIsBookmarked(
               result.id,
