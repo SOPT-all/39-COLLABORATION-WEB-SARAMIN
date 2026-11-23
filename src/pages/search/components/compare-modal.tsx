@@ -5,6 +5,7 @@
 // 구조   : [제목 · 닫기] [고정 항목 열 168px │ 공고 열 296px × n (가로 스크롤)]
 // 동작   : "스크랩함" → 그 공고만 빠지고 창은 그대로, 홈 · 검색 별표도 함께 꺼져요. 마지막이면 빈 안내.
 //          "바로 지원" → 홈 드롭과 같은 지원 내용 확인창 (FR-11, 실제 전송은 범위 밖)
+//                        마감된 공고 · 서류가 3/3이 아닐 때는 홈과 같이 지원을 막고 이유를 버튼에 보여 줘요.
 //          열 이동(≡) → 끌어다 놓거나 핸들에서 ← →로 공고 열 순서를 바꿔요. 정보 · 버튼이 열 단위로 함께 움직여요. (FR-07-A)
 //          비교 항목 편집(✎) → 표시 항목 · 순서를 편집해 적용해요. (FR-07-B · C)
 //          상세보기 → 공고 상세 모달
@@ -20,20 +21,26 @@ import {
   type CompareRowKey,
   DEFAULT_COMPARE_ROW_KEYS,
 } from '@/pages/search/constants/compare-rows';
+import { useMyDocumentsQuery } from '@/shared/api/use-my-documents-query';
 import { useMyKeywordsQuery } from '@/shared/api/use-my-keywords-query';
 import ModalApplyReview from '@/shared/components/modal/modal-apply-review';
 import ModalDialog from '@/shared/components/modal/modal-dialog';
 import ModalFeedback from '@/shared/components/modal/modal-feedback';
 import ModalJobDetail from '@/shared/components/modal/modal-job-detail';
+import { MY_DOCUMENT_FIELDS } from '@/shared/constants/my-documents';
 import { useBookmarks } from '@/shared/hooks/use-bookmarks';
 import type { CompareJob } from '@/shared/types/compare-job';
+import { checkIsDeadlinePassed } from '@/shared/utils/check-is-deadline-passed';
 import { cn } from '@/shared/utils/cn';
+import { createApplyDocumentSummary } from '@/shared/utils/create-apply-document-summary';
 import { moveItem } from '@/shared/utils/move-item';
 
 import IcClose from '@/shared/assets/icons/ic-close.svg?react';
 import IcPencil from '@/shared/assets/icons/ic-pencil.svg?react';
 
 const COLUMN_DRAG_TYPE = 'application/x-saramin-compare-column';
+const APPLY_CLOSED_LABEL = '접수 마감';
+const APPLY_MISSING_DOCUMENTS_LABEL = '서류 준비 필요';
 
 // 사용자가 옮긴 열 순서를 앞에 두고, 새로 스크랩한 공고는 뒤에 붙여요.
 const sortByColumnOrder = (jobs: CompareJob[], columnOrder: number[]) => {
@@ -54,6 +61,18 @@ const CompareModal = ({ isOpen, onClose }: CompareModalProps) => {
   const { bookmarkedJobs, setBookmark } = useBookmarks();
   const { data: myKeywords = [] } = useMyKeywordsQuery();
   const myKeywordNames = myKeywords.map(({ name }) => name);
+  // 홈 스티키 허브와 같은 쿼리 키라 홈에서 바꾼 서류 체크가 그대로 반영돼요.
+  const { data: myDocuments } = useMyDocumentsQuery();
+  // 보유 서류를 아직 못 받았으면 막지 않고 기본 문구로 확인창을 열어요.
+  const isMissingDocuments =
+    myDocuments !== undefined &&
+    MY_DOCUMENT_FIELDS.some(({ id }) => !myDocuments[id]);
+
+  const getApplyBlockedLabel = (job: CompareJob) => {
+    if (checkIsDeadlinePassed(job.deadlineAt)) return APPLY_CLOSED_LABEL;
+    if (isMissingDocuments) return APPLY_MISSING_DOCUMENTS_LABEL;
+    return undefined;
+  };
 
   const [rowKeys, setRowKeys] = useState<CompareRowKey[]>(
     DEFAULT_COMPARE_ROW_KEYS,
@@ -180,6 +199,7 @@ const CompareModal = ({ isOpen, onClose }: CompareModalProps) => {
               onDetail={() => setDetailJob(job)}
               onUnscrap={() => setBookmark(job.id, false)}
               onApply={() => setApplyTarget(job)}
+              applyBlockedLabel={getApplyBlockedLabel(job)}
             />
           ))}
         </ul>
@@ -224,7 +244,11 @@ const CompareModal = ({ isOpen, onClose }: CompareModalProps) => {
           isOpen
           companyName={applyTarget.companyName}
           positionName={applyTarget.title}
-          documentSummary={COMPARE_APPLY_DOCUMENT_SUMMARY}
+          documentSummary={
+            myDocuments
+              ? createApplyDocumentSummary(myDocuments)
+              : COMPARE_APPLY_DOCUMENT_SUMMARY
+          }
           onClose={() => setApplyTarget(null)}
           // 실제 지원 전송은 범위 밖이라 확인창까지만 열어요. (기능명세서 FR-11)
           onSubmit={() => setApplyTarget(null)}

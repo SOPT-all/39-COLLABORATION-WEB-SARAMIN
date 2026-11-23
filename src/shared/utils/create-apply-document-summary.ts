@@ -1,8 +1,8 @@
 import {
   MY_DOCUMENT_FIELDS,
   READY_DOCUMENT_COUNT,
-} from '@/pages/home/constants/my-documents';
-import type { MyDocuments } from '@/pages/home/types/my-documents';
+} from '@/shared/constants/my-documents';
+import type { MyDocuments } from '@/shared/types/my-documents';
 
 const DOCUMENT_SEPARATOR = ' · ';
 
