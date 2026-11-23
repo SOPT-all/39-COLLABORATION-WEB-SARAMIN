@@ -22,6 +22,7 @@ import { RECRUIT_SECTIONS } from '@/pages/home/constants/recruit-sections';
 import { useApplyDrag } from '@/pages/home/hooks/use-apply-drag';
 import { useApplyFilter } from '@/pages/home/hooks/use-apply-filter';
 import { useRecruitFeed } from '@/pages/home/hooks/use-recruit-feed';
+import { useReturnFocus } from '@/pages/home/hooks/use-return-focus';
 import type { JobCardItem } from '@/pages/home/types/job-card';
 import type { RecruitSectionType } from '@/pages/home/types/recruit';
 import { createApplication } from '@/pages/home/utils/create-application';
@@ -97,6 +98,8 @@ const HomePage = () => {
     () => convertExpandedParamToSections(expandedParam),
     [expandedParam],
   );
+  // 서류 관리 · 지원 패키지처럼 모달을 이어서 열 때, 다 닫으면 처음 누른 버튼으로 포커스를 돌려요.
+  const { rememberTrigger, restoreFocus } = useReturnFocus();
   const recruitSections = useRecruitFeed(
     appliedAtByRecruitId,
     expandedSections,
@@ -149,6 +152,27 @@ const HomePage = () => {
     );
   };
 
+  const handleBundleOpen = () => {
+    rememberTrigger();
+    setIsBundleOpen(true);
+  };
+
+  const handleBundleClose = () => {
+    setIsBundleOpen(false);
+    restoreFocus();
+  };
+
+  const handleDocumentManagementOpen = () => {
+    rememberTrigger();
+    setIsDocumentManagementOpen(true);
+  };
+
+  // 서류 관리를 닫으면 흐름이 끝나요. (서류 추가로 넘어갈 때는 닫기가 아니라 handleAddDocumentClick)
+  const handleDocumentManagementClose = () => {
+    setIsDocumentManagementOpen(false);
+    restoreFocus();
+  };
+
   // 지원 패키지 모달에서 서류 관리로 넘어가요.
   const handleBundleDocumentManageClick = () => {
     setIsBundleOpen(false);
@@ -192,8 +216,8 @@ const HomePage = () => {
         <StickyRailSection
           isDragging={isDragging}
           bundleProps={bundleProps}
-          onBundleClick={() => setIsBundleOpen(true)}
-          onDocumentManageClick={() => setIsDocumentManagementOpen(true)}
+          onBundleClick={handleBundleOpen}
+          onDocumentManageClick={handleDocumentManagementOpen}
           onApplicationHistoryClick={() => setIsHistoryOpen(true)}
         />
         <div className="flex w-240 flex-col gap-6">
@@ -235,14 +259,14 @@ const HomePage = () => {
       {myDocuments && (
         <BundleSummaryModal
           isOpen={isBundleOpen}
-          onClose={() => setIsBundleOpen(false)}
+          onClose={handleBundleClose}
           myDocuments={myDocuments}
           onDocumentManageClick={handleBundleDocumentManageClick}
         />
       )}
       <DocumentManagementModal
         isOpen={isDocumentManagementOpen}
-        onClose={() => setIsDocumentManagementOpen(false)}
+        onClose={handleDocumentManagementClose}
         onAddDocumentClick={handleAddDocumentClick}
       />
       <DocumentUploadModal
