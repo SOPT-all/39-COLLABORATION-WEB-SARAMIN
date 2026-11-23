@@ -6,6 +6,7 @@ import type { JobPosting } from '@/pages/home/types/job-posting';
 import type { ApplyStatus } from '@/pages/home/types/recruit';
 import { convertDateToMonthDay } from '@/pages/home/utils/convert-date-to-month-day';
 import type { CardJobTag } from '@/shared/components/card-job/card-job.types';
+import { checkIsDeadlinePassed } from '@/shared/utils/check-is-deadline-passed';
 import { convertAddressToRegion } from '@/shared/utils/convert-address-to-region';
 import { convertCareerYears } from '@/shared/utils/convert-career-years';
 import { convertDeadlineToDday } from '@/shared/utils/convert-deadline-to-dday';
@@ -17,9 +18,12 @@ const getStartOfDay = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
 // 서버에 외부 지원 여부가 없어서 마감 · 지원 완료 · 서류 부족 · 지원 가능 4가지로 나눠요.
-const getApplyStatus = (jobPosting: JobPosting): ApplyStatus => {
+// 이미 지원한 공고는 마감일이 지나도 지원 완료로 남겨요.
+const getApplyStatus = (jobPosting: JobPosting, today: Date): ApplyStatus => {
   if (jobPosting.status === '모집 마감') return 'closed';
   if (jobPosting.applied) return 'applied';
+  // 서버가 '모집 중'으로 줘도 마감일이 지났으면 지원을 받지 않아요.
+  if (checkIsDeadlinePassed(jobPosting.deadlineAt, today)) return 'closed';
   if (jobPosting.missingDocuments?.length) return 'needsDocuments';
   return 'ready';
 };
@@ -94,7 +98,7 @@ export const convertJobPostingToCardItem = (
       : '',
   deadline: convertDeadlineToDday(jobPosting.deadlineAt, today),
   updated: convertToUpdatedLabel(jobPosting, today),
-  applyStatus: getApplyStatus(jobPosting),
+  applyStatus: getApplyStatus(jobPosting, today),
   // 북마크 API가 없어서 항상 false예요.
   isBookmarked: false,
   documents: convertToDocuments(jobPosting),
