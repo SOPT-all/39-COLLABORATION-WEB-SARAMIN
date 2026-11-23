@@ -1,4 +1,9 @@
-import { type ComponentProps, type FocusEvent, useState } from 'react';
+import {
+  type ComponentProps,
+  type FocusEvent,
+  type KeyboardEvent,
+  useState,
+} from 'react';
 
 import MyfitSearchButton from '@/shared/components/button/myfit-search-button';
 import ChipKeyword from '@/shared/components/chip/chip-keyword';
@@ -8,6 +13,7 @@ import ListSearch, {
 import KeywordInput from '@/shared/components/search/keyword-input';
 import SkeletonFilterPanel from '@/shared/components/skeleton/skeleton-filter-panel';
 import { cn } from '@/shared/utils/cn';
+import { moveFocusByArrowKey } from '@/shared/utils/move-focus-by-arrow-key';
 
 type KeywordSearchPanelState = 'loaded' | 'loading';
 
@@ -15,7 +21,8 @@ type KeywordSearchPanelState = 'loaded' | 'loading';
 // 입력 중인 글자는 keyword와 onKeywordChange, 검색하기 클릭은 onSearch입니다.
 // 입력창에서 Enter를 누르면 onKeywordSubmit이 불립니다. 칩으로 추가하는 처리는 페이지에서 keywords에 넣으면 됩니다.
 // 후보 목록은 candidateGroups로 넘깁니다. 입력 중이고 입력창에 포커스가 있을 때 입력창 아래에 띄우고,
-// 후보를 누르면 onCandidateSelect가 불립니다. 후보가 0개면 입력창이 오류 상태로 바뀌어 안내 문구가 보입니다. (FR-09 · FN-10)
+// 후보를 누르면 onCandidateSelect가 불립니다. ↑ ↓ 로 후보를 오가고 ESC로 목록을 닫습니다.
+// 후보가 0개면 입력창이 오류 상태로 바뀌어 안내 문구가 보입니다. (FR-09 · FN-10)
 // 로딩(state="loading")은 SkeletonFilterPanel을 보여 줍니다. 폭은 부모에 맞춥니다.
 interface KeywordSearchPanelProps extends Omit<
   ComponentProps<'section'>,
@@ -50,10 +57,32 @@ const KeywordSearchPanel = ({
   ...props
 }: KeywordSearchPanelProps) => {
   const [isInputFocused, setIsInputFocused] = useState(false);
+  // ESC로 닫았는지. 다시 입력하면 목록을 열어요.
+  const [isCandidateDismissed, setIsCandidateDismissed] = useState(false);
   const isTyping = keyword.trim().length > 0;
   const isCandidateOpen =
-    Boolean(candidateGroups) && isTyping && isInputFocused;
+    Boolean(candidateGroups) &&
+    isTyping &&
+    isInputFocused &&
+    !isCandidateDismissed;
   const hasNoCandidates = isCandidateOpen && candidateGroups?.length === 0;
+
+  const handleKeywordChange = (nextKeyword: string) => {
+    setIsCandidateDismissed(false);
+    onKeywordChange?.(nextKeyword);
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Escape' && isCandidateOpen) {
+      // 후보에 포커스가 있었으면 입력창으로 돌려놓고 목록만 닫아요.
+      e.currentTarget.querySelector('input')?.focus();
+      setIsCandidateDismissed(true);
+      return;
+    }
+    if (isCandidateOpen) {
+      moveFocusByArrowKey(e, '[aria-label="키워드 후보"] button');
+    }
+  };
 
   // 후보 버튼으로 포커스가 옮겨 가도 목록을 닫지 않아요.
   const handleBlur = (e: FocusEvent<HTMLDivElement>) => {
@@ -92,11 +121,12 @@ const KeywordSearchPanel = ({
             className="relative"
             onFocus={() => setIsInputFocused(true)}
             onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
           >
             <KeywordInput
               state={hasNoCandidates ? 'error' : 'default'}
               keyword={keyword}
-              onKeywordChange={onKeywordChange}
+              onKeywordChange={handleKeywordChange}
               onKeywordSubmit={onKeywordSubmit}
             />
             {isCandidateOpen && !hasNoCandidates && candidateGroups && (
