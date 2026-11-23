@@ -135,6 +135,21 @@ const SearchPage = () => {
     );
   };
 
+  // 입력한 키워드를 편집 목록 끝에 더해요. 검색하기를 눌러야 검색 조건에 적용돼요.
+  const handleMyFitKeywordAdd = (addedKeyword: string) => {
+    const nextKeyword = addedKeyword.trim();
+    if (!hasInitializedMyFitKeywords) return;
+
+    setMyFitInput('');
+    if (!nextKeyword) return;
+    const isDuplicated = myFitKeywords.some(
+      (selectedKeyword) =>
+        selectedKeyword.toLowerCase() === nextKeyword.toLowerCase(),
+    );
+    if (isDuplicated) return;
+    setEditedMyFitKeywords([...myFitKeywords, nextKeyword]);
+  };
+
   const handleMyFitSearch = () => {
     if (!hasInitializedMyFitKeywords) return;
 
@@ -181,8 +196,8 @@ const SearchPage = () => {
         <div className="mt-5 flex items-start gap-8">
           <aside aria-label="MY FIT" className="sticky top-6 w-69 shrink-0">
             {/*
-              TODO(FR-09): 서버 조회가 아니라 키워드 시트 목록에서 입력값으로 후보를 거르고,
-              선택하면 myFitKeywords에 추가해요.
+              TODO(FR-09): 키워드 시트 목록에서 입력값으로 후보를 거르는 추천 목록은 아직 없어요.
+              지금은 입력한 글자를 Enter로 바로 추가해요.
             */}
             {isMyFitInitializationError ? (
               <StateMessage
@@ -199,6 +214,7 @@ const SearchPage = () => {
                 keywords={myFitKeywords}
                 keyword={myFitInput}
                 onKeywordChange={setMyFitInput}
+                onKeywordSubmit={handleMyFitKeywordAdd}
                 onRemove={handleMyFitKeywordRemove}
                 onSearch={handleMyFitSearch}
               />
