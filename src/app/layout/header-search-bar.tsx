@@ -18,6 +18,7 @@ import {
   SEARCH_KEYWORD_PARAM,
 } from '@/shared/constants/search';
 import { useRecentSearches } from '@/shared/hooks/use-recent-searches';
+import { moveFocusByArrowKey } from '@/shared/utils/move-focus-by-arrow-key';
 
 // 패널 한 칸에 보여 줄 추천 검색어 수 (피그마 panel_search_suggestion 4줄)
 const MAX_SUGGESTIONS = 4;
@@ -50,6 +51,8 @@ const getPredictiveSuggestions = (
 // 검색하면 /search?keyword=검색어로 이동해요.
 // 검색창에 포커스하면 아래에 추천 검색어 패널(피그마 panel_search_suggestion)을 띄워요. (디자인 QA)
 // 비어 있을 때 → 최근 검색어 (없으면 내 키워드를 연관 검색어로) / 입력 중 → 자동완성
+// 검색 화면에서 지금 검색어를 그대로 두고 포커스하면, 이미 검색한 단어라 최근 검색어(지금 검색어 제외)를 보여 줘요.
+// ↑ ↓ 로 항목을 오가고 ESC · 바깥 클릭으로 닫아요. 입력창에 포커스할 때만 열려요. (AI 검색 버튼 제외)
 const HeaderSearchBar = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -102,20 +105,42 @@ const HeaderSearchBar = () => {
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLFormElement>) => {
-    if (e.key === 'Escape') setIsPanelOpen(false);
+    if (e.key === 'Escape') {
+      // 추천 항목에 포커스가 있었으면 입력창으로 돌려놓고 닫아요.
+      if (isPanelOpen) e.currentTarget.querySelector('input')?.focus();
+      setIsPanelOpen(false);
+      return;
+    }
+    if (isPanelOpen) {
+      // 줄 단위로 이동해요. (최근 검색어의 X 삭제 버튼은 건너뛰어요)
+      moveFocusByArrowKey(
+        e,
+        '[aria-label="추천 검색어"] button:not([aria-label$=" 삭제"])',
+      );
+    }
+  };
+
+  // 입력창에 포커스할 때만 패널을 열어요. (AI 검색 버튼을 눌렀을 때는 열지 않아요)
+  const handleFocus = (e: FocusEvent<HTMLFormElement>) => {
+    if (e.target instanceof HTMLInputElement) setIsPanelOpen(true);
   };
 
   const renderPanel = () => {
     if (!isPanelOpen) return null;
 
-    const isTyping = query.trim().length > 0;
+    const trimmedQuery = query.trim();
+    // 검색 화면에서 지금 검색어를 그대로 둔 상태는 입력 중으로 보지 않아요.
+    const isTyping = trimmedQuery.length > 0 && trimmedQuery !== currentKeyword;
     const suggestions = isTyping
       ? getPredictiveSuggestions(query, recentSearches)
-      : recentSearches.map((search) => ({
-          keyword: search,
-          supportingText: '최근 검색',
-        }));
+      : recentSearches
+          .filter((search) => search !== currentKeyword)
+          .map((search) => ({
+            keyword: search,
+            supportingText: '최근 검색',
+          }));
     const relatedSuggestions = myKeywords
+      .filter(({ name }) => name !== currentKeyword)
       .slice(0, MAX_SUGGESTIONS)
       .map(({ name }) => ({ keyword: name, supportingText: '내 키워드' }));
 
@@ -146,7 +171,7 @@ const HeaderSearchBar = () => {
       role="search"
       className="relative w-140"
       onSubmit={handleSubmit}
-      onFocus={() => setIsPanelOpen(true)}
+      onFocus={handleFocus}
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}
     >
