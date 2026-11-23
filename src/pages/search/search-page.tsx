@@ -19,6 +19,7 @@ import {
   SEARCH_KEYWORD_PARAM,
   SEARCH_PAGE_PARAM,
 } from '@/shared/constants/search';
+import { useDocumentTitle } from '@/shared/hooks/use-document-title';
 
 const SEARCH_PAGE_SIZE = 7;
 
@@ -43,6 +44,8 @@ const SearchPage = () => {
     0,
     SEARCH_KEYWORD_MAX_LENGTH,
   );
+
+  useDocumentTitle(`‘${keyword}’ 검색 결과`);
 
   const myKeywordsQuery = useMyKeywordsQuery();
   const [appliedMyFitKeywords, setAppliedMyFitKeywords] = useState<
@@ -69,8 +72,12 @@ const SearchPage = () => {
   const pageParam = searchParams.get(SEARCH_PAGE_PARAM);
   const currentPage = convertPageParamToPage(pageParam);
 
+  // 같은 검색 결과 안에서 페이지만 바꾸는 거라 화면을 맨 위로 올리지 않아요. (결과 영역으로는 JobResultSection이 올려요)
   const changePageParam = (page: number, options?: { replace?: boolean }) => {
-    setSearchParams((previous) => setPageParam(previous, page), options);
+    setSearchParams((previous) => setPageParam(previous, page), {
+      ...options,
+      preventScrollReset: true,
+    });
   };
 
   // MY FIT 검색하기로 조건이 바뀌었을 때, 첫 페이지로 주소가 바뀐 뒤에 적용할 키워드예요.
@@ -119,6 +126,7 @@ const SearchPage = () => {
     if (!shouldReplacePageParam) return;
     setSearchParams((previous) => setPageParam(previous, resolvedPage), {
       replace: true,
+      preventScrollReset: true,
     });
   }, [shouldReplacePageParam, resolvedPage, setSearchParams]);
 

@@ -5,7 +5,8 @@
 //          onBundleClick - 지원 패키지 카드 클릭 (지원 패키지 모달)
 //          onDocumentManageClick - 허브 아래 "서류 관리" 버튼 (지원 서류 관리 모달)
 //          onApplicationHistoryClick - 허브 아래 "지원 내역" 버튼
-// 데이터 : 보유 서류 체크 상태를 GET으로 받아 허브 props로 바꿔 넘김. 받는 중 · 실패하면 허브는 loading(스켈레톤)
+// 데이터 : 보유 서류 체크 상태를 GET으로 받아 허브 props로 바꿔 넘김. 받는 중이면 허브는 loading(스켈레톤)
+//          실패하면 허브 대신 오류 안내 + 다시 시도 (공고 피드 오류와 같은 StateMessage)
 //          서류 행을 누르면 그 서류만 뒤집어 세 값을 PATCH. 요청 중에 또 누르면 무시
 //          서류가 3/3일 때만 지원 패키지를 끌 수 있음. 부족하면 드래그 연결을 안 넘김
 // 고정   : aside에 sticky top 96px. 부모(레일 + 공고 피드 묶음) 안에서만 붙어 있다가 공고 피드가 끝나면 같이 올라감
@@ -24,6 +25,7 @@ import { isMyDocumentField } from '@/pages/home/utils/is-my-document-field';
 import { useMyDocumentsQuery } from '@/shared/api/use-my-documents-query';
 import ChipTool from '@/shared/components/chip/chip-tool';
 import HubSticky from '@/shared/components/hub/hub-sticky';
+import StateMessage from '@/shared/components/state-message/state-message';
 
 interface StickyRailSectionProps {
   isDragging: boolean;
@@ -40,7 +42,11 @@ const StickyRailSection = ({
   onDocumentManageClick,
   onApplicationHistoryClick,
 }: StickyRailSectionProps) => {
-  const { data: myDocuments } = useMyDocumentsQuery();
+  const {
+    data: myDocuments,
+    isError: isDocumentsError,
+    refetch: refetchMyDocuments,
+  } = useMyDocumentsQuery();
   const { mutate: changeMyDocuments, isPending: isChanging } =
     useMyDocumentsMutation();
 
@@ -70,13 +76,9 @@ const StickyRailSection = ({
   // 서류 3/3일 때만 지원 패키지 드래그 가능
   const canDrag = hubProps?.status === 'ready';
 
-  return (
-    <aside
-      aria-label="나의 취업 in"
-      className="sticky top-24 flex w-69 shrink-0 flex-col items-start gap-3"
-    >
-      <ChipTool className="w-auto">원하는 기업에 바로 지원해보세요!</ChipTool>
-      {hubProps ? (
+  const renderHub = () => {
+    if (hubProps) {
+      return (
         <HubSticky
           {...hubProps}
           status={canDrag && isDragging ? 'dragging' : hubProps.status}
@@ -87,9 +89,36 @@ const StickyRailSection = ({
           onDocumentManageClick={onDocumentManageClick}
           onApplicationHistoryClick={onApplicationHistoryClick}
         />
-      ) : (
-        <HubSticky status="loading" />
-      )}
+      );
+    }
+
+    // 서류 상태를 못 받으면 계속 스켈레톤으로 두지 않고 다시 시도할 수 있게 해요.
+    if (isDocumentsError) {
+      return (
+        <StateMessage
+          kind="error"
+          scope="section"
+          className="w-full [&>div]:w-full"
+          title="서류 상태를 불러오지 못했어요"
+          description="잠시 후 다시 시도해 주세요."
+          action={{
+            label: '다시 시도',
+            onClick: () => void refetchMyDocuments(),
+          }}
+        />
+      );
+    }
+
+    return <HubSticky status="loading" />;
+  };
+
+  return (
+    <aside
+      aria-label="나의 취업 in"
+      className="sticky top-24 flex w-69 shrink-0 flex-col items-start gap-3"
+    >
+      <ChipTool className="w-auto">원하는 기업에 바로 지원해보세요!</ChipTool>
+      {renderHub()}
     </aside>
   );
 };
