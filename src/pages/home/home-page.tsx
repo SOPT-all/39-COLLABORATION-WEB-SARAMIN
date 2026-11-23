@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
 
-import { createMockSubmitApplication } from '@/pages/home/api/create-mock-submit-application';
 import ApplicationHistoryModal from '@/pages/home/components/application-history-modal';
 import ApplyFilterBar from '@/pages/home/components/apply-filter-bar';
-import ApplyFlowModal from '@/pages/home/components/apply-flow-modal';
 import BundleSummaryModal from '@/pages/home/components/bundle-summary-modal';
 import CareerCtaSection from '@/pages/home/components/career-cta-section';
 import CareerToolsSection from '@/pages/home/components/career-tools-section';
@@ -17,15 +16,18 @@ import StickyRailSection from '@/pages/home/components/sticky-rail-section';
 import { APPLY_DOCUMENT_SUMMARY } from '@/pages/home/constants/apply-drag';
 import { useApplyDrag } from '@/pages/home/hooks/use-apply-drag';
 import { useApplyFilter } from '@/pages/home/hooks/use-apply-filter';
-import { useApplyFlow } from '@/pages/home/hooks/use-apply-flow';
 import { useRecruitFeed } from '@/pages/home/hooks/use-recruit-feed';
-import type { Application } from '@/pages/home/types/application';
 import type { JobCardItem } from '@/pages/home/types/job-card';
 import type { RecruitSectionType } from '@/pages/home/types/recruit';
 import { createApplication } from '@/pages/home/utils/create-application';
 import { getApplyStatusCounts } from '@/pages/home/utils/get-apply-status-counts';
+import { createMockSubmitApplication } from '@/shared/api/create-mock-submit-application';
 import { useMyDocumentsQuery } from '@/shared/api/use-my-documents-query';
 import { useMyKeywordsQuery } from '@/shared/api/use-my-keywords-query';
+import ModalApplyFlow from '@/shared/components/modal/modal-apply-flow';
+import { checkIsOpenApplicationHistoryState } from '@/shared/constants/routes';
+import { useApplyFlow } from '@/shared/hooks/use-apply-flow';
+import { useSessionApplications } from '@/shared/hooks/use-session-applications';
 import { createApplyDocumentSummary } from '@/shared/utils/create-apply-document-summary';
 
 // 지원 API가 없어 목 제출 함수로 항상 성공 처리
@@ -38,14 +40,32 @@ const HomePage = () => {
   // 스티키 레일과 같은 쿼리 키라 요청은 한 번만 나감
   const { data: myDocuments } = useMyDocumentsQuery();
   const myKeywordsQuery = useMyKeywordsQuery();
-  const [appliedAtByRecruitId, setAppliedAtByRecruitId] = useState<
-    ReadonlyMap<number, string>
-  >(() => new Map());
-  // 이번 방문에서 지원한 내역. 지원 API가 없어 지원 내역 모달 목록 맨 앞에 붙여 보여 줘요.
-  const [sessionApplications, setSessionApplications] = useState<Application[]>(
-    [],
+  const location = useLocation();
+  const navigate = useNavigate();
+  // 이번 방문에서 지원한 기록. 홈 드롭과 비교 모달 바로 지원이 함께 써요.
+  const { sessionApplications, addApplication } = useSessionApplications();
+  const appliedAtByRecruitId = useMemo(
+    () =>
+      new Map(
+        sessionApplications.map(({ target, appliedAt }) => [
+          target.recruitId,
+          appliedAt,
+        ]),
+      ),
+    [sessionApplications],
   );
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  // 지원 API가 없어 지원 내역 모달 목록 맨 앞에 붙여 보여 줘요.
+  const historyApplications = useMemo(
+    () =>
+      sessionApplications.map(({ target, appliedAt, myDocuments: documents }) =>
+        createApplication(target, documents, new Date(appliedAt)),
+      ),
+    [sessionApplications],
+  );
+  // 비교 모달에서 '지원 내역 보기'로 넘어오면 지원 내역 모달을 바로 열어요.
+  const [isHistoryOpen, setIsHistoryOpen] = useState(() =>
+    checkIsOpenApplicationHistoryState(location.state),
+  );
   const [isBundleOpen, setIsBundleOpen] = useState(false);
   const [isDocumentManagementOpen, setIsDocumentManagementOpen] =
     useState(false);
@@ -63,16 +83,12 @@ const HomePage = () => {
 
   const { step, target, openApplyFlow, closeApplyFlow, submit } = useApplyFlow({
     submitApplication,
-    onApplySuccess: (applyTarget) => {
-      const appliedAt = new Date();
-      setAppliedAtByRecruitId((previous) =>
-        new Map(previous).set(applyTarget.recruitId, appliedAt.toISOString()),
-      );
-      setSessionApplications((previous) => [
-        createApplication(applyTarget, myDocuments, appliedAt),
-        ...previous,
-      ]);
-    },
+    onApplySuccess: (applyTarget) =>
+      addApplication({
+        target: applyTarget,
+        appliedAt: new Date().toISOString(),
+        myDocuments,
+      }),
   });
 
   const handleApplyDrop = (recruit: JobCardItem) => {
@@ -110,6 +126,18 @@ const HomePage = () => {
   const handleDocumentUploadClose = () => {
     setIsDocumentUploadOpen(false);
     setIsDocumentManagementOpen(true);
+  };
+
+  // 비교 모달에서 넘어와 연 경우, 닫을 때 주소의 state도 비워 새로고침해도 다시 열리지 않게 해요.
+  const handleHistoryClose = () => {
+    setIsHistoryOpen(false);
+    if (checkIsOpenApplicationHistoryState(location.state)) {
+      navigate(location, {
+        replace: true,
+        state: null,
+        preventScrollReset: true,
+      });
+    }
   };
 
   const handleViewHistory = () => {
@@ -158,7 +186,7 @@ const HomePage = () => {
       <DocumentToolsSection />
       <CareerCtaSection />
 
-      <ApplyFlowModal
+      <ModalApplyFlow
         step={step}
         target={target}
         onClose={closeApplyFlow}
@@ -185,8 +213,8 @@ const HomePage = () => {
       />
       <ApplicationHistoryModal
         isOpen={isHistoryOpen}
-        sessionApplications={sessionApplications}
-        onClose={() => setIsHistoryOpen(false)}
+        sessionApplications={historyApplications}
+        onClose={handleHistoryClose}
       />
     </>
   );

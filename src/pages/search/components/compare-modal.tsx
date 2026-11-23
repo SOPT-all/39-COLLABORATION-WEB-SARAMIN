@@ -1,17 +1,21 @@
 // [스펙] CompareModal
 // 역할   : 검색 결과 "저장한 공고 보기"로 여는 "선택한 공고 비교" 모달 (기능명세서 FN-06 ~ FN-08)
 // props  : isOpen · onClose - 열림 상태와 닫기
+//          myFitKeywordNames - 검색에 적용한 MY FIT 키워드. 검색 목록과 같은 기준으로 일치 개수를 세요. (FR-05)
+//                              안 주면 내 프로필 키워드를 써요.
 // 데이터 : 스크랩 목록 = 비교 대상. 홈 · 검색에서 스크랩한 공고를 보여 줘요. (useBookmarks)
 // 구조   : [제목 · 닫기] [고정 항목 열 168px │ 공고 열 296px × n (가로 스크롤)]
 // 동작   : "스크랩함" → 그 공고만 빠지고 창은 그대로, 홈 · 검색 별표도 함께 꺼져요. 마지막이면 빈 안내.
-//          "바로 지원" → 홈 드롭과 같은 지원 내용 확인창 (FR-11, 실제 전송은 범위 밖)
-//                        마감된 공고 · 서류가 3/3이 아닐 때는 홈과 같이 지원을 막고 이유를 버튼에 보여 줘요.
+//          "바로 지원" → 홈 드롭과 같은 지원 플로우 (확인 → 제출 중 → 완료 · 지원 내역 보기, 기능명세서 FN-09 · FN-11)
+//                        지원을 마치면 홈 카드 · 지원 내역에도 반영돼요. (실제 전송은 범위 밖이라 목 제출)
+//                        마감된 공고 · 서류가 3/3이 아님 · 이번 방문에 이미 지원한 공고는 막고 이유를 버튼에 보여 줘요.
 //          열 이동(≡) → 끌어다 놓거나 핸들에서 ← →로 공고 열 순서를 바꿔요. 정보 · 버튼이 열 단위로 함께 움직여요. (FR-07-A)
 //          비교 항목 편집(✎) → 표시 항목 · 순서를 편집해 적용해요. (FR-07-B · C)
 //          상세보기 → 공고 상세 모달
 // 유지   : 열 순서 · 비교 항목은 검색 화면에 있는 동안 유지돼요. 새로고침하면 처음으로 돌아가요.
 
 import { type DragEvent, type KeyboardEvent, useId, useState } from 'react';
+import { useNavigate } from 'react-router';
 
 import CompareJobColumn from '@/pages/search/components/compare-job-column';
 import CompareRowEditPanel from '@/pages/search/components/compare-row-edit-panel';
@@ -21,14 +25,21 @@ import {
   type CompareRowKey,
   DEFAULT_COMPARE_ROW_KEYS,
 } from '@/pages/search/constants/compare-rows';
+import { createMockSubmitApplication } from '@/shared/api/create-mock-submit-application';
 import { useMyDocumentsQuery } from '@/shared/api/use-my-documents-query';
 import { useMyKeywordsQuery } from '@/shared/api/use-my-keywords-query';
-import ModalApplyReview from '@/shared/components/modal/modal-apply-review';
+import ModalApplyFlow from '@/shared/components/modal/modal-apply-flow';
 import ModalDialog from '@/shared/components/modal/modal-dialog';
 import ModalFeedback from '@/shared/components/modal/modal-feedback';
 import ModalJobDetail from '@/shared/components/modal/modal-job-detail';
 import { MY_DOCUMENT_FIELDS } from '@/shared/constants/my-documents';
+import {
+  OPEN_APPLICATION_HISTORY_STATE,
+  ROUTES,
+} from '@/shared/constants/routes';
+import { useApplyFlow } from '@/shared/hooks/use-apply-flow';
 import { useBookmarks } from '@/shared/hooks/use-bookmarks';
+import { useSessionApplications } from '@/shared/hooks/use-session-applications';
 import type { CompareJob } from '@/shared/types/compare-job';
 import { checkIsDeadlinePassed } from '@/shared/utils/check-is-deadline-passed';
 import { cn } from '@/shared/utils/cn';
@@ -38,8 +49,12 @@ import { moveItem } from '@/shared/utils/move-item';
 import IcClose from '@/shared/assets/icons/ic-close.svg?react';
 import IcPencil from '@/shared/assets/icons/ic-pencil.svg?react';
 
+// 지원 API가 없어 홈과 같은 목 제출 함수로 항상 성공 처리
+const submitApplication = createMockSubmitApplication('success');
+
 const COLUMN_DRAG_TYPE = 'application/x-saramin-compare-column';
 const APPLY_CLOSED_LABEL = '접수 마감';
+const APPLY_APPLIED_LABEL = '지원 완료';
 const APPLY_MISSING_DOCUMENTS_LABEL = '서류 준비 필요';
 
 // 사용자가 옮긴 열 순서를 앞에 두고, 새로 스크랩한 공고는 뒤에 붙여요.
@@ -54,13 +69,22 @@ const sortByColumnOrder = (jobs: CompareJob[], columnOrder: number[]) => {
 interface CompareModalProps {
   isOpen: boolean;
   onClose: () => void;
+  myFitKeywordNames?: string[];
 }
 
-const CompareModal = ({ isOpen, onClose }: CompareModalProps) => {
+const CompareModal = ({
+  isOpen,
+  onClose,
+  myFitKeywordNames,
+}: CompareModalProps) => {
   const titleId = useId();
   const { bookmarkedJobs, setBookmark } = useBookmarks();
-  const { data: myKeywords = [] } = useMyKeywordsQuery();
-  const myKeywordNames = myKeywords.map(({ name }) => name);
+  const navigate = useNavigate();
+  const { data: myKeywords } = useMyKeywordsQuery();
+  // 검색에 적용한 칩이 있으면 그 기준으로, 없으면 내 프로필 키워드로 세요. (못 받았으면 undefined)
+  const myKeywordNames =
+    myFitKeywordNames ?? myKeywords?.map(({ name }) => name);
+  const { sessionApplications, addApplication } = useSessionApplications();
   // 홈 스티키 허브와 같은 쿼리 키라 홈에서 바꾼 서류 체크가 그대로 반영돼요.
   const { data: myDocuments } = useMyDocumentsQuery();
   // 보유 서류를 아직 못 받았으면 막지 않고 기본 문구로 확인창을 열어요.
@@ -69,6 +93,10 @@ const CompareModal = ({ isOpen, onClose }: CompareModalProps) => {
     MY_DOCUMENT_FIELDS.some(({ id }) => !myDocuments[id]);
 
   const getApplyBlockedLabel = (job: CompareJob) => {
+    const isApplied = sessionApplications.some(
+      ({ target }) => target.recruitId === job.id,
+    );
+    if (isApplied) return APPLY_APPLIED_LABEL;
     if (checkIsDeadlinePassed(job.deadlineAt)) return APPLY_CLOSED_LABEL;
     if (isMissingDocuments) return APPLY_MISSING_DOCUMENTS_LABEL;
     return undefined;
@@ -82,7 +110,34 @@ const CompareModal = ({ isOpen, onClose }: CompareModalProps) => {
   const [dragOverJobId, setDragOverJobId] = useState<number | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [detailJob, setDetailJob] = useState<CompareJob | null>(null);
-  const [applyTarget, setApplyTarget] = useState<CompareJob | null>(null);
+
+  // 홈 드롭과 같은 지원 플로우예요. 지원을 마치면 이번 방문의 지원 기록에 남겨요.
+  const { step, target, openApplyFlow, closeApplyFlow, submit } = useApplyFlow({
+    submitApplication,
+    onApplySuccess: (applyTarget) =>
+      addApplication({
+        target: applyTarget,
+        appliedAt: new Date().toISOString(),
+        myDocuments,
+      }),
+  });
+
+  const handleApply = (job: CompareJob) =>
+    openApplyFlow({
+      recruitId: job.id,
+      companyName: job.companyName,
+      positionName: job.title,
+      documentSummary: myDocuments
+        ? createApplyDocumentSummary(myDocuments)
+        : COMPARE_APPLY_DOCUMENT_SUMMARY,
+    });
+
+  // 지원 내역 모달은 홈에 있어서, 비교 창을 닫고 홈으로 가며 지원 내역을 바로 열어요.
+  const handleViewHistory = () => {
+    closeApplyFlow();
+    onClose();
+    navigate(ROUTES.HOME, { state: OPEN_APPLICATION_HISTORY_STATE });
+  };
 
   const jobs = sortByColumnOrder(bookmarkedJobs, columnOrder);
   const jobIds = jobs.map(({ id }) => id);
@@ -198,7 +253,7 @@ const CompareModal = ({ isOpen, onClose }: CompareModalProps) => {
               onDrop={(e) => handleDrop(e, job.id)}
               onDetail={() => setDetailJob(job)}
               onUnscrap={() => setBookmark(job.id, false)}
-              onApply={() => setApplyTarget(job)}
+              onApply={() => handleApply(job)}
               applyBlockedLabel={getApplyBlockedLabel(job)}
             />
           ))}
@@ -239,21 +294,14 @@ const CompareModal = ({ isOpen, onClose }: CompareModalProps) => {
         onClose={() => setIsEditOpen(false)}
       />
       <ModalJobDetail job={detailJob} onClose={() => setDetailJob(null)} />
-      {applyTarget && (
-        <ModalApplyReview
-          isOpen
-          companyName={applyTarget.companyName}
-          positionName={applyTarget.title}
-          documentSummary={
-            myDocuments
-              ? createApplyDocumentSummary(myDocuments)
-              : COMPARE_APPLY_DOCUMENT_SUMMARY
-          }
-          onClose={() => setApplyTarget(null)}
-          // 실제 지원 전송은 범위 밖이라 확인창까지만 열어요. (기능명세서 FR-11)
-          onSubmit={() => setApplyTarget(null)}
-        />
-      )}
+      <ModalApplyFlow
+        step={step}
+        target={target}
+        onClose={closeApplyFlow}
+        onSubmit={submit}
+        onRetry={submit}
+        onViewHistory={handleViewHistory}
+      />
     </>
   );
 };

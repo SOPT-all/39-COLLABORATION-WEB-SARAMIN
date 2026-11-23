@@ -33,6 +33,8 @@ interface JobResultSectionProps {
   results: SearchResult[];
   totalCount: number;
   keywordCount: number; // 적용한 MY FIT 키워드 수예요. 조건을 아직 안 보내면 0이에요.
+  // 적용한 MY FIT 키워드. 비교 모달이 검색 목록과 같은 기준으로 일치 개수를 세요. 아직 못 받았으면 undefined
+  appliedKeywords?: string[];
   currentPage: number; // 0부터 시작해요. 화면 번호는 1을 더해 보여요.
   totalPages: number;
   onPageChange: (page: number) => void;
@@ -46,6 +48,7 @@ const JobResultSection = ({
   results,
   totalCount,
   keywordCount,
+  appliedKeywords,
   currentPage,
   totalPages,
   onPageChange,
@@ -250,6 +253,7 @@ const JobResultSection = ({
       <ModalJobDetail job={detailJob} onClose={() => setDetailJob(null)} />
       <CompareModal
         isOpen={isCompareOpen}
+        myFitKeywordNames={appliedKeywords}
         onClose={() => setIsCompareOpen(false)}
       />
     </section>

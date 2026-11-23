@@ -1,9 +1,9 @@
 import type { Application } from '@/pages/home/types/application';
-import type { ApplyTarget } from '@/pages/home/types/apply-flow';
 import {
   MY_DOCUMENT_FIELDS,
   READY_DOCUMENT_COUNT,
 } from '@/shared/constants/my-documents';
+import type { ApplyTarget } from '@/shared/types/apply-flow';
 import type { MyDocuments } from '@/shared/types/my-documents';
 
 const PACKAGE_NAME = '지원 패키지';

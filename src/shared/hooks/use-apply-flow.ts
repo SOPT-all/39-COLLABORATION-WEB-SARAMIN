@@ -4,7 +4,7 @@ import type {
   ApplyFlowStep,
   ApplyResult,
   ApplyTarget,
-} from '@/pages/home/types/apply-flow';
+} from '@/shared/types/apply-flow';
 
 interface UseApplyFlowOptions {
   submitApplication: (target: ApplyTarget) => Promise<ApplyResult>;
