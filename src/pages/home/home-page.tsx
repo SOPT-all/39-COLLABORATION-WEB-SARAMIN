@@ -19,8 +19,10 @@ import { useApplyDrag } from '@/pages/home/hooks/use-apply-drag';
 import { useApplyFilter } from '@/pages/home/hooks/use-apply-filter';
 import { useApplyFlow } from '@/pages/home/hooks/use-apply-flow';
 import { useRecruitFeed } from '@/pages/home/hooks/use-recruit-feed';
+import type { Application } from '@/pages/home/types/application';
 import type { JobCardItem } from '@/pages/home/types/job-card';
 import type { RecruitSectionType } from '@/pages/home/types/recruit';
+import { createApplication } from '@/pages/home/utils/create-application';
 import { getApplyStatusCounts } from '@/pages/home/utils/get-apply-status-counts';
 import { useMyDocumentsQuery } from '@/shared/api/use-my-documents-query';
 import { useMyKeywordsQuery } from '@/shared/api/use-my-keywords-query';
@@ -39,6 +41,10 @@ const HomePage = () => {
   const [appliedAtByRecruitId, setAppliedAtByRecruitId] = useState<
     ReadonlyMap<number, string>
   >(() => new Map());
+  // 이번 방문에서 지원한 내역. 지원 API가 없어 지원 내역 모달 목록 맨 앞에 붙여 보여 줘요.
+  const [sessionApplications, setSessionApplications] = useState<Application[]>(
+    [],
+  );
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isBundleOpen, setIsBundleOpen] = useState(false);
   const [isDocumentManagementOpen, setIsDocumentManagementOpen] =
@@ -57,10 +63,16 @@ const HomePage = () => {
 
   const { step, target, openApplyFlow, closeApplyFlow, submit } = useApplyFlow({
     submitApplication,
-    onApplySuccess: ({ recruitId }) =>
+    onApplySuccess: (applyTarget) => {
+      const appliedAt = new Date();
       setAppliedAtByRecruitId((previous) =>
-        new Map(previous).set(recruitId, new Date().toISOString()),
-      ),
+        new Map(previous).set(applyTarget.recruitId, appliedAt.toISOString()),
+      );
+      setSessionApplications((previous) => [
+        createApplication(applyTarget, myDocuments, appliedAt),
+        ...previous,
+      ]);
+    },
   });
 
   const handleApplyDrop = (recruit: JobCardItem) => {
@@ -173,6 +185,7 @@ const HomePage = () => {
       />
       <ApplicationHistoryModal
         isOpen={isHistoryOpen}
+        sessionApplications={sessionApplications}
         onClose={() => setIsHistoryOpen(false)}
       />
     </>
