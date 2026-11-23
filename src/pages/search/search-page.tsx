@@ -55,13 +55,10 @@ const SearchPage = () => {
   const [appliedMyFitKeywords, setAppliedMyFitKeywords] = useState<
     string[] | null
   >(null);
-  const [editedMyFitKeywords, setEditedMyFitKeywords] = useState<
-    string[] | null
-  >(null);
   const [myFitInput, setMyFitInput] = useState('');
 
   // null은 초기화 전, []는 기본 키워드가 없는 정상 응답이에요.
-  // 최초 성공한 값만 저장해 재조회가 편집 목록과 검색 조건을 덮어쓰지 않아요.
+  // 최초 성공한 값만 저장해 재조회가 칩 목록과 검색 조건을 덮어쓰지 않아요.
   if (appliedMyFitKeywords === null && myKeywordsQuery.isSuccess) {
     setAppliedMyFitKeywords(myKeywordsQuery.data.map(({ name }) => name));
   }
@@ -69,7 +66,6 @@ const SearchPage = () => {
   const hasInitializedMyFitKeywords = appliedMyFitKeywords !== null;
   const isMyFitInitializationError =
     !hasInitializedMyFitKeywords && myKeywordsQuery.isError;
-  const myFitKeywords = editedMyFitKeywords ?? appliedMyFitKeywords ?? [];
 
   // 페이지 번호는 주소에 둬요. 새로고침 · 뒤로가기 · 링크 공유에도 보던 페이지가 유지돼요.
   // 새 검색어로 이동하면 주소에 page가 없어서 첫 페이지부터 조회해요.
@@ -84,7 +80,7 @@ const SearchPage = () => {
     });
   };
 
-  // MY FIT 검색하기로 조건이 바뀌었을 때, 첫 페이지로 주소가 바뀐 뒤에 적용할 키워드예요.
+  // 2페이지 이상에서 칩을 바꿨을 때, 첫 페이지로 주소가 바뀐 뒤에 적용할 키워드예요.
   // 주소 변경은 다음 렌더에 반영돼서, 먼저 적용하면 새 조건으로 이전 페이지를 한 번 더 요청해요.
   const [pendingMyFitKeywords, setPendingMyFitKeywords] = useState<
     string[] | null
@@ -94,6 +90,9 @@ const SearchPage = () => {
     setAppliedMyFitKeywords(pendingMyFitKeywords);
     setPendingMyFitKeywords(null);
   }
+
+  // 화면에 보이는 칩이에요. 첫 페이지로 넘어가는 중에도 바뀐 칩을 바로 보여 줘요.
+  const myFitKeywords = pendingMyFitKeywords ?? appliedMyFitKeywords ?? [];
 
   // 잘못된 페이지 값(page=abc · page=0 · page=02)과 생략할 page=1은 주소를 바로잡아요. 기록은 남기지 않아요.
   const isInvalidPageParam =
@@ -173,8 +172,20 @@ const SearchPage = () => {
     void searchQuery.refetch();
   };
 
+  // 칩을 추가 · 삭제하면 검색하기 없이 바로 다시 조회해요. (기능명세서 FR-09 즉시 반영)
+  // 2페이지 이상이면 첫 페이지로 돌아간 뒤 새 조건으로 조회해요.
+  const applyMyFitKeywords = (nextKeywords: string[]) => {
+    if (!hasInitializedMyFitKeywords) return;
+    if (currentPage === 0) {
+      setAppliedMyFitKeywords(nextKeywords);
+      return;
+    }
+    setPendingMyFitKeywords(nextKeywords);
+    changePageParam(0);
+  };
+
   const handleMyFitKeywordRemove = (removedKeyword: string) => {
-    setEditedMyFitKeywords(
+    applyMyFitKeywords(
       myFitKeywords.filter(
         (selectedKeyword) => selectedKeyword !== removedKeyword,
       ),
@@ -193,7 +204,7 @@ const SearchPage = () => {
     if (candidate) handleMyFitKeywordAdd(candidate);
   };
 
-  // 고른 키워드를 편집 목록 끝에 더해요. 검색하기를 눌러야 검색 조건에 적용돼요.
+  // 고른 키워드를 칩 목록 끝에 더하고 바로 다시 조회해요.
   const handleMyFitKeywordAdd = (addedKeyword: string) => {
     const nextKeyword = addedKeyword.trim();
     if (!hasInitializedMyFitKeywords) return;
@@ -205,30 +216,16 @@ const SearchPage = () => {
         selectedKeyword.toLowerCase() === nextKeyword.toLowerCase(),
     );
     if (isDuplicated) return;
-    setEditedMyFitKeywords([...myFitKeywords, nextKeyword]);
+    applyMyFitKeywords([...myFitKeywords, nextKeyword]);
   };
 
+  // 칩은 바꾸는 즉시 반영돼서, 검색하기는 지금 조건으로 첫 페이지부터 다시 조회해요. (시안의 버튼 유지)
   const handleMyFitSearch = () => {
     if (!hasInitializedMyFitKeywords) return;
-
-    const hasSameKeywords =
-      appliedMyFitKeywords.length === myFitKeywords.length &&
-      appliedMyFitKeywords.every(
-        (appliedKeyword, index) => appliedKeyword === myFitKeywords[index],
-      );
-
-    // 같은 조건의 첫 페이지에서도 검색하기를 누르면 다시 조회해요.
-    if (hasSameKeywords && currentPage === 0) {
+    if (currentPage === 0) {
       void searchQuery.refetch();
       return;
     }
-
-    // 첫 페이지면 바로 적용하고, 아니면 첫 페이지로 주소를 바꾼 뒤 적용해요.
-    if (currentPage === 0) {
-      setAppliedMyFitKeywords([...myFitKeywords]);
-      return;
-    }
-    setPendingMyFitKeywords([...myFitKeywords]);
     changePageParam(0);
   };
 
@@ -257,7 +254,7 @@ const SearchPage = () => {
 
         <div className="mt-5 flex items-start gap-8">
           <aside aria-label="MY FIT" className="sticky top-6 w-69 shrink-0">
-            {/* 후보 중에서 고르거나 Enter로 가장 맞는 후보를 추가해요. 검색하기를 눌러야 조건에 적용돼요. */}
+            {/* 후보 중에서 고르거나 Enter로 가장 맞는 후보를 추가해요. 칩을 추가 · 삭제하면 바로 다시 조회해요. */}
             {isMyFitInitializationError ? (
               <StateMessage
                 kind="error"
