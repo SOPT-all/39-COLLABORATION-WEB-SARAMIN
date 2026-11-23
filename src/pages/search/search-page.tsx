@@ -14,13 +14,20 @@ import { useMyKeywordsQuery } from '@/shared/api/use-my-keywords-query';
 import KeywordSearchPanel from '@/shared/components/search/keyword-search-panel';
 import StateMessage from '@/shared/components/state-message/state-message';
 import { ROUTES } from '@/shared/constants/routes';
-import { SEARCH_KEYWORD_PARAM } from '@/shared/constants/search';
+import {
+  SEARCH_KEYWORD_MAX_LENGTH,
+  SEARCH_KEYWORD_PARAM,
+} from '@/shared/constants/search';
 
 const SEARCH_PAGE_SIZE = 7;
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
-  const keyword = searchParams.get(SEARCH_KEYWORD_PARAM)?.trim() ?? '';
+  // 주소에 직접 긴 검색어를 넣어도 서버가 받는 길이까지만 써요. (넘으면 400)
+  const keyword = (searchParams.get(SEARCH_KEYWORD_PARAM)?.trim() ?? '').slice(
+    0,
+    SEARCH_KEYWORD_MAX_LENGTH,
+  );
 
   const myKeywordsQuery = useMyKeywordsQuery();
   const [appliedMyFitKeywords, setAppliedMyFitKeywords] = useState<
@@ -163,10 +170,10 @@ const SearchPage = () => {
       />
       <div className="mx-auto w-315 pt-6.5 pb-14.5">
         <div className="flex items-center justify-between">
-          <h1 className="text-heading-20 text-text-primary">
+          <h1 className="min-w-0 text-heading-20 break-all text-text-primary">
             ‘{keyword}’에 대한 취업정보
           </h1>
-          <span className="text-body-14 whitespace-pre text-text-secondary">
+          <span className="shrink-0 text-body-14 whitespace-pre text-text-secondary">
             {SEARCH_PAGE_SIZE}개씩
           </span>
         </div>
