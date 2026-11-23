@@ -1,4 +1,4 @@
-import type { ApplyResult } from '@/pages/home/types/apply-flow';
+import type { ApplyResult } from '@/shared/types/apply-flow';
 
 const MOCK_SUBMIT_DELAY_MS = 1500;
 
