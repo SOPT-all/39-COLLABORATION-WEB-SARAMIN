@@ -10,6 +10,10 @@ import SearchSatisfactionSection from '@/pages/search/components/search-satisfac
 import SearchSummary from '@/pages/search/components/search-summary';
 import SearchUtilities from '@/pages/search/components/search-utilities';
 import { convertSearchJobPostingToSearchResult } from '@/pages/search/utils/convert-search-job-posting-to-search-result';
+import {
+  filterKeywordCandidates,
+  getKeywordCandidateToSubmit,
+} from '@/pages/search/utils/filter-keyword-candidates';
 import { useMyKeywordsQuery } from '@/shared/api/use-my-keywords-query';
 import KeywordSearchPanel from '@/shared/components/search/keyword-search-panel';
 import StateMessage from '@/shared/components/state-message/state-message';
@@ -177,7 +181,19 @@ const SearchPage = () => {
     );
   };
 
-  // 입력한 키워드를 편집 목록 끝에 더해요. 검색하기를 눌러야 검색 조건에 적용돼요.
+  // 입력한 글자로 거른 키워드 후보예요. (기능명세서 FR-09)
+  const myFitCandidateGroups = filterKeywordCandidates(
+    myFitInput,
+    myFitKeywords,
+  );
+
+  // Enter는 입력과 같은 후보, 없으면 첫 후보를 추가해요. 후보가 없으면 추가하지 않고 안내만 보여요.
+  const handleMyFitKeywordSubmit = (input: string) => {
+    const candidate = getKeywordCandidateToSubmit(input, myFitCandidateGroups);
+    if (candidate) handleMyFitKeywordAdd(candidate);
+  };
+
+  // 고른 키워드를 편집 목록 끝에 더해요. 검색하기를 눌러야 검색 조건에 적용돼요.
   const handleMyFitKeywordAdd = (addedKeyword: string) => {
     const nextKeyword = addedKeyword.trim();
     if (!hasInitializedMyFitKeywords) return;
@@ -241,10 +257,7 @@ const SearchPage = () => {
 
         <div className="mt-5 flex items-start gap-8">
           <aside aria-label="MY FIT" className="sticky top-6 w-69 shrink-0">
-            {/*
-              TODO(FR-09): 키워드 시트 목록에서 입력값으로 후보를 거르는 추천 목록은 아직 없어요.
-              지금은 입력한 글자를 Enter로 바로 추가해요.
-            */}
+            {/* 후보 중에서 고르거나 Enter로 가장 맞는 후보를 추가해요. 검색하기를 눌러야 조건에 적용돼요. */}
             {isMyFitInitializationError ? (
               <StateMessage
                 kind="error"
@@ -260,7 +273,9 @@ const SearchPage = () => {
                 keywords={myFitKeywords}
                 keyword={myFitInput}
                 onKeywordChange={setMyFitInput}
-                onKeywordSubmit={handleMyFitKeywordAdd}
+                onKeywordSubmit={handleMyFitKeywordSubmit}
+                candidateGroups={myFitCandidateGroups}
+                onCandidateSelect={handleMyFitKeywordAdd}
                 onRemove={handleMyFitKeywordRemove}
                 onSearch={handleMyFitSearch}
               />
