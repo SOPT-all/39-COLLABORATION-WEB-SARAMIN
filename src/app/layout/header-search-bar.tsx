@@ -40,7 +40,7 @@ const HeaderSearchBar = () => {
       {/* TODO: AI 검색 버튼의 동작이 정해지면 onAiSearch를 연결해요. 현재 검색 이동은 Enter로 처리해요. */}
       <SearchGlobal
         query={query}
-        placeholder="백엔드 개발자"
+        placeholder="공채는 역시, 사람인"
         maxLength={SEARCH_KEYWORD_MAX_LENGTH}
         state={query ? 'typing' : 'default'}
         onQueryChange={setQuery}
