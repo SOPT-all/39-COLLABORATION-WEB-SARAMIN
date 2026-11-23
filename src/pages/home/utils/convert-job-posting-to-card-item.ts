@@ -91,11 +91,8 @@ export const convertJobPostingToCardItem = (
     convertCareerYears(jobPosting.minCareerYears, jobPosting.maxCareerYears),
     jobPosting.hireType,
   ].join(' · '),
-  // 일치 키워드가 없으면 일치 줄을 그리지 않아요. (0개 일치에 체크 아이콘이 붙어 맞는 것처럼 보이지 않게)
-  matchReason:
-    jobPosting.matchedKeywordCount > 0
-      ? `내 조건 ${jobPosting.matchedKeywordCount}개 일치`
-      : '',
+  // 피그마 card_job처럼 모든 카드 하단에 일치 개수를 보여 줘요. 0개여도 '내 조건 0개 일치'로 표시해요. (디자인 QA)
+  matchReason: `내 조건 ${jobPosting.matchedKeywordCount}개 일치`,
   deadline: convertDeadlineToDday(jobPosting.deadlineAt, today),
   updated: convertToUpdatedLabel(jobPosting, today),
   applyStatus: getApplyStatus(jobPosting, today),
