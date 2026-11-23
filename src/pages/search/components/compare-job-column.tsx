@@ -6,6 +6,7 @@
 //          handleProps - 열 이동 핸들(≡)에 붙일 드래그 · 키보드 속성
 //          isDragOver - 다른 열을 이 자리에 끌어다 놓는 중인지
 //          onDetail · onUnscrap · onApply - 상세보기 · 스크랩 해제 · 바로 지원
+//          applyBlockedLabel - 지원할 수 없는 이유(접수 마감 · 서류 준비 필요). 넘기면 지원 버튼을 막고 이 문구를 보여 줌
 // 구조   : [회사 / 공고명 · 상세보기 · ≡] [MY FIT 키워드 n/m 매치 + 일치 칩] [비교 항목 행들] [스크랩함 │ 바로 지원]
 
 import type { ComponentProps, DragEvent } from 'react';
@@ -34,6 +35,7 @@ interface CompareJobColumnProps {
   onDetail: () => void;
   onUnscrap: () => void;
   onApply: () => void;
+  applyBlockedLabel?: string;
 }
 
 const CompareJobColumn = ({
@@ -47,12 +49,20 @@ const CompareJobColumn = ({
   onDetail,
   onUnscrap,
   onApply,
+  applyBlockedLabel,
 }: CompareJobColumnProps) => {
   const { companyName, title, keywords, matchCount, totalKeywordCount } = job;
-  // 홈 공고는 일치 키워드 목록이 없어서 공고 키워드 중 내 키워드와 겹치는 것을 보여 줘요.
-  const matchedKeywords =
-    job.matchedKeywords ??
-    keywords.filter((keyword) => myKeywordNames.includes(keyword));
+  // 검색 목록의 '내 키워드 n/m 일치'와 같은 기준으로 맞춰요. (분모 = 내 MY FIT 키워드 수)
+  // 홈 공고는 일치 키워드 목록이 없어서 공고 키워드 중 내 키워드와 겹치는 것을 써요.
+  // 검색에서 키워드를 더해 스크랩한 공고도 내 키워드에 있는 것만 세요.
+  const hasMyKeywords = myKeywordNames.length > 0;
+  const matchedKeywords = (job.matchedKeywords ?? keywords).filter(
+    (keyword) => !hasMyKeywords || myKeywordNames.includes(keyword),
+  );
+  // 내 키워드를 아직 못 받았으면 스크랩할 때 받은 일치 정보로 보여 줘요.
+  const matchLabel = hasMyKeywords
+    ? `${matchedKeywords.length}/${myKeywordNames.length} 일치`
+    : `${matchCount}/${totalKeywordCount} 일치`;
 
   return (
     <li
@@ -100,9 +110,9 @@ const CompareJobColumn = ({
 
         <div className="flex h-25.75 flex-col justify-center gap-1.5 overflow-hidden border-b border-border-default px-4 py-2.5">
           <p className="text-label-14 text-text-primary">
-            키워드{' '}
+            내 키워드{' '}
             <strong className="text-heading-18 text-blue-90">
-              {matchCount}/{totalKeywordCount} 매치
+              {matchLabel}
             </strong>
           </p>
           {matchedKeywords.length > 0 && (
@@ -139,8 +149,12 @@ const CompareJobColumn = ({
 
       <div className="flex gap-2 px-2.5">
         <CompareScrapButton isSaved className="flex-1" onClick={onUnscrap} />
-        <CompareButton className="flex-1" onClick={onApply}>
-          바로 지원
+        <CompareButton
+          disabled={Boolean(applyBlockedLabel)}
+          className="flex-1 disabled:cursor-not-allowed disabled:border-border-default disabled:bg-surface-subtle disabled:text-text-tertiary"
+          onClick={onApply}
+        >
+          {applyBlockedLabel ?? '바로 지원'}
         </CompareButton>
       </div>
     </li>

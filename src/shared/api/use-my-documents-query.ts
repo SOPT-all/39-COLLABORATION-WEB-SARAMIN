@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { getMyDocuments } from '@/pages/home/api/get-my-documents';
+import { getMyDocuments } from '@/shared/api/get-my-documents';
 import { QUERY_KEYS } from '@/shared/constants/query-keys';
 
 // 보유 서류 체크 상태 조회. 홈 진입 · 새로고침 때 체크 초기값으로 사용

@@ -1,8 +1,9 @@
-import { useNavigate } from 'react-router';
+import { createSearchParams, Link, useNavigate } from 'react-router';
 
 import { MOCK_RELATED_KEYWORDS } from '@/pages/search/constants/mock-search';
 import ChipSelectedFilter from '@/shared/components/chip/chip-selected-filter';
 import { ROUTES } from '@/shared/constants/routes';
+import { SEARCH_KEYWORD_PARAM } from '@/shared/constants/search';
 import { cn } from '@/shared/utils/cn';
 
 interface SearchSummaryProps {
@@ -11,6 +12,9 @@ interface SearchSummaryProps {
   isLoading: boolean;
   isError: boolean;
 }
+
+// 검색어 칩은 한 줄이라 긴 검색어는 앞부분만 보여 줘요.
+const CHIP_KEYWORD_MAX_LENGTH = 30;
 
 const SEARCH_TABS = ['통합검색', '✦ AI 검색', '채용정보', '기업정보'];
 
@@ -24,13 +28,17 @@ const SearchSummary = ({
 }: SearchSummaryProps) => {
   const navigate = useNavigate();
   const canShowTotalCount = !isLoading && !isError;
+  const chipKeyword =
+    keyword.length > CHIP_KEYWORD_MAX_LENGTH
+      ? `${keyword.slice(0, CHIP_KEYWORD_MAX_LENGTH)}…`
+      : keyword;
   return (
     <section aria-label="검색 요약" className="mx-auto w-315">
       <div className="flex h-18.5 items-center justify-between px-5">
         <div className="flex items-center gap-2">
           {/* 적용된 조건은 검색어뿐이라 검색어 칩만 보여 줘요. 지우면 검색어 없이 홈으로 돌아가요. */}
           <ChipSelectedFilter onRemove={() => navigate(ROUTES.HOME)}>
-            {`검색어 · ${keyword}`}
+            {`검색어 · ${chipKeyword}`}
           </ChipSelectedFilter>
         </div>
         {canShowTotalCount && (
@@ -47,7 +55,18 @@ const SearchSummary = ({
         <ul className="flex gap-4 text-text-tertiary">
           {MOCK_RELATED_KEYWORDS.map((relatedKeyword) => (
             <li key={relatedKeyword} className="min-w-21.5">
-              <a href="#">{relatedKeyword}</a>
+              {/* 누르면 그 검색어로 다시 검색해요. */}
+              <Link
+                to={{
+                  pathname: ROUTES.SEARCH,
+                  search: createSearchParams({
+                    [SEARCH_KEYWORD_PARAM]: relatedKeyword,
+                  }).toString(),
+                }}
+                className="hover:text-text-primary"
+              >
+                {relatedKeyword}
+              </Link>
             </li>
           ))}
         </ul>

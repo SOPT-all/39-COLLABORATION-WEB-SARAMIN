@@ -9,7 +9,7 @@ const getTimeBefore = (ms: number) => new Date(Date.now() - ms).toISOString();
 export const MOCK_DOCUMENT_FILES: DocumentFile[] = [
   {
     id: 1,
-    fileName: '이력서_프로덕트디자인.pdf',
+    fileName: '이력서_백엔드개발.pdf',
     format: 'PDF',
     sizeLabel: '1.8 MB',
     updatedAt: getTimeBefore(10 * MINUTE_MS),

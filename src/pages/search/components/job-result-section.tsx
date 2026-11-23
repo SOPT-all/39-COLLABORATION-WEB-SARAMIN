@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import CompareModal from '@/pages/search/components/compare-modal';
 import type { SearchResult, SearchSort } from '@/pages/search/types/search';
@@ -55,6 +55,7 @@ const JobResultSection = ({
   onRetry,
 }: JobResultSectionProps) => {
   const { getIsBookmarked, setBookmark, bookmarkedJobs } = useBookmarks();
+  const sectionRef = useRef<HTMLElement>(null);
   const [isCompareOpen, setIsCompareOpen] = useState(false);
   const [detailJob, setDetailJob] = useState<CompareJob | null>(null);
   // 고른 정렬은 페이지를 넘기거나 검색어를 바꿔도 유지돼요.
@@ -68,6 +69,12 @@ const JobResultSection = ({
   const hasLoaded = !isLoading && !isError;
   const hasResults = hasLoaded && results.length > 0;
   const isEmpty = hasLoaded && !isRefreshing && results.length === 0;
+  // 페이지를 넘기면 새 결과의 첫 줄부터 보이게 결과 영역 맨 위로 올려요.
+  const handlePageChange = (page: number) => {
+    onPageChange(page);
+    sectionRef.current?.scrollIntoView({ block: 'start' });
+  };
+
   const pageGroupStart =
     Math.floor(currentPage / PAGE_GROUP_SIZE) * PAGE_GROUP_SIZE;
   const visiblePageCount = Math.max(
@@ -80,7 +87,11 @@ const JobResultSection = ({
   );
 
   return (
-    <section aria-labelledby="job-result-title">
+    <section
+      ref={sectionRef}
+      aria-labelledby="job-result-title"
+      className="scroll-mt-6"
+    >
       <div className="flex items-center gap-2 px-6.75 py-4.5">
         <h2
           id="job-result-title"
@@ -208,7 +219,7 @@ const JobResultSection = ({
             <button
               type="button"
               disabled={isRefreshing || currentPage === 0}
-              onClick={() => onPageChange(currentPage - 1)}
+              onClick={() => handlePageChange(currentPage - 1)}
               className="mr-1.5 text-body-14 text-text-secondary disabled:cursor-not-allowed disabled:opacity-50"
             >
               ‹ 이전
@@ -220,7 +231,7 @@ const JobResultSection = ({
                 isSelected={page === currentPage}
                 disabled={isRefreshing}
                 className="disabled:cursor-not-allowed disabled:opacity-50"
-                onClick={() => onPageChange(page)}
+                onClick={() => handlePageChange(page)}
               >
                 {page + 1}
               </ChipNumber>
@@ -228,7 +239,7 @@ const JobResultSection = ({
             <button
               type="button"
               disabled={isRefreshing || currentPage >= totalPages - 1}
-              onClick={() => onPageChange(currentPage + 1)}
+              onClick={() => handlePageChange(currentPage + 1)}
               className="ml-1.5 text-body-14 text-text-secondary disabled:cursor-not-allowed disabled:opacity-50"
             >
               다음 ›

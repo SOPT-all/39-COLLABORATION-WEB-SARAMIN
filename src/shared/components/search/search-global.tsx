@@ -17,6 +17,7 @@ interface SearchGlobalBaseProps extends Omit<
 > {
   query?: string;
   placeholder: string;
+  maxLength?: number;
   onQueryChange?: (query: string) => void;
   onAiSearch?: () => void;
   onRetry?: () => void;
@@ -46,6 +47,7 @@ const BORDER_CLASS_NAMES = {
 const SearchGlobal = ({
   query = '',
   placeholder,
+  maxLength,
   state = 'default',
   errorMessage,
   onQueryChange,
@@ -76,6 +78,7 @@ const SearchGlobal = ({
             value={query}
             aria-label="검색어 입력"
             placeholder={placeholder}
+            maxLength={maxLength}
             readOnly={isLoading}
             aria-busy={isLoading}
             onChange={(event) => onQueryChange?.(event.target.value)}
