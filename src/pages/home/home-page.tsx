@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate, useSearchParams } from 'react-router';
 
 import ApplicationHistoryModal from '@/pages/home/components/application-history-modal';
 import ApplyFilterBar from '@/pages/home/components/apply-filter-bar';
@@ -14,6 +14,11 @@ import KeywordPanelSection from '@/pages/home/components/keyword-panel-section';
 import RecruitFeedSection from '@/pages/home/components/recruit-feed-section';
 import StickyRailSection from '@/pages/home/components/sticky-rail-section';
 import { APPLY_DOCUMENT_SUMMARY } from '@/pages/home/constants/apply-drag';
+import {
+  HOME_EXPANDED_PARAM,
+  HOME_EXPANDED_SEPARATOR,
+} from '@/pages/home/constants/home-search-params';
+import { RECRUIT_SECTIONS } from '@/pages/home/constants/recruit-sections';
 import { useApplyDrag } from '@/pages/home/hooks/use-apply-drag';
 import { useApplyFilter } from '@/pages/home/hooks/use-apply-filter';
 import { useRecruitFeed } from '@/pages/home/hooks/use-recruit-feed';
@@ -29,6 +34,21 @@ import { checkIsOpenApplicationHistoryState } from '@/shared/constants/routes';
 import { useApplyFlow } from '@/shared/hooks/use-apply-flow';
 import { useSessionApplications } from '@/shared/hooks/use-session-applications';
 import { createApplyDocumentSummary } from '@/shared/utils/create-apply-document-summary';
+
+const checkIsRecruitSectionType = (
+  value: string,
+): value is RecruitSectionType =>
+  RECRUIT_SECTIONS.some(({ type }) => type === value);
+
+// 주소의 '전체보기로 펼친 섹션' 목록을 읽어요. 모르는 값은 빼요.
+const convertExpandedParamToSections = (
+  expandedParam: string | null,
+): ReadonlySet<RecruitSectionType> =>
+  new Set(
+    (expandedParam ?? '')
+      .split(HOME_EXPANDED_SEPARATOR)
+      .filter(checkIsRecruitSectionType),
+  );
 
 // 지원 API가 없어 목 제출 함수로 항상 성공 처리
 const submitApplication = createMockSubmitApplication('success');
@@ -70,9 +90,13 @@ const HomePage = () => {
   const [isDocumentManagementOpen, setIsDocumentManagementOpen] =
     useState(false);
   const [isDocumentUploadOpen, setIsDocumentUploadOpen] = useState(false);
-  const [expandedSections, setExpandedSections] = useState<
-    ReadonlySet<RecruitSectionType>
-  >(() => new Set());
+  const [searchParams, setSearchParams] = useSearchParams();
+  // 전체보기로 펼친 섹션도 주소(?expanded=)에 남겨 뒤로가기로 돌아와도 펼쳐 둬요.
+  const expandedParam = searchParams.get(HOME_EXPANDED_PARAM);
+  const expandedSections = useMemo(
+    () => convertExpandedParamToSections(expandedParam),
+    [expandedParam],
+  );
   const recruitSections = useRecruitFeed(
     appliedAtByRecruitId,
     expandedSections,
@@ -103,12 +127,26 @@ const HomePage = () => {
   };
 
   const handleToggleExpand = (type: RecruitSectionType) => {
-    setExpandedSections((previous) => {
-      const next = new Set(previous);
-      if (next.has(type)) next.delete(type);
-      else next.add(type);
-      return next;
-    });
+    const nextSections = new Set(expandedSections);
+    if (nextSections.has(type)) nextSections.delete(type);
+    else nextSections.add(type);
+
+    setSearchParams(
+      (previous) => {
+        const next = new URLSearchParams(previous);
+        if (nextSections.size > 0) {
+          next.set(
+            HOME_EXPANDED_PARAM,
+            [...nextSections].join(HOME_EXPANDED_SEPARATOR),
+          );
+        } else {
+          next.delete(HOME_EXPANDED_PARAM);
+        }
+        return next;
+      },
+      // 펼칠 때마다 기록이 쌓이거나 화면이 맨 위로 가지 않게 해요.
+      { replace: true, preventScrollReset: true },
+    );
   };
 
   // 지원 패키지 모달에서 서류 관리로 넘어가요.
