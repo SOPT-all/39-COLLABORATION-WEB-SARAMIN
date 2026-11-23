@@ -10,7 +10,7 @@ import IcKindError from '@/shared/assets/icons/ic-kind-error.svg?react';
 type SearchSuggestionPanelContentState =
   'recent' | 'predictive' | 'related' | 'loading' | 'empty' | 'error';
 
-interface SearchSuggestion {
+export interface SearchSuggestion {
   keyword: string;
   supportingText?: string;
 }
