@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate, useSearchParams } from 'react-router';
 
 import { useSearchJobPostingsQuery } from '@/pages/search/api/use-search-job-postings-query';
@@ -17,12 +17,27 @@ import { ROUTES } from '@/shared/constants/routes';
 import {
   SEARCH_KEYWORD_MAX_LENGTH,
   SEARCH_KEYWORD_PARAM,
+  SEARCH_PAGE_PARAM,
 } from '@/shared/constants/search';
 
 const SEARCH_PAGE_SIZE = 7;
 
+// 주소의 검색어는 두고 페이지 번호만 바꿔요. 첫 페이지는 주소에서 빼요.
+const setPageParam = (searchParams: URLSearchParams, page: number) => {
+  const next = new URLSearchParams(searchParams);
+  if (page > 0) next.set(SEARCH_PAGE_PARAM, String(page + 1));
+  else next.delete(SEARCH_PAGE_PARAM);
+  return next;
+};
+
+// 주소의 페이지 번호(1부터)를 조회용 번호(0부터)로 바꿔요. 없거나 잘못된 값은 첫 페이지예요.
+const convertPageParamToPage = (pageParam: string | null) => {
+  const page = Number(pageParam);
+  return Number.isInteger(page) && page >= 1 ? page - 1 : 0;
+};
+
 const SearchPage = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   // 주소에 직접 긴 검색어를 넣어도 서버가 받는 길이까지만 써요. (넘으면 400)
   const keyword = (searchParams.get(SEARCH_KEYWORD_PARAM)?.trim() ?? '').slice(
     0,
@@ -49,17 +64,30 @@ const SearchPage = () => {
     !hasInitializedMyFitKeywords && myKeywordsQuery.isError;
   const myFitKeywords = editedMyFitKeywords ?? appliedMyFitKeywords ?? [];
 
-  const [pagination, setPagination] = useState({
-    keyword,
-    page: 0,
-  });
+  // 페이지 번호는 주소에 둬요. 새로고침 · 뒤로가기 · 링크 공유에도 보던 페이지가 유지돼요.
+  // 새 검색어로 이동하면 주소에 page가 없어서 첫 페이지부터 조회해요.
+  const pageParam = searchParams.get(SEARCH_PAGE_PARAM);
+  const currentPage = convertPageParamToPage(pageParam);
 
-  // 검색어가 바뀌면 첫 페이지부터 다시 조회해요.
-  const currentPage = pagination.keyword === keyword ? pagination.page : 0;
+  const changePageParam = (page: number, options?: { replace?: boolean }) => {
+    setSearchParams((previous) => setPageParam(previous, page), options);
+  };
 
-  if (pagination.keyword !== keyword) {
-    setPagination({ keyword, page: 0 });
+  // MY FIT 검색하기로 조건이 바뀌었을 때, 첫 페이지로 주소가 바뀐 뒤에 적용할 키워드예요.
+  // 주소 변경은 다음 렌더에 반영돼서, 먼저 적용하면 새 조건으로 이전 페이지를 한 번 더 요청해요.
+  const [pendingMyFitKeywords, setPendingMyFitKeywords] = useState<
+    string[] | null
+  >(null);
+
+  if (pendingMyFitKeywords !== null && currentPage === 0) {
+    setAppliedMyFitKeywords(pendingMyFitKeywords);
+    setPendingMyFitKeywords(null);
   }
+
+  // 잘못된 페이지 값(page=abc · page=0 · page=02)과 생략할 page=1은 주소를 바로잡아요. 기록은 남기지 않아요.
+  const isInvalidPageParam =
+    pageParam !== null &&
+    (currentPage === 0 || String(currentPage + 1) !== pageParam);
 
   const searchQuery = useSearchJobPostingsQuery(
     {
@@ -74,7 +102,6 @@ const SearchPage = () => {
   const totalPages = searchData?.totalPages ?? 0;
   // 공고가 줄어 보고 있던 페이지가 없어지면 마지막 페이지로 돌아와요.
   const isPageOutOfRange =
-    pagination.keyword === keyword &&
     searchQuery.isSuccess &&
     !searchQuery.isPlaceholderData &&
     searchData !== undefined &&
@@ -85,9 +112,15 @@ const SearchPage = () => {
     ? Math.max(totalPages - 1, 0)
     : currentPage;
 
-  if (isPageOutOfRange) {
-    setPagination({ keyword, page: resolvedPage });
-  }
+  const shouldReplacePageParam = isPageOutOfRange || isInvalidPageParam;
+
+  // 렌더 중에는 주소를 바꿀 수 없어서 그린 뒤에 바로잡아요.
+  useEffect(() => {
+    if (!shouldReplacePageParam) return;
+    setSearchParams((previous) => setPageParam(previous, resolvedPage), {
+      replace: true,
+    });
+  }, [shouldReplacePageParam, resolvedPage, setSearchParams]);
 
   const results =
     searchData?.content.map(convertSearchJobPostingToSearchResult) ?? [];
@@ -116,7 +149,8 @@ const SearchPage = () => {
     ) {
       return;
     }
-    setPagination({ keyword, page: nextPage });
+    // 페이지 이동은 기록에 남겨 뒤로가기로 이전 페이지에 돌아가요.
+    changePageParam(nextPage);
   };
 
   const handleRetry = () => {
@@ -165,9 +199,13 @@ const SearchPage = () => {
       return;
     }
 
-    // 같은 이벤트에서 함께 갱신해 새 조건과 이전 페이지로 요청하지 않아요.
-    setAppliedMyFitKeywords([...myFitKeywords]);
-    setPagination({ keyword, page: 0 });
+    // 첫 페이지면 바로 적용하고, 아니면 첫 페이지로 주소를 바꾼 뒤 적용해요.
+    if (currentPage === 0) {
+      setAppliedMyFitKeywords([...myFitKeywords]);
+      return;
+    }
+    setPendingMyFitKeywords([...myFitKeywords]);
+    changePageParam(0);
   };
 
   // 검색어 없이 /search에 들어오면 공고를 요청하지 않고 홈으로 보내요.
