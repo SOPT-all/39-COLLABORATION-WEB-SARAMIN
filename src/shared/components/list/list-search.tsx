@@ -3,7 +3,7 @@ import type { ComponentProps } from 'react';
 import RowKeywordSearch from '@/shared/components/row/row-keyword-search';
 import { cn } from '@/shared/utils/cn';
 
-interface SearchKeywordGroup {
+export interface SearchKeywordGroup {
   title: string;
   keywords: string[];
 }
