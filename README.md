@@ -1,13 +1,83 @@
 # PLAY SOPT 39기 합동 세미나 데스크탑 웹 3조 사람인
 
+> **공고를 찾고, 비교하고, 끌어다 놓아 지원하는 사람인 리디자인**
+
+<br />
+
+## 📌 프로젝트 소개
+
+취업 플랫폼 **사람인**의 홈과 검색 결과 화면을, 기획 · 디자인 파트와 함께 만든 리디자인안으로 구현한 프로젝트예요.<br />
+기존 사람인은 추천 · 서비스 · 채용 정보가 한 화면에 섞여 있어 **어디부터 봐야 할지**, 추천된 공고가 **나와 왜 맞는지**, 여러 공고를 **어떻게 비교할지**를 사용자가 직접 따져야 했어요.<br />
+그래서 **"지원 준비 → 탐색 → 비교 → 지원"** 을 화면 이동 없이 한 흐름으로 잇는 데 집중했어요.
+
+🔗 **배포** : [39-collaboration-web-saramin.vercel.app](https://39-collaboration-web-saramin.vercel.app)
+
+<br />
+
+## ✨ 주요 기능
+
+### 🏠 홈 — 준비 상태를 보고, 끌어다 놓아 지원해요
+
+<img src="docs/images/home-before.png" alt="기존 사람인 홈 문제 분석" width="100%" />
+
+<img src="docs/images/home-after.png" alt="홈 개선 포인트" width="100%" />
+
+| 기능 | 설명 |
+| --- | --- |
+| **나의 취업 in** | 이력서 · 자기소개서 · 경력기술서 준비 상태를 체크하면 공고마다 지원 가능 여부가 바로 바뀌어요. 스크롤해도 공고 피드 안에서 따라와요. |
+| **드래그 앤 드롭 지원** | 지원 패키지를 공고 카드에 끌어다 놓으면 지원 확인 → 제출 → 완료 → 지원 내역까지 한 화면에서 이어져요. |
+| **나의 키워드 · 맞춤 추천** | 내 키워드를 피드 맨 위에 두고, 추천 공고 → 최근 조회 기업 → 마감 임박(48시간) 순으로 보여 줘요. |
+| **추천 근거 · 지원 상태** | 카드마다 `내 조건 n개 일치`와 지원 가능 · 서류 부족 · 지원 완료 · 마감 상태를 보여 줘요. |
+| **지원 필터 · 전체보기** | 지원 상태별 개수로 공고를 걸러 보고, 전체보기로 홈 안에서 목록을 펼쳐요. |
+| **서류 관리 · 지원 내역** | 서류 목록 · 업로드(형식 · 용량 오류 포함)와 지원 내역 · 상세를 모달로 확인해요. |
+
+### 🔍 검색 — 내 조건과 얼마나 맞는지 보고, 나란히 비교해요
+
+<img src="docs/images/search-before.png" alt="기존 검색 결과 문제 분석" width="100%" />
+
+<img src="docs/images/search-after.png" alt="검색 · 공고 비교 개선 포인트" width="100%" />
+
+| 기능 | 설명 |
+| --- | --- |
+| **MY FIT** | 키워드 후보에서 골라 칩으로 추가 · 삭제하면 결과가 바로 바뀌어요. |
+| **일치 근거** | 결과마다 `내 키워드 5/7 일치`와 일치한 키워드를 보여 주고, 매칭순 · 마감임박순으로 정렬해요. |
+| **헤더 검색 추천** | 검색창에 최근 검색어 · 자동완성 · 연관 검색어를 띄우고, 페이지 번호는 주소에 남겨 새로고침 · 뒤로가기에도 유지돼요. |
+| **스크랩** | 홈 · 검색 · 비교 화면의 별표가 함께 바뀌고, 새로고침 · 다른 탭에서도 유지돼요. |
+| **공고 비교** | 스크랩한 공고가 곧 비교 대상이에요. 같은 행으로 조건을 대조하고, 비교 항목 편집 · 열 순서 이동 · 바로 지원까지 할 수 있어요. |
+
+### 🔌 서버 API와 목데이터
+
+| 구분 | 기능 |
+| --- | --- |
+| **서버 API (7)** | 추천 · 조회한 공고 · 마감 임박 목록, 보유 서류 조회 · 변경, 내 키워드 조회, 공고 검색 |
+| **목데이터** | 서버 범위 밖인 지원 제출 · 지원 내역 · 서류 업로드 · 비교 상세 항목은 목데이터로 끝까지 동작하게 만들었어요. |
+
 <br />
 
 ## 👥 Team
 
-| <img src="https://avatars.githubusercontent.com/u/175678784?v=4" width="120" /> | <img src="https://avatars.githubusercontent.com/u/114052066?v=4" width="120" /> | <img src="https://avatars.githubusercontent.com/u/322835854?v=4" width="120" /> | <img src="https://avatars.githubusercontent.com/u/90814077?v=4" width="120" /> | <img src="https://avatars.githubusercontent.com/u/159880204?v=4" width="120" /> |
+| <img src="https://avatars.githubusercontent.com/u/175678784?v=4&s=240" width="120" /> | <img src="https://avatars.githubusercontent.com/u/114052066?v=4&s=240" width="120" /> | <img src="https://avatars.githubusercontent.com/u/322835854?v=4&s=240" width="120" /> | <img src="https://avatars.githubusercontent.com/u/90814077?v=4&s=240" width="120" /> | <img src="https://avatars.githubusercontent.com/u/159880204?v=4&s=240" width="120" /> |
 | :---: | :---: | :---: | :---: | :---: |
 | **조영찬** | **장희진** | **김지영** | **김종현** | **남주형** |
 | [@ychany](https://github.com/ychany) | [@huijeanjang](https://github.com/huijeanjang) | [@2516391](https://github.com/2516391) | [@KimJongHyun2](https://github.com/KimJongHyun2) | [@Juhyung03](https://github.com/Juhyung03) |
+
+<br />
+
+## 🧑‍💻 역할 분담
+
+<img src="docs/images/roles.png" alt="화면으로 보는 역할 분담" width="100%" />
+
+| 이름 | 초기 세팅 | 공통 컴포넌트 | 페이지 · API |
+| :---: | --- | --- | --- |
+| **조영찬** | 프로젝트 생성 · 폴더 구조, 스타일 토큰, CI/CD · 배포, API 초기 세팅 | 모달 공통 컴포넌트, 헤더 · 푸터 | 드래그 지원 흐름, 서류 관리 · 업로드, 공고 비교 모달, 스크랩 저장, 조회한 공고 · 마감 임박 API |
+| **장희진** | SVG 아이콘(SVGR), Discord PR 알림 | 검색 컴포넌트, 목록 · 행 컴포넌트 | 헤더 검색, 검색 페이지 연결, 공고 검색 API, MY FIT 조건 적용 · 재조회 |
+| **김지영** | PR · 이슈 템플릿, 라벨, 오토 리뷰어 | 공고 카드, 지원 패키지 카드, 검색 결과 · 피드백 상태 | 홈 공고 피드 섹션, 추천 공고 API |
+| **김종현** | 라우터, axios · TanStack Query, Storybook | 스티키 허브, 스켈레톤, 드롭 영역, 취업 준비 도구 | 홈 스티키 레일 · 도구 섹션, 보유 서류 조회 · 변경 API |
+| **남주형** | ESLint · Prettier, 절대경로 | 버튼 · 칩 · 뱃지 · 태그 · 아이콘 | 나의 키워드 패널, 지원 필터 바, 지원 내역 모달, MY FIT 키워드 API, 북마크 |
+
+### 🤝 함께 일한 방식
+
+이슈 생성(템플릿 · 라벨 · 담당자) → `타입/이슈번호/기능명` 브랜치 → PR(CI 검사 · Vercel 미리보기 · Discord 알림) → 오토 리뷰어 코드 리뷰 → `dev` 머지 → `main` 릴리즈 · 자동 배포
 
 <br />
 
@@ -66,8 +136,9 @@ src
 ├── routes
 │   └── router.tsx
 └── shared
-    ├── api/config      # axios 인스턴스, queryClient
-    ├── assets/icons
+    ├── api             # 두 페이지 이상에서 쓰는 API 함수 · 쿼리 훅
+    │   └── config      # axios 인스턴스, queryClient
+    ├── assets          # icons · images · logo
     ├── components      # 공통 컴포넌트 (컴포넌트별 폴더)
     ├── constants
     ├── hooks
