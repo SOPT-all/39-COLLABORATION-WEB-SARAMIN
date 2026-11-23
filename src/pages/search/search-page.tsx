@@ -19,6 +19,7 @@ import {
   SEARCH_KEYWORD_PARAM,
   SEARCH_PAGE_PARAM,
 } from '@/shared/constants/search';
+import { useDocumentTitle } from '@/shared/hooks/use-document-title';
 
 const SEARCH_PAGE_SIZE = 7;
 
@@ -43,6 +44,8 @@ const SearchPage = () => {
     0,
     SEARCH_KEYWORD_MAX_LENGTH,
   );
+
+  useDocumentTitle(`‘${keyword}’ 검색 결과`);
 
   const myKeywordsQuery = useMyKeywordsQuery();
   const [appliedMyFitKeywords, setAppliedMyFitKeywords] = useState<
