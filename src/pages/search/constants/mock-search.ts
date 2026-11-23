@@ -9,12 +9,13 @@ import type {
 export const MOCK_SEARCH_RESULT_TOTAL = 729;
 export const MOCK_COMPANY_TOTAL = 49094;
 
+// 연관검색어. 내 키워드(백엔드 · Java · Spring …)로 검색했을 때 결과가 나오는 검색어로 골랐어요.
 export const MOCK_RELATED_KEYWORDS = [
-  'UX 디자이너',
-  'UIUX',
-  '프로덕트 디자인',
-  'Figma',
-  '서비스 기획',
+  '백엔드 개발자',
+  'Java',
+  'Spring',
+  '프론트엔드',
+  '핀테크',
 ];
 
 export const MOCK_SEARCH_RESULTS: SearchResult[] = [
