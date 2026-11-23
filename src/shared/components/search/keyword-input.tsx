@@ -1,4 +1,4 @@
-import { type ComponentProps, useState } from 'react';
+import { type ComponentProps, type KeyboardEvent, useState } from 'react';
 
 import ChipKeyword from '@/shared/components/chip/chip-keyword';
 import { cn } from '@/shared/utils/cn';
@@ -8,6 +8,7 @@ import IcSearch from '@/shared/assets/icons/ic-search.svg?react';
 type KeywordInputState = 'default' | 'focused' | 'error' | 'chip';
 
 // 페이지 연결: 입력값은 keyword와 onKeywordChange, 입력창 안 칩은 keywords와 onRemove입니다.
+// Enter로 입력을 확정하면 onKeywordSubmit이 불립니다. (칩으로 추가하는 처리는 페이지에서)
 // 에러 문구는 message입니다. 피그마의 추천 목록은 기본으로 숨겨져 있어서 입력창만 구현했습니다.
 interface KeywordInputProps extends Omit<
   ComponentProps<'div'>,
@@ -19,6 +20,7 @@ interface KeywordInputProps extends Omit<
   message?: string;
   keywords?: string[];
   onKeywordChange?: (keyword: string) => void;
+  onKeywordSubmit?: (keyword: string) => void;
   onRemove?: (keyword: string) => void;
 }
 
@@ -37,6 +39,7 @@ const KeywordInput = ({
   message = '일치하는 키워드가 없어요. 다른 키워드로 검색해 주세요.',
   keywords = [],
   onKeywordChange,
+  onKeywordSubmit,
   onRemove,
   className,
   ...props
@@ -52,6 +55,13 @@ const KeywordInput = ({
       return;
     }
     setDraftKeyword(nextKeyword);
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    // 한글 조합 중의 Enter는 글자 확정이라 넘겨요. (마지막 글자가 두 번 들어가지 않게)
+    if (e.key !== 'Enter' || e.nativeEvent.isComposing) return;
+    e.preventDefault();
+    onKeywordSubmit?.(inputValue);
   };
 
   return (
@@ -81,6 +91,7 @@ const KeywordInput = ({
           placeholder={keywords.length > 0 ? '' : placeholder}
           aria-invalid={state === 'error'}
           onChange={(event) => handleKeywordChange(event.target.value)}
+          onKeyDown={handleKeyDown}
           className={cn(
             'h-6 min-w-0 flex-1 bg-transparent text-body-16 text-text-primary outline-none',
             state === 'focused'

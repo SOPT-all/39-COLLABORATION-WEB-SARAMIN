@@ -34,7 +34,7 @@ const SearchFilterBand = ({ keyword }: SearchFilterBandProps) => {
         <div className="flex">
           <div className={cn(FIELD_CLASS_NAME, 'w-102.5 text-blue-90')}>
             <IcSearch aria-hidden className="shrink-0" />
-            {keyword}
+            <span className="truncate">{keyword}</span>
           </div>
           <button type="button" className={cn(FIELD_CLASS_NAME, 'w-87.5')}>
             <IcLocation aria-hidden className="shrink-0" />

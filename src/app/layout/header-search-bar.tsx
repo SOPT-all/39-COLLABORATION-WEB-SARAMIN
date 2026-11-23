@@ -3,7 +3,10 @@ import { createSearchParams, useNavigate, useSearchParams } from 'react-router';
 
 import SearchGlobal from '@/shared/components/search/search-global';
 import { ROUTES } from '@/shared/constants/routes';
-import { SEARCH_KEYWORD_PARAM } from '@/shared/constants/search';
+import {
+  SEARCH_KEYWORD_MAX_LENGTH,
+  SEARCH_KEYWORD_PARAM,
+} from '@/shared/constants/search';
 
 // 검색하면 /search?keyword=검색어로 이동해요.
 const HeaderSearchBar = () => {
@@ -38,6 +41,7 @@ const HeaderSearchBar = () => {
       <SearchGlobal
         query={query}
         placeholder="프로덕트 디자이너"
+        maxLength={SEARCH_KEYWORD_MAX_LENGTH}
         state={query ? 'typing' : 'default'}
         onQueryChange={setQuery}
       />

@@ -12,6 +12,9 @@ interface SearchSummaryProps {
   isError: boolean;
 }
 
+// 검색어 칩은 한 줄이라 긴 검색어는 앞부분만 보여 줘요.
+const CHIP_KEYWORD_MAX_LENGTH = 30;
+
 const SEARCH_TABS = ['통합검색', '✦ AI 검색', '채용정보', '기업정보'];
 
 // 탭 전환은 아직 동작하지 않아요.
@@ -24,13 +27,17 @@ const SearchSummary = ({
 }: SearchSummaryProps) => {
   const navigate = useNavigate();
   const canShowTotalCount = !isLoading && !isError;
+  const chipKeyword =
+    keyword.length > CHIP_KEYWORD_MAX_LENGTH
+      ? `${keyword.slice(0, CHIP_KEYWORD_MAX_LENGTH)}…`
+      : keyword;
   return (
     <section aria-label="검색 요약" className="mx-auto w-315">
       <div className="flex h-18.5 items-center justify-between px-5">
         <div className="flex items-center gap-2">
           {/* 적용된 조건은 검색어뿐이라 검색어 칩만 보여 줘요. 지우면 검색어 없이 홈으로 돌아가요. */}
           <ChipSelectedFilter onRemove={() => navigate(ROUTES.HOME)}>
-            {`검색어 · ${keyword}`}
+            {`검색어 · ${chipKeyword}`}
           </ChipSelectedFilter>
         </div>
         {canShowTotalCount && (

@@ -14,13 +14,20 @@ import { useMyKeywordsQuery } from '@/shared/api/use-my-keywords-query';
 import KeywordSearchPanel from '@/shared/components/search/keyword-search-panel';
 import StateMessage from '@/shared/components/state-message/state-message';
 import { ROUTES } from '@/shared/constants/routes';
-import { SEARCH_KEYWORD_PARAM } from '@/shared/constants/search';
+import {
+  SEARCH_KEYWORD_MAX_LENGTH,
+  SEARCH_KEYWORD_PARAM,
+} from '@/shared/constants/search';
 
 const SEARCH_PAGE_SIZE = 7;
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
-  const keyword = searchParams.get(SEARCH_KEYWORD_PARAM)?.trim() ?? '';
+  // 주소에 직접 긴 검색어를 넣어도 서버가 받는 길이까지만 써요. (넘으면 400)
+  const keyword = (searchParams.get(SEARCH_KEYWORD_PARAM)?.trim() ?? '').slice(
+    0,
+    SEARCH_KEYWORD_MAX_LENGTH,
+  );
 
   const myKeywordsQuery = useMyKeywordsQuery();
   const [appliedMyFitKeywords, setAppliedMyFitKeywords] = useState<
@@ -128,6 +135,21 @@ const SearchPage = () => {
     );
   };
 
+  // 입력한 키워드를 편집 목록 끝에 더해요. 검색하기를 눌러야 검색 조건에 적용돼요.
+  const handleMyFitKeywordAdd = (addedKeyword: string) => {
+    const nextKeyword = addedKeyword.trim();
+    if (!hasInitializedMyFitKeywords) return;
+
+    setMyFitInput('');
+    if (!nextKeyword) return;
+    const isDuplicated = myFitKeywords.some(
+      (selectedKeyword) =>
+        selectedKeyword.toLowerCase() === nextKeyword.toLowerCase(),
+    );
+    if (isDuplicated) return;
+    setEditedMyFitKeywords([...myFitKeywords, nextKeyword]);
+  };
+
   const handleMyFitSearch = () => {
     if (!hasInitializedMyFitKeywords) return;
 
@@ -163,10 +185,10 @@ const SearchPage = () => {
       />
       <div className="mx-auto w-315 pt-6.5 pb-14.5">
         <div className="flex items-center justify-between">
-          <h1 className="text-heading-20 text-text-primary">
+          <h1 className="min-w-0 text-heading-20 break-all text-text-primary">
             ‘{keyword}’에 대한 취업정보
           </h1>
-          <span className="text-body-14 whitespace-pre text-text-secondary">
+          <span className="shrink-0 text-body-14 whitespace-pre text-text-secondary">
             {SEARCH_PAGE_SIZE}개씩
           </span>
         </div>
@@ -174,8 +196,8 @@ const SearchPage = () => {
         <div className="mt-5 flex items-start gap-8">
           <aside aria-label="MY FIT" className="sticky top-6 w-69 shrink-0">
             {/*
-              TODO(FR-09): 서버 조회가 아니라 키워드 시트 목록에서 입력값으로 후보를 거르고,
-              선택하면 myFitKeywords에 추가해요.
+              TODO(FR-09): 키워드 시트 목록에서 입력값으로 후보를 거르는 추천 목록은 아직 없어요.
+              지금은 입력한 글자를 Enter로 바로 추가해요.
             */}
             {isMyFitInitializationError ? (
               <StateMessage
@@ -192,6 +214,7 @@ const SearchPage = () => {
                 keywords={myFitKeywords}
                 keyword={myFitInput}
                 onKeywordChange={setMyFitInput}
+                onKeywordSubmit={handleMyFitKeywordAdd}
                 onRemove={handleMyFitKeywordRemove}
                 onSearch={handleMyFitSearch}
               />
