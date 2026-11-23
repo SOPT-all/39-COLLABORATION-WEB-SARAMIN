@@ -33,7 +33,8 @@ export const convertMyDocumentsToHubSticky = (
       id,
       label,
       state: myDocuments[id] ? 'ready' : 'waiting',
-      count: READY_DOCUMENT_COUNT,
+      // 지원 패키지 모달과 같이 체크 안 한 서류는 0개로 보여요.
+      count: myDocuments[id] ? READY_DOCUMENT_COUNT : 0,
     })),
   };
 };
