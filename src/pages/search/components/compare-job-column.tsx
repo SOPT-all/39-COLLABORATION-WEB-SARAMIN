@@ -52,10 +52,17 @@ const CompareJobColumn = ({
   applyBlockedLabel,
 }: CompareJobColumnProps) => {
   const { companyName, title, keywords, matchCount, totalKeywordCount } = job;
-  // 홈 공고는 일치 키워드 목록이 없어서 공고 키워드 중 내 키워드와 겹치는 것을 보여 줘요.
-  const matchedKeywords =
-    job.matchedKeywords ??
-    keywords.filter((keyword) => myKeywordNames.includes(keyword));
+  // 검색 목록의 '내 키워드 n/m 일치'와 같은 기준으로 맞춰요. (분모 = 내 MY FIT 키워드 수)
+  // 홈 공고는 일치 키워드 목록이 없어서 공고 키워드 중 내 키워드와 겹치는 것을 써요.
+  // 검색에서 키워드를 더해 스크랩한 공고도 내 키워드에 있는 것만 세요.
+  const hasMyKeywords = myKeywordNames.length > 0;
+  const matchedKeywords = (job.matchedKeywords ?? keywords).filter(
+    (keyword) => !hasMyKeywords || myKeywordNames.includes(keyword),
+  );
+  // 내 키워드를 아직 못 받았으면 스크랩할 때 받은 일치 정보로 보여 줘요.
+  const matchLabel = hasMyKeywords
+    ? `${matchedKeywords.length}/${myKeywordNames.length} 일치`
+    : `${matchCount}/${totalKeywordCount} 일치`;
 
   return (
     <li
@@ -103,9 +110,9 @@ const CompareJobColumn = ({
 
         <div className="flex h-25.75 flex-col justify-center gap-1.5 overflow-hidden border-b border-border-default px-4 py-2.5">
           <p className="text-label-14 text-text-primary">
-            키워드{' '}
+            내 키워드{' '}
             <strong className="text-heading-18 text-blue-90">
-              {matchCount}/{totalKeywordCount} 매치
+              {matchLabel}
             </strong>
           </p>
           {matchedKeywords.length > 0 && (

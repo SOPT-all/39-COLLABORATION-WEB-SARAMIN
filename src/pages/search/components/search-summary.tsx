@@ -1,8 +1,9 @@
-import { useNavigate } from 'react-router';
+import { createSearchParams, Link, useNavigate } from 'react-router';
 
 import { MOCK_RELATED_KEYWORDS } from '@/pages/search/constants/mock-search';
 import ChipSelectedFilter from '@/shared/components/chip/chip-selected-filter';
 import { ROUTES } from '@/shared/constants/routes';
+import { SEARCH_KEYWORD_PARAM } from '@/shared/constants/search';
 import { cn } from '@/shared/utils/cn';
 
 interface SearchSummaryProps {
@@ -54,7 +55,18 @@ const SearchSummary = ({
         <ul className="flex gap-4 text-text-tertiary">
           {MOCK_RELATED_KEYWORDS.map((relatedKeyword) => (
             <li key={relatedKeyword} className="min-w-21.5">
-              <a href="#">{relatedKeyword}</a>
+              {/* 누르면 그 검색어로 다시 검색해요. */}
+              <Link
+                to={{
+                  pathname: ROUTES.SEARCH,
+                  search: createSearchParams({
+                    [SEARCH_KEYWORD_PARAM]: relatedKeyword,
+                  }).toString(),
+                }}
+                className="hover:text-text-primary"
+              >
+                {relatedKeyword}
+              </Link>
             </li>
           ))}
         </ul>
