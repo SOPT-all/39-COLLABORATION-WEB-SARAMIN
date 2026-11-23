@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { patchMyDocuments } from '@/pages/home/api/patch-my-documents';
-import type { MyDocuments } from '@/pages/home/types/my-documents';
 import { QUERY_KEYS } from '@/shared/constants/query-keys';
+import type { MyDocuments } from '@/shared/types/my-documents';
 
 // 보유 서류 체크 변경
 // 서버가 저장한 값을 받으면 캐시를 그 값으로 교체

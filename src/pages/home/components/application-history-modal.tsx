@@ -5,6 +5,7 @@ import ApplicationHistoryDetail from '@/pages/home/components/application-histor
 import ApplicationHistoryList from '@/pages/home/components/application-history-list';
 import ApplicationHistorySectionHeader from '@/pages/home/components/application-history-section-header';
 import { useApplications } from '@/pages/home/hooks/use-applications';
+import type { Application } from '@/pages/home/types/application';
 import { useMyKeywordsQuery } from '@/shared/api/use-my-keywords-query';
 import ModalButton from '@/shared/components/button/modal-button';
 import Modal from '@/shared/components/modal/modal';
@@ -17,6 +18,8 @@ const SKELETON_ROW_COUNT = 4;
 
 interface ApplicationHistoryModalProps {
   isOpen: boolean;
+  // 이번 방문에서 지원한 내역. 목 지원 내역 앞에 붙여 최근 순으로 보여 줘요.
+  sessionApplications?: Application[];
   onClose: () => void;
 }
 
@@ -24,15 +27,18 @@ interface ApplicationHistoryModalProps {
 // 모달 하나 안에서 selectedId로 목록 ↔ 상세 화면을 바꾸고, 다시 열면 항상 목록부터 보여줘요.
 const ApplicationHistoryModal = ({
   isOpen,
+  sessionApplications = [],
   onClose,
 }: ApplicationHistoryModalProps) => {
   const navigate = useNavigate();
   const {
-    data: applications,
+    data: savedApplications,
     isPending,
     isError,
     refetch,
   } = useApplications({ enabled: isOpen });
+
+  const applications = [...sessionApplications, ...(savedApplications ?? [])];
 
   const { data: myKeywords } = useMyKeywordsQuery();
 
@@ -48,7 +54,7 @@ const ApplicationHistoryModal = ({
     }
   }
 
-  const selectedApplication = applications?.find(
+  const selectedApplication = applications.find(
     (application) => application.id === selectedId,
   );
 
