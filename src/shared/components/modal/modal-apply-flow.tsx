@@ -1,5 +1,5 @@
-// [스펙] ApplyFlowModal
-// 역할   : 지원 패키지를 공고에 드롭한 뒤 이어지는 지원 플로우 모달
+// [스펙] ModalApplyFlow
+// 역할   : 지원 플로우 모달. 홈에서 지원 패키지를 드롭하거나 비교 모달에서 바로 지원을 누르면 열림 (기능명세서 FN-09 SC-05)
 // props  : step - 지금 보여줄 단계 (useApplyFlow의 step)
 //          target - 드롭된 공고 (회사 · 직무 · 제출 서류)
 //          onClose · onSubmit · onRetry - 닫기 · 최종 지원 · 다시 시도
@@ -7,12 +7,12 @@
 // 단계   : review → submitting → success · error · unknown
 //          submitting은 중복 지원을 막기 위해 닫기 버튼 · ESC · 배경 클릭으로 닫히지 않음
 
-import type { ApplyFlowStep, ApplyTarget } from '@/pages/home/types/apply-flow';
 import ModalButton from '@/shared/components/button/modal-button';
 import LoadingSpinner from '@/shared/components/loading-spinner/loading-spinner';
 import Modal from '@/shared/components/modal/modal';
 import ModalApplyReview from '@/shared/components/modal/modal-apply-review';
 import ModalFeedback from '@/shared/components/modal/modal-feedback';
+import type { ApplyFlowStep, ApplyTarget } from '@/shared/types/apply-flow';
 
 const RESULT_CONTENTS = {
   success: {
@@ -41,7 +41,7 @@ interface ApplyFlowModalProps {
   onViewHistory: () => void;
 }
 
-const ApplyFlowModal = ({
+const ModalApplyFlow = ({
   step,
   target,
   onClose,
@@ -131,4 +131,4 @@ const ApplyFlowModal = ({
   );
 };
 
-export default ApplyFlowModal;
+export default ModalApplyFlow;

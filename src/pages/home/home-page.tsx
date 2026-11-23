@@ -1,9 +1,7 @@
 import { useState } from 'react';
 
-import { createMockSubmitApplication } from '@/pages/home/api/create-mock-submit-application';
 import ApplicationHistoryModal from '@/pages/home/components/application-history-modal';
 import ApplyFilterBar from '@/pages/home/components/apply-filter-bar';
-import ApplyFlowModal from '@/pages/home/components/apply-flow-modal';
 import BundleSummaryModal from '@/pages/home/components/bundle-summary-modal';
 import CareerCtaSection from '@/pages/home/components/career-cta-section';
 import CareerToolsSection from '@/pages/home/components/career-tools-section';
@@ -17,15 +15,17 @@ import StickyRailSection from '@/pages/home/components/sticky-rail-section';
 import { APPLY_DOCUMENT_SUMMARY } from '@/pages/home/constants/apply-drag';
 import { useApplyDrag } from '@/pages/home/hooks/use-apply-drag';
 import { useApplyFilter } from '@/pages/home/hooks/use-apply-filter';
-import { useApplyFlow } from '@/pages/home/hooks/use-apply-flow';
 import { useRecruitFeed } from '@/pages/home/hooks/use-recruit-feed';
 import type { Application } from '@/pages/home/types/application';
 import type { JobCardItem } from '@/pages/home/types/job-card';
 import type { RecruitSectionType } from '@/pages/home/types/recruit';
 import { createApplication } from '@/pages/home/utils/create-application';
 import { getApplyStatusCounts } from '@/pages/home/utils/get-apply-status-counts';
+import { createMockSubmitApplication } from '@/shared/api/create-mock-submit-application';
 import { useMyDocumentsQuery } from '@/shared/api/use-my-documents-query';
 import { useMyKeywordsQuery } from '@/shared/api/use-my-keywords-query';
+import ModalApplyFlow from '@/shared/components/modal/modal-apply-flow';
+import { useApplyFlow } from '@/shared/hooks/use-apply-flow';
 import { createApplyDocumentSummary } from '@/shared/utils/create-apply-document-summary';
 
 // 지원 API가 없어 목 제출 함수로 항상 성공 처리
@@ -158,7 +158,7 @@ const HomePage = () => {
       <DocumentToolsSection />
       <CareerCtaSection />
 
-      <ApplyFlowModal
+      <ModalApplyFlow
         step={step}
         target={target}
         onClose={closeApplyFlow}
