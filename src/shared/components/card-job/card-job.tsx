@@ -167,7 +167,7 @@ const CardJob = ({
             )}
 
             <footer className="mt-auto flex shrink-0 items-center gap-2 border-t border-border-default pt-2">
-              {/* 일치 사유가 없으면(일치 0개) 아이콘과 문구를 그리지 않아요. */}
+              {/* matchReason을 넘기지 않으면 아이콘과 문구를 그리지 않아요. (홈 공고는 항상 넘겨요) */}
               {matchReason && (
                 <span className="flex min-w-0 items-center gap-1 text-label-12 text-text-primary">
                   <MatchIcon aria-hidden className="shrink-0" />
