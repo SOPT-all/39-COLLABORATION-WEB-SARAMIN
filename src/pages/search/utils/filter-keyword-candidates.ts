@@ -1,5 +1,5 @@
-import { MY_FIT_KEYWORD_CANDIDATE_GROUPS } from '@/pages/search/constants/my-fit-keyword-candidates';
 import type { SearchKeywordGroup } from '@/shared/components/list/list-search';
+import { KEYWORD_CANDIDATE_GROUPS } from '@/shared/constants/keyword-candidates';
 
 // 묶음마다 보여 줄 후보 수. 목록이 너무 길어지지 않게 잘라요.
 const MAX_CANDIDATES_PER_GROUP = 5;
@@ -17,7 +17,7 @@ export const filterKeywordCandidates = (
 
   const selected = new Set(selectedKeywords.map(normalize));
 
-  return MY_FIT_KEYWORD_CANDIDATE_GROUPS.map(({ title, keywords }) => ({
+  return KEYWORD_CANDIDATE_GROUPS.map(({ title, keywords }) => ({
     title,
     keywords: keywords
       .filter(

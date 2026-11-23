@@ -1,9 +1,9 @@
 import type { SearchKeywordGroup } from '@/shared/components/list/list-search';
 
-// MY FIT 키워드 후보 (기능명세서 FR-09)
+// 키워드 후보 (기능명세서 FR-09). MY FIT 후보 목록과 헤더 검색어 자동완성이 함께 써요.
 // 키워드 후보 API가 없어서, 서버 공고 52건의 키워드를 직무 · 기술 · 도메인으로 묶어 옮겼어요.
 // 이 목록에 있는 키워드로만 칩을 추가해서, 일치하는 공고가 있는 키워드만 고를 수 있어요.
-export const MY_FIT_KEYWORD_CANDIDATE_GROUPS: SearchKeywordGroup[] = [
+export const KEYWORD_CANDIDATE_GROUPS: SearchKeywordGroup[] = [
   {
     title: '직무',
     keywords: [
