@@ -53,9 +53,10 @@
 | **목데이터** | 서버 범위 밖인 지원 제출 · 지원 내역 · 서류 업로드 · 비교 상세 항목은 목데이터로 끝까지 동작하게 만들었어요. |
 
 <br />
+
 ## 👥 Team
 
-| <img src="https://avatars.githubusercontent.com/u/175678784?v=4" width="120" /> | <img src="https://avatars.githubusercontent.com/u/114052066?v=4" width="120" /> | <img src="https://avatars.githubusercontent.com/u/322835854?v=4" width="120" /> | <img src="https://avatars.githubusercontent.com/u/90814077?v=4" width="120" /> | <img src="https://avatars.githubusercontent.com/u/159880204?v=4" width="120" /> |
+| <img src="https://avatars.githubusercontent.com/u/175678784?v=4&s=240" width="120" /> | <img src="https://avatars.githubusercontent.com/u/114052066?v=4&s=240" width="120" /> | <img src="https://avatars.githubusercontent.com/u/322835854?v=4&s=240" width="120" /> | <img src="https://avatars.githubusercontent.com/u/90814077?v=4&s=240" width="120" /> | <img src="https://avatars.githubusercontent.com/u/159880204?v=4&s=240" width="120" /> |
 | :---: | :---: | :---: | :---: | :---: |
 | **조영찬** | **장희진** | **김지영** | **김종현** | **남주형** |
 | [@ychany](https://github.com/ychany) | [@huijeanjang](https://github.com/huijeanjang) | [@2516391](https://github.com/2516391) | [@KimJongHyun2](https://github.com/KimJongHyun2) | [@Juhyung03](https://github.com/Juhyung03) |
@@ -135,8 +136,9 @@ src
 ├── routes
 │   └── router.tsx
 └── shared
-    ├── api/config      # axios 인스턴스, queryClient
-    ├── assets/icons
+    ├── api             # 두 페이지 이상에서 쓰는 API 함수 · 쿼리 훅
+    │   └── config      # axios 인스턴스, queryClient
+    ├── assets          # icons · images · logo
     ├── components      # 공통 컴포넌트 (컴포넌트별 폴더)
     ├── constants
     ├── hooks
