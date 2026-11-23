@@ -18,7 +18,9 @@
 
 ### 🏠 홈 — 준비 상태를 보고, 끌어다 놓아 지원해요
 
-<img src="docs/images/home.png" alt="홈 화면" width="100%" />
+<img src="docs/images/home-before.png" alt="기존 사람인 홈 문제 분석" width="100%" />
+
+<img src="docs/images/home-after.png" alt="홈 개선 포인트" width="100%" />
 
 | 기능 | 설명 |
 | --- | --- |
@@ -31,7 +33,9 @@
 
 ### 🔍 검색 — 내 조건과 얼마나 맞는지 보고, 나란히 비교해요
 
-<img src="docs/images/search.png" alt="검색 결과 화면" width="100%" />
+<img src="docs/images/search-before.png" alt="기존 검색 결과 문제 분석" width="100%" />
+
+<img src="docs/images/search-after.png" alt="검색 · 공고 비교 개선 포인트" width="100%" />
 
 | 기능 | 설명 |
 | --- | --- |
@@ -39,11 +43,6 @@
 | **일치 근거** | 결과마다 `내 키워드 5/7 일치`와 일치한 키워드를 보여 주고, 매칭순 · 마감임박순으로 정렬해요. |
 | **헤더 검색 추천** | 검색창에 최근 검색어 · 자동완성 · 연관 검색어를 띄우고, 페이지 번호는 주소에 남겨 새로고침 · 뒤로가기에도 유지돼요. |
 | **스크랩** | 홈 · 검색 · 비교 화면의 별표가 함께 바뀌고, 새로고침 · 다른 탭에서도 유지돼요. |
-
-<img src="docs/images/compare.png" alt="공고 비교 모달" width="70%" />
-
-| 기능 | 설명 |
-| --- | --- |
 | **공고 비교** | 스크랩한 공고가 곧 비교 대상이에요. 같은 행으로 조건을 대조하고, 비교 항목 편집 · 열 순서 이동 · 바로 지원까지 할 수 있어요. |
 
 ### 🔌 서버 API와 목데이터
@@ -65,9 +64,7 @@
 
 ## 🧑‍💻 역할 분담
 
-<img src="docs/images/roles-home.png" alt="홈 화면 역할 분담" width="100%" />
-
-<img src="docs/images/roles-search.png" alt="검색 화면 역할 분담" width="100%" />
+<img src="docs/images/roles.png" alt="화면으로 보는 역할 분담" width="100%" />
 
 | 이름 | 초기 세팅 | 공통 컴포넌트 | 페이지 · API |
 | :---: | --- | --- | --- |
