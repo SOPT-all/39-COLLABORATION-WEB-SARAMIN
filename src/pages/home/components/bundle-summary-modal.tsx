@@ -9,15 +9,15 @@
 // 데이터 : 서버는 서류 유무만 줘서, 체크된 서류는 1개 · 아닌 서류는 0개로 표시
 //          최근 업데이트 시각은 API에 없어서 허브와 같은 피그마 문구를 씀
 
-import {
-  MY_DOCUMENT_FIELDS,
-  READY_DOCUMENT_COUNT,
-} from '@/pages/home/constants/my-documents';
-import type { MyDocuments } from '@/pages/home/types/my-documents';
 import BadgeModalStatus from '@/shared/components/badge/badge-modal-status';
 import ModalButton from '@/shared/components/button/modal-button';
 import ChipStickyDocumentCount from '@/shared/components/chip/chip-sticky-document-count';
 import Modal from '@/shared/components/modal/modal';
+import {
+  MY_DOCUMENT_FIELDS,
+  READY_DOCUMENT_COUNT,
+} from '@/shared/constants/my-documents';
+import type { MyDocuments } from '@/shared/types/my-documents';
 import { cn } from '@/shared/utils/cn';
 
 import IcDocumentCheck from '@/shared/assets/icons/ic-document-check.svg?react';

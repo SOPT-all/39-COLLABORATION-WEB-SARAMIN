@@ -1,4 +1,4 @@
-import type { MyDocumentField } from '@/pages/home/types/my-documents';
+import type { MyDocumentField } from '@/shared/types/my-documents';
 
 // 스티키 허브 서류 행 목록. 위에서부터 이 순서로 표시
 export const MY_DOCUMENT_FIELDS: MyDocumentField[] = [

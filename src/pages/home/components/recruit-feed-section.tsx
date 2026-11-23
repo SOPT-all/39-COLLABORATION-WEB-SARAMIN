@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import RecruitCardList from '@/pages/home/components/recruit-card-list';
 import RecruitSectionHeading from '@/pages/home/components/recruit-section-heading';
+import { APPLY_FILTERS } from '@/pages/home/constants/apply-filters';
 import { RECRUIT_SECTIONS } from '@/pages/home/constants/recruit-sections';
 import type { RecruitSectionContent } from '@/pages/home/hooks/use-recruit-feed';
 import type { JobCardItem } from '@/pages/home/types/job-card';
@@ -9,6 +10,9 @@ import type {
   ApplyFilter,
   RecruitSectionType,
 } from '@/pages/home/types/recruit';
+
+const FILTERED_EMPTY_DESCRIPTION =
+  '다른 지원 상태를 고르거나 필터를 다시 눌러 전체 공고를 확인해 보세요.';
 
 interface DragOverTarget {
   type: RecruitSectionType;
@@ -39,6 +43,10 @@ const RecruitFeedSection = ({
     null,
   );
 
+  const selectedFilterLabel = APPLY_FILTERS.find(
+    ({ value }) => value === selectedFilter,
+  )?.label;
+
   return (
     <>
       {RECRUIT_SECTIONS.map(
@@ -52,6 +60,8 @@ const RecruitFeedSection = ({
             ({ applyStatus }) =>
               !selectedFilter || applyStatus === selectedFilter,
           );
+          // 공고는 있는데 고른 지원 상태에 맞는 공고가 없을 때는 필터 기준으로 안내해요.
+          const isFilteredEmpty = recruits.length > 0 && selectedFilterLabel;
 
           return (
             <section key={type} className="flex flex-col gap-6">
@@ -66,7 +76,7 @@ const RecruitFeedSection = ({
                 }
                 description={
                   hasCount && isLoaded
-                    ? `${heading.description} · ${recruits.length}개`
+                    ? `${heading.description} · ${filteredRecruits.length}개`
                     : heading.description
                 }
               />
@@ -74,9 +84,17 @@ const RecruitFeedSection = ({
                 recruits={filteredRecruits}
                 isPending={isPending}
                 isError={isError}
-                isEmpty={isLoaded && recruits.length === 0}
-                emptyTitle={emptyTitle}
-                emptyDescription={emptyDescription}
+                isEmpty={isLoaded && filteredRecruits.length === 0}
+                emptyTitle={
+                  isFilteredEmpty
+                    ? `‘${selectedFilterLabel}’ 공고가 없어요`
+                    : emptyTitle
+                }
+                emptyDescription={
+                  isFilteredEmpty
+                    ? FILTERED_EMPTY_DESCRIPTION
+                    : emptyDescription
+                }
                 onRetry={onRetry}
                 isDragging={isDragging}
                 dragOverId={
