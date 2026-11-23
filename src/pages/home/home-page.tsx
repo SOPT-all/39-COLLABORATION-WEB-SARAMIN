@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 import { createMockSubmitApplication } from '@/pages/home/api/create-mock-submit-application';
-import { useMyDocumentsQuery } from '@/pages/home/api/use-my-documents-query';
 import ApplicationHistoryModal from '@/pages/home/components/application-history-modal';
 import ApplyFilterBar from '@/pages/home/components/apply-filter-bar';
 import ApplyFlowModal from '@/pages/home/components/apply-flow-modal';
@@ -22,9 +21,10 @@ import { useApplyFlow } from '@/pages/home/hooks/use-apply-flow';
 import { useRecruitFeed } from '@/pages/home/hooks/use-recruit-feed';
 import type { JobCardItem } from '@/pages/home/types/job-card';
 import type { RecruitSectionType } from '@/pages/home/types/recruit';
-import { createApplyDocumentSummary } from '@/pages/home/utils/create-apply-document-summary';
 import { getApplyStatusCounts } from '@/pages/home/utils/get-apply-status-counts';
+import { useMyDocumentsQuery } from '@/shared/api/use-my-documents-query';
 import { useMyKeywordsQuery } from '@/shared/api/use-my-keywords-query';
+import { createApplyDocumentSummary } from '@/shared/utils/create-apply-document-summary';
 
 // 지원 API가 없어 목 제출 함수로 항상 성공 처리
 const submitApplication = createMockSubmitApplication('success');

@@ -19,9 +19,9 @@
 import type { ComponentProps, KeyboardEvent } from 'react';
 
 import { useMyDocumentsMutation } from '@/pages/home/api/use-my-documents-mutation';
-import { useMyDocumentsQuery } from '@/pages/home/api/use-my-documents-query';
 import { convertMyDocumentsToHubSticky } from '@/pages/home/utils/convert-my-documents-to-hub-sticky';
 import { isMyDocumentField } from '@/pages/home/utils/is-my-document-field';
+import { useMyDocumentsQuery } from '@/shared/api/use-my-documents-query';
 import ChipTool from '@/shared/components/chip/chip-tool';
 import HubSticky from '@/shared/components/hub/hub-sticky';
 

@@ -1,11 +1,11 @@
 import type { ComponentProps } from 'react';
 
+import type HubSticky from '@/shared/components/hub/hub-sticky';
 import {
   MY_DOCUMENT_FIELDS,
   READY_DOCUMENT_COUNT,
-} from '@/pages/home/constants/my-documents';
-import type { MyDocuments } from '@/pages/home/types/my-documents';
-import type HubSticky from '@/shared/components/hub/hub-sticky';
+} from '@/shared/constants/my-documents';
+import type { MyDocuments } from '@/shared/types/my-documents';
 
 type HubStickyDocumentProps = Pick<
   ComponentProps<typeof HubSticky>,
