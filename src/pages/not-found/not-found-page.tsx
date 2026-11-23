@@ -2,10 +2,12 @@ import { useNavigate } from 'react-router';
 
 import StateMessage from '@/shared/components/state-message/state-message';
 import { ROUTES } from '@/shared/constants/routes';
+import { useDocumentTitle } from '@/shared/hooks/use-document-title';
 
 // 없는 주소로 들어왔을 때 보여 주는 화면이에요. 홈으로 돌아가는 버튼만 둬요.
 const NotFoundPage = () => {
   const navigate = useNavigate();
+  useDocumentTitle('페이지를 찾을 수 없어요');
 
   return (
     <div className="mx-auto flex w-315 flex-col items-center gap-6 py-30">
