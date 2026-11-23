@@ -10,9 +10,7 @@
 기존 사람인은 추천 · 서비스 · 채용 정보가 한 화면에 섞여 있어 **어디부터 봐야 할지**, 추천된 공고가 **나와 왜 맞는지**, 여러 공고를 **어떻게 비교할지**를 사용자가 직접 따져야 했어요.<br />
 그래서 **"지원 준비 → 탐색 → 비교 → 지원"** 을 화면 이동 없이 한 흐름으로 잇는 데 집중했어요.
 
-| 🔗 배포 | 📅 기간 | 📊 작업량 |
-| --- | --- | --- |
-| [39-collaboration-web-saramin.vercel.app](https://39-collaboration-web-saramin.vercel.app) | 2026.11.04 ~ 2026.11.27 | PR 95 · 이슈 70 · Storybook 스토리 48 · 서버 API 7 |
+🔗 **배포** : [39-collaboration-web-saramin.vercel.app](https://39-collaboration-web-saramin.vercel.app)
 
 <br />
 
