@@ -272,6 +272,7 @@ const SearchPage = () => {
               results={results}
               totalCount={totalCount}
               keywordCount={searchData?.keywordCount ?? 0}
+              appliedKeywords={appliedMyFitKeywords ?? undefined}
               currentPage={searchData?.page ?? resolvedPage}
               totalPages={totalPages}
               onPageChange={handlePageChange}

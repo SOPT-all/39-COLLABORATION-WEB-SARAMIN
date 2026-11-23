@@ -2,11 +2,11 @@
 // 역할   : 스크랩 공고 비교 모달의 공고 한 열 (피그마 compare_job_column, 296px)
 // props  : job - 비교용 공고 정보 (CompareJob)
 //          rowKeys - 보여 줄 비교 항목과 순서 (비교 항목 편집 결과)
-//          myKeywordNames - 내 MY FIT 키워드 이름 (홈 공고의 일치 칩 계산)
+//          myKeywordNames - 일치 개수를 셀 MY FIT 키워드 (검색에 적용한 칩). 아직 못 받았으면 undefined
 //          handleProps - 열 이동 핸들(≡)에 붙일 드래그 · 키보드 속성
 //          isDragOver - 다른 열을 이 자리에 끌어다 놓는 중인지
 //          onDetail · onUnscrap · onApply - 상세보기 · 스크랩 해제 · 바로 지원
-//          applyBlockedLabel - 지원할 수 없는 이유(접수 마감 · 서류 준비 필요). 넘기면 지원 버튼을 막고 이 문구를 보여 줌
+//          applyBlockedLabel - 지원할 수 없는 이유(지원 완료 · 접수 마감 · 서류 준비 필요). 넘기면 지원 버튼을 막고 이 문구를 보여 줌
 // 구조   : [회사 / 공고명 · 상세보기 · ≡] [MY FIT 키워드 n/m 매치 + 일치 칩] [비교 항목 행들] [스크랩함 │ 바로 지원]
 
 import type { ComponentProps, DragEvent } from 'react';
@@ -24,10 +24,12 @@ import { cn } from '@/shared/utils/cn';
 
 import IcReorder from '@/shared/assets/icons/ic-reorder.svg?react';
 
+const NO_KEYWORD_LABEL = '선택 없음';
+
 interface CompareJobColumnProps {
   job: CompareJob;
   rowKeys: CompareRowKey[];
-  myKeywordNames: string[];
+  myKeywordNames?: string[];
   handleProps: ComponentProps<'button'>;
   isDragOver: boolean;
   onDragOver: (e: DragEvent<HTMLLIElement>) => void;
@@ -52,17 +54,23 @@ const CompareJobColumn = ({
   applyBlockedLabel,
 }: CompareJobColumnProps) => {
   const { companyName, title, keywords, matchCount, totalKeywordCount } = job;
-  // 검색 목록의 '내 키워드 n/m 일치'와 같은 기준으로 맞춰요. (분모 = 내 MY FIT 키워드 수)
-  // 홈 공고는 일치 키워드 목록이 없어서 공고 키워드 중 내 키워드와 겹치는 것을 써요.
-  // 검색에서 키워드를 더해 스크랩한 공고도 내 키워드에 있는 것만 세요.
-  const hasMyKeywords = myKeywordNames.length > 0;
-  const matchedKeywords = (job.matchedKeywords ?? keywords).filter(
-    (keyword) => !hasMyKeywords || myKeywordNames.includes(keyword),
-  );
-  // 내 키워드를 아직 못 받았으면 스크랩할 때 받은 일치 정보로 보여 줘요.
-  const matchLabel = hasMyKeywords
-    ? `${matchedKeywords.length}/${myKeywordNames.length} 일치`
-    : `${matchCount}/${totalKeywordCount} 일치`;
+  // 검색 목록의 '내 키워드 n/m 일치'와 같은 기준으로 맞춰요. (분모 = 적용한 MY FIT 키워드 수, FR-05)
+  // 공고 키워드 중 적용한 키워드와 겹치는 것을 세서, 칩을 바꾸면 목록과 함께 바뀌어요.
+  const matchedKeywords = myKeywordNames
+    ? keywords.filter((keyword) =>
+        myKeywordNames.some(
+          (name) => name.toLowerCase() === keyword.toLowerCase(),
+        ),
+      )
+    : (job.matchedKeywords ?? []);
+
+  const getMatchLabel = () => {
+    // 키워드를 아직 못 받았으면 스크랩할 때 받은 일치 정보로 보여 줘요.
+    if (!myKeywordNames) return `${matchCount}/${totalKeywordCount} 일치`;
+    // 검색 목록도 적용한 칩이 없으면 일치 배지를 숨겨요.
+    if (myKeywordNames.length === 0) return NO_KEYWORD_LABEL;
+    return `${matchedKeywords.length}/${myKeywordNames.length} 일치`;
+  };
 
   return (
     <li
@@ -112,7 +120,7 @@ const CompareJobColumn = ({
           <p className="text-label-14 text-text-primary">
             내 키워드{' '}
             <strong className="text-heading-18 text-blue-90">
-              {matchLabel}
+              {getMatchLabel()}
             </strong>
           </p>
           {matchedKeywords.length > 0 && (

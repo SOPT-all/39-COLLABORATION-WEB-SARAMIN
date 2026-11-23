@@ -1,6 +1,8 @@
 // [스펙] CompareModal
 // 역할   : 검색 결과 "저장한 공고 보기"로 여는 "선택한 공고 비교" 모달 (기능명세서 FN-06 ~ FN-08)
 // props  : isOpen · onClose - 열림 상태와 닫기
+//          myFitKeywordNames - 검색에 적용한 MY FIT 키워드. 검색 목록과 같은 기준으로 일치 개수를 세요. (FR-05)
+//                              안 주면 내 프로필 키워드를 써요.
 // 데이터 : 스크랩 목록 = 비교 대상. 홈 · 검색에서 스크랩한 공고를 보여 줘요. (useBookmarks)
 // 구조   : [제목 · 닫기] [고정 항목 열 168px │ 공고 열 296px × n (가로 스크롤)]
 // 동작   : "스크랩함" → 그 공고만 빠지고 창은 그대로, 홈 · 검색 별표도 함께 꺼져요. 마지막이면 빈 안내.
@@ -54,13 +56,20 @@ const sortByColumnOrder = (jobs: CompareJob[], columnOrder: number[]) => {
 interface CompareModalProps {
   isOpen: boolean;
   onClose: () => void;
+  myFitKeywordNames?: string[];
 }
 
-const CompareModal = ({ isOpen, onClose }: CompareModalProps) => {
+const CompareModal = ({
+  isOpen,
+  onClose,
+  myFitKeywordNames,
+}: CompareModalProps) => {
   const titleId = useId();
   const { bookmarkedJobs, setBookmark } = useBookmarks();
-  const { data: myKeywords = [] } = useMyKeywordsQuery();
-  const myKeywordNames = myKeywords.map(({ name }) => name);
+  const { data: myKeywords } = useMyKeywordsQuery();
+  // 검색에 적용한 칩이 있으면 그 기준으로, 없으면 내 프로필 키워드로 세요. (못 받았으면 undefined)
+  const myKeywordNames =
+    myFitKeywordNames ?? myKeywords?.map(({ name }) => name);
   // 홈 스티키 허브와 같은 쿼리 키라 홈에서 바꾼 서류 체크가 그대로 반영돼요.
   const { data: myDocuments } = useMyDocumentsQuery();
   // 보유 서류를 아직 못 받았으면 막지 않고 기본 문구로 확인창을 열어요.
