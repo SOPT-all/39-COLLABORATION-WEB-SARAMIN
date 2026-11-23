@@ -65,7 +65,9 @@
 
 ## 🧑‍💻 역할 분담
 
-<img src="docs/images/roles.png" alt="화면으로 보는 역할 분담" width="100%" />
+<img src="docs/images/roles-home.png" alt="홈 화면 역할 분담" width="100%" />
+
+<img src="docs/images/roles-search.png" alt="검색 화면 역할 분담" width="100%" />
 
 | 이름 | 초기 세팅 | 공통 컴포넌트 | 페이지 · API |
 | :---: | --- | --- | --- |
