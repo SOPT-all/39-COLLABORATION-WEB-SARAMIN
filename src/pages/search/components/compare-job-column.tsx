@@ -5,7 +5,8 @@
 //          myKeywordNames - 일치 개수를 셀 MY FIT 키워드 (검색에 적용한 칩). 아직 못 받았으면 undefined
 //          handleProps - 열 이동 핸들(≡)에 붙일 드래그 · 키보드 속성
 //          isDragOver - 다른 열을 이 자리에 끌어다 놓는 중인지
-//          onDetail · onUnscrap · onApply - 상세보기 · 스크랩 해제 · 바로 지원
+//          isScrapped · onScrapToggle - 창 안의 스크랩 표시와 토글 (닫을 때 반영)
+//          onDetail · onApply - 상세보기 · 바로 지원
 //          applyBlockedLabel - 지원할 수 없는 이유(지원 완료 · 접수 마감 · 서류 준비 필요). 넘기면 지원 버튼을 막고 이 문구를 보여 줌
 // 구조   : [회사 / 공고명 · 상세보기 · ≡] [MY FIT 키워드 n/m 매치 + 일치 칩] [비교 항목 행들] [스크랩함 │ 바로 지원]
 
@@ -35,7 +36,8 @@ interface CompareJobColumnProps {
   onDragOver: (e: DragEvent<HTMLLIElement>) => void;
   onDrop: (e: DragEvent<HTMLLIElement>) => void;
   onDetail: () => void;
-  onUnscrap: () => void;
+  isScrapped: boolean;
+  onScrapToggle: () => void;
   onApply: () => void;
   applyBlockedLabel?: string;
 }
@@ -49,7 +51,8 @@ const CompareJobColumn = ({
   onDragOver,
   onDrop,
   onDetail,
-  onUnscrap,
+  isScrapped,
+  onScrapToggle,
   onApply,
   applyBlockedLabel,
 }: CompareJobColumnProps) => {
@@ -156,7 +159,11 @@ const CompareJobColumn = ({
       </div>
 
       <div className="flex gap-2 px-2.5">
-        <CompareScrapButton isSaved className="flex-1" onClick={onUnscrap} />
+        <CompareScrapButton
+          isSaved={isScrapped}
+          className="flex-1"
+          onClick={onScrapToggle}
+        />
         <CompareButton
           disabled={Boolean(applyBlockedLabel)}
           className="flex-1 disabled:cursor-not-allowed disabled:border-border-default disabled:bg-surface-subtle disabled:text-text-tertiary"
