@@ -5,7 +5,6 @@ import {
   useState,
 } from 'react';
 
-import MyfitSearchButton from '@/shared/components/button/myfit-search-button';
 import ChipKeyword from '@/shared/components/chip/chip-keyword';
 import ListSearch, {
   type SearchKeywordGroup,
@@ -18,7 +17,8 @@ import { moveFocusByArrowKey } from '@/shared/utils/move-focus-by-arrow-key';
 type KeywordSearchPanelState = 'loaded' | 'loading';
 
 // 페이지 연결: keywords에 선택된 키워드를 넘기고, 칩의 X는 onRemove로 목록에서 빼야 사라집니다.
-// 입력 중인 글자는 keyword와 onKeywordChange, 검색하기 클릭은 onSearch입니다.
+// 입력 중인 글자는 keyword와 onKeywordChange입니다. 칩을 바꾸면 페이지에서 바로 다시 조회해서 검색하기 버튼은 없습니다. (디자인 QA)
+// notice는 설명 아래 파란 안내 문구입니다.
 // 입력창에서 Enter를 누르면 onKeywordSubmit이 불립니다. 칩으로 추가하는 처리는 페이지에서 keywords에 넣으면 됩니다.
 // 후보 목록은 candidateGroups로 넘깁니다. 입력 중이고 입력창에 포커스가 있을 때 입력창 아래에 띄우고,
 // 후보를 누르면 onCandidateSelect가 불립니다. ↑ ↓ 로 후보를 오가고 ESC로 목록을 닫습니다.
@@ -31,6 +31,7 @@ interface KeywordSearchPanelProps extends Omit<
   state?: KeywordSearchPanelState;
   title?: string;
   description?: string;
+  notice?: string;
   keywords: string[];
   keyword?: string;
   onKeywordChange?: (keyword: string) => void;
@@ -38,13 +39,13 @@ interface KeywordSearchPanelProps extends Omit<
   candidateGroups?: SearchKeywordGroup[];
   onCandidateSelect?: (keyword: string) => void;
   onRemove?: (keyword: string) => void;
-  onSearch?: () => void;
 }
 
 const KeywordSearchPanel = ({
   state = 'loaded',
   title = 'MY FIT',
   description = '내 키워드로 맞춤 공고 찾기',
+  notice = '*키워드 수정 시 검색 결과 즉시 반영',
   keywords,
   keyword = '',
   onKeywordChange,
@@ -52,7 +53,6 @@ const KeywordSearchPanel = ({
   candidateGroups,
   onCandidateSelect,
   onRemove,
-  onSearch,
   className,
   ...props
 }: KeywordSearchPanelProps) => {
@@ -115,6 +115,7 @@ const KeywordSearchPanel = ({
         <div className="flex flex-col">
           <h2 className="text-heading-20 text-text-primary">{title}</h2>
           <p className="text-body-14 text-text-secondary">{description}</p>
+          {notice && <p className="mt-1 text-body-14 text-blue-70">{notice}</p>}
         </div>
         <div className="flex w-full flex-col gap-4.5">
           <div
@@ -153,14 +154,9 @@ const KeywordSearchPanel = ({
           </div>
         </div>
       </div>
-      <div className="flex w-full flex-col gap-2">
-        <p className="text-center text-caption-12 text-text-secondary">
-          키워드 {keywords.length}개 선택됨
-        </p>
-        <MyfitSearchButton className="w-full" onClick={onSearch}>
-          검색하기
-        </MyfitSearchButton>
-      </div>
+      <p className="w-full text-center text-caption-12 text-text-secondary">
+        키워드 {keywords.length}개 선택됨
+      </p>
     </section>
   );
 };
