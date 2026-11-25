@@ -27,7 +27,6 @@ const meta = {
       '프로토타이핑',
     ],
     onRemove: () => {},
-    onSearch: () => {},
   },
   argTypes: {
     state: { control: 'radio', options: ['loaded', 'loading'] },

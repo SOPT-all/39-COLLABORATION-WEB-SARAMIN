@@ -5,7 +5,8 @@
 //                              안 주면 내 프로필 키워드를 써요.
 // 데이터 : 스크랩 목록 = 비교 대상. 홈 · 검색에서 스크랩한 공고를 보여 줘요. (useBookmarks)
 // 구조   : [제목 · 닫기] [고정 항목 열 168px │ 공고 열 296px × n (가로 스크롤)]
-// 동작   : "스크랩함" → 그 공고만 빠지고 창은 그대로, 홈 · 검색 별표도 함께 꺼져요. 마지막이면 빈 안내.
+// 동작   : "스크랩함" → 창 안에서는 열을 그대로 두고 버튼만 "스크랩"으로 바뀌어요. 다시 누르면 되돌려요.
+//                        창을 닫을 때 해제한 공고를 스크랩에서 빼고 홈 · 검색 별표에도 반영해요. (QA 요청)
 //          "바로 지원" → 홈 드롭과 같은 지원 플로우 (확인 → 제출 중 → 완료 · 지원 내역 보기, 기능명세서 FN-09 · FN-11)
 //                        지원을 마치면 홈 카드 · 지원 내역에도 반영돼요. (실제 전송은 범위 밖이라 목 제출)
 //                        마감된 공고 · 서류가 3/3이 아님 · 이번 방문에 이미 지원한 공고는 막고 이유를 버튼에 보여 줘요.
@@ -79,6 +80,26 @@ const CompareModal = ({
 }: CompareModalProps) => {
   const titleId = useId();
   const { bookmarkedJobs, setBookmark } = useBookmarks();
+  // 창 안에서 스크랩을 푼 공고. 닫을 때 한꺼번에 반영해서, 비교하던 열이 갑자기 사라지지 않게 해요.
+  const [unscrappedIds, setUnscrappedIds] = useState<ReadonlySet<number>>(
+    () => new Set(),
+  );
+
+  const toggleScrapInModal = (jobId: number) => {
+    setUnscrappedIds((previous) => {
+      const next = new Set(previous);
+      if (next.has(jobId)) next.delete(jobId);
+      else next.add(jobId);
+      return next;
+    });
+  };
+
+  // 닫기 버튼 · ESC · 배경 클릭 · 지원 내역 이동 모두 여기를 거쳐요.
+  const handleClose = () => {
+    unscrappedIds.forEach((jobId) => setBookmark(jobId, false));
+    setUnscrappedIds(new Set());
+    onClose();
+  };
   const navigate = useNavigate();
   const { data: myKeywords } = useMyKeywordsQuery();
   // 검색에 적용한 칩이 있으면 그 기준으로, 없으면 내 프로필 키워드로 세요. (못 받았으면 undefined)
@@ -135,7 +156,7 @@ const CompareModal = ({
   // 지원 내역 모달은 홈에 있어서, 비교 창을 닫고 홈으로 가며 지원 내역을 바로 열어요.
   const handleViewHistory = () => {
     closeApplyFlow();
-    onClose();
+    handleClose();
     navigate(ROUTES.HOME, { state: OPEN_APPLICATION_HISTORY_STATE });
   };
 
@@ -252,7 +273,8 @@ const CompareModal = ({
               onDragOver={(e) => handleDragOver(e, job.id)}
               onDrop={(e) => handleDrop(e, job.id)}
               onDetail={() => setDetailJob(job)}
-              onUnscrap={() => setBookmark(job.id, false)}
+              isScrapped={!unscrappedIds.has(job.id)}
+              onScrapToggle={() => toggleScrapInModal(job.id)}
               onApply={() => handleApply(job)}
               applyBlockedLabel={getApplyBlockedLabel(job)}
             />
@@ -267,7 +289,7 @@ const CompareModal = ({
       <ModalDialog
         aria-labelledby={titleId}
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={handleClose}
         // 항목을 많이 더하면 화면보다 길어질 수 있어 세로로 스크롤해요.
         className="max-h-screen w-240 flex-col gap-4 overflow-y-auto rounded-2xl bg-surface-default px-8 pt-7 pb-6 shadow-card-strong open:flex"
       >
@@ -279,7 +301,7 @@ const CompareModal = ({
             type="button"
             aria-label="닫기"
             className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-surface-subtle"
-            onClick={onClose}
+            onClick={handleClose}
           >
             <IcClose aria-hidden />
           </button>
