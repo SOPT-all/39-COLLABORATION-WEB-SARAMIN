@@ -219,16 +219,6 @@ const SearchPage = () => {
     applyMyFitKeywords([...myFitKeywords, nextKeyword]);
   };
 
-  // 칩은 바꾸는 즉시 반영돼서, 검색하기는 지금 조건으로 첫 페이지부터 다시 조회해요. (시안의 버튼 유지)
-  const handleMyFitSearch = () => {
-    if (!hasInitializedMyFitKeywords) return;
-    if (currentPage === 0) {
-      void searchQuery.refetch();
-      return;
-    }
-    changePageParam(0);
-  };
-
   // 검색어 없이 /search에 들어오면 공고를 요청하지 않고 홈으로 보내요.
   if (!keyword) return <Navigate to={ROUTES.HOME} replace />;
 
@@ -274,7 +264,6 @@ const SearchPage = () => {
                 candidateGroups={myFitCandidateGroups}
                 onCandidateSelect={handleMyFitKeywordAdd}
                 onRemove={handleMyFitKeywordRemove}
-                onSearch={handleMyFitSearch}
               />
             )}
           </aside>
