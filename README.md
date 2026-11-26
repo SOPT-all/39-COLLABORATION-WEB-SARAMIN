@@ -14,13 +14,23 @@
 
 <br />
 
+## 🎬 시연
+
+<img src="docs/images/demo.gif" alt="시연: 서류 관리 · 업로드 → 드래그 앤 드롭 지원 → 지원 내역 → 헤더 검색 → MY FIT 재조회 → 공고 비교" width="100%" />
+
+홈 · 나의 취업 in → 서류 관리 · 업로드 → 드래그 앤 드롭 지원 → 지원 내역 → 헤더 검색 → MY FIT 재조회 → 북마크 · 공고 비교 (65초)
+
+<br />
+
 ## ✨ 주요 기능
 
 ### 🏠 홈 — 준비 상태를 보고, 끌어다 놓아 지원해요
 
-<img src="docs/images/home-before.png" alt="기존 사람인 홈 문제 분석" width="100%" />
+<img src="docs/images/redesign-home-asis.png" alt="AS-IS 홈 — 어디부터 봐야 할지 모르겠어요" width="100%" />
 
-<img src="docs/images/home-after.png" alt="홈 개선 포인트" width="100%" />
+<img src="docs/images/redesign-home-tobe.png" alt="TO-BE 홈 — 필요한 공고만 보고, 바로 지원해요" width="100%" />
+
+<img src="docs/images/redesign-myjobin.png" alt="TO-BE 나의 취업 in — 준비는 한 번, 지원은 드롭 한 번" width="100%" />
 
 | 기능 | 설명 |
 | --- | --- |
@@ -33,9 +43,11 @@
 
 ### 🔍 검색 — 내 조건과 얼마나 맞는지 보고, 나란히 비교해요
 
-<img src="docs/images/search-before.png" alt="기존 검색 결과 문제 분석" width="100%" />
+<img src="docs/images/redesign-search-asis.png" alt="AS-IS 검색 — 나와 맞는지, 무엇이 다른지 직접 따져야 해요" width="100%" />
 
-<img src="docs/images/search-after.png" alt="검색 · 공고 비교 개선 포인트" width="100%" />
+<img src="docs/images/redesign-search-tobe.png" alt="TO-BE 검색 — 탐색 중에 조건을 바꾸고, 맞는 공고만 담아요" width="100%" />
+
+<img src="docs/images/redesign-compare.png" alt="TO-BE 비교 모달 — 담아 둔 공고를 나란히 보고 바로 지원해요" width="100%" />
 
 | 기능 | 설명 |
 | --- | --- |
@@ -52,6 +64,8 @@
 | **서버 API (7)** | 추천 · 조회한 공고 · 마감 임박 목록, 보유 서류 조회 · 변경, 내 키워드 조회, 공고 검색 |
 | **목데이터** | 서버 범위 밖인 지원 제출 · 지원 내역 · 서류 업로드 · 비교 상세 항목은 목데이터로 끝까지 동작하게 만들었어요. |
 
+> 리디자인 AS-IS · TO-BE 화면과 문구는 디자인 파트 장표(AS-IS 디자인 페인포인트 · TO-BE 디자인 솔루션)를 바탕으로 정리했어요.
+
 <br />
 
 ## 👥 Team
@@ -65,9 +79,15 @@
 
 ## 🧑‍💻 역할 분담
 
-<img src="docs/images/roles-home.png" alt="화면으로 보는 역할 분담 ① 홈" width="100%" />
+<img src="docs/images/roles-api.png" alt="역할 분담 - API" width="100%" />
 
-<img src="docs/images/roles-search.png" alt="화면으로 보는 역할 분담 ② 검색 · 모달" width="100%" />
+<img src="docs/images/roles-home.png" alt="역할 분담 - 홈" width="100%" />
+
+<img src="docs/images/roles-tools-loading.png" alt="역할 분담 - 홈 도구 · 로딩" width="100%" />
+
+<img src="docs/images/roles-search.png" alt="역할 분담 - 검색" width="100%" />
+
+<img src="docs/images/roles-modal.png" alt="역할 분담 - 모달" width="100%" />
 
 | 이름 | 초기 세팅 | 공통 컴포넌트 | 페이지 · API |
 | :---: | --- | --- | --- |
