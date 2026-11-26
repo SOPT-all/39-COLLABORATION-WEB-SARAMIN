@@ -79,9 +79,15 @@
 
 ## 🧑‍💻 역할 분담
 
-<img src="docs/images/roles-home.png" alt="화면으로 보는 역할 분담 ① 홈" width="100%" />
+<img src="docs/images/roles-api.png" alt="역할 분담 - API" width="100%" />
 
-<img src="docs/images/roles-search.png" alt="화면으로 보는 역할 분담 ② 검색 · 모달" width="100%" />
+<img src="docs/images/roles-home.png" alt="역할 분담 - 홈" width="100%" />
+
+<img src="docs/images/roles-tools-loading.png" alt="역할 분담 - 홈 도구 · 로딩" width="100%" />
+
+<img src="docs/images/roles-search.png" alt="역할 분담 - 검색" width="100%" />
+
+<img src="docs/images/roles-modal.png" alt="역할 분담 - 모달" width="100%" />
 
 | 이름 | 초기 세팅 | 공통 컴포넌트 | 페이지 · API |
 | :---: | --- | --- | --- |
